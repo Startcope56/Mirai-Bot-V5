@@ -63,12 +63,34 @@ async function getWeatherJSON(loc) {
 
 async function downloadWeatherImage(loc) {
   const fp = path.join(TEMP_DIR, `wimg_${Date.now()}.png`);
-  const { data } = await axios.get(
-    `https://wttr.in/${encodeURIComponent(loc)}.png?1&lang=tl`,
-    { responseType: 'arraybuffer', timeout: 25000, headers: { 'User-Agent': UA } }
-  );
-  fs.writeFileSync(fp, Buffer.from(data));
-  return fp;
+  // Try wttr.in PNG (no lang param — lang=tl breaks some locations)
+  try {
+    const { data } = await axios.get(
+      `https://wttr.in/${encodeURIComponent(loc)}.png?1`,
+      { responseType: 'arraybuffer', timeout: 25000, headers: { 'User-Agent': UA } }
+    );
+    const buf = Buffer.from(data);
+    // Validate PNG header: 89 50 4E 47
+    if (buf.length > 8 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) {
+      fs.writeFileSync(fp, buf);
+      return fp;
+    }
+    throw new Error('Not a valid PNG from wttr.in');
+  } catch (e) {
+    // Fallback: generate weather image via Pollinations AI
+    console.log(`[Weather] wttr.in image failed (${e.message?.slice(0, 50)}), using Pollinations fallback...`);
+    const prompt = encodeURIComponent(
+      `Philippine weather forecast card for ${loc}, professional meteorology style, ` +
+      `dark navy blue gradient background, weather icons (sun clouds rain), ` +
+      `temperature and humidity display, Philippines map accent, ` +
+      `clean modern broadcast UI design, high contrast, ultra HD`
+    );
+    const url = `https://image.pollinations.ai/prompt/${prompt}?width=1080&height=600&nologo=true&model=flux&seed=${Date.now() % 99999}`;
+    const { data: imgData } = await axios.get(url, { responseType: 'arraybuffer', timeout: 70000 });
+    if (!imgData || imgData.byteLength < 2000) throw new Error('Pollinations image too small');
+    fs.writeFileSync(fp, Buffer.from(imgData));
+    return fp;
+  }
 }
 
 // ── PAGASA typhoon check ──────────────────────────────────────────────────────
