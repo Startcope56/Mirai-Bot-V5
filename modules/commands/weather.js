@@ -1,13 +1,13 @@
 /**
- * !weather — Real-time weather with image, voice, and video
- * Uses wttr.in (FREE, no API key) + PAGASA public data + msedge-tts voice
+ * !weather — Real-time weather with image, Tagalog voice, and video
+ * Uses wttr.in (FREE, no API key) + PAGASA public data + msedge-tts Tagalog voice
  *
  * Usage:
- *   !weather [location]           — Image + text + voice (male/female)
- *   !weather video [location]     — Short weather video clip with voice
+ *   !weather [location]           — Image + text + Tagalog voice
+ *   !weather video [location]     — 59-second weather video with Tagalog voice
  *   !weather typhoon / bagyo      — Philippines typhoon/LPA tracker
- *   !weather male [location]      — Force male voice
- *   !weather female [location]    — Force female voice
+ *   !weather male [location]      — Force male Tagalog voice
+ *   !weather female [location]    — Force female Tagalog voice
  */
 
 const axios           = require('axios');
@@ -23,6 +23,35 @@ fs.ensureDirSync(TEMP_DIR);
 const UA      = 'curl/7.68.0';
 const cleanup = (fp) => setTimeout(() => fs.remove(fp).catch(() => {}), 300000);
 
+// ── Real Philippine city locations for video overlays ────────────────────────
+const PH_CITIES = [
+  'Naga City, Camarines Sur',
+  'Manila, Metro Manila',
+  'Cebu City, Cebu',
+  'Davao City, Davao del Sur',
+  'Baguio City, Benguet',
+  'Cagayan de Oro, Misamis Oriental',
+  'Iloilo City, Iloilo',
+  'Zamboanga City, Zamboanga del Sur',
+  'Bacolod City, Negros Occidental',
+  'Antipolo City, Rizal',
+  'Quezon City, Metro Manila',
+  'Makati City, Metro Manila',
+  'Pasig City, Metro Manila',
+  'Taguig City, Metro Manila',
+  'Marikina City, Metro Manila',
+  'Caloocan City, Metro Manila',
+  'Legazpi City, Albay',
+  'Lucena City, Quezon',
+  'Lipa City, Batangas',
+  'San Fernando, Pampanga',
+  'Tacloban City, Leyte',
+  'General Santos City, South Cotabato',
+  'Butuan City, Agusan del Norte',
+  'Olongapo City, Zambales',
+  'Dagupan City, Pangasinan',
+];
+
 // ── wttr.in helpers ───────────────────────────────────────────────────────────
 async function getWeatherJSON(loc) {
   const { data } = await axios.get(
@@ -35,7 +64,7 @@ async function getWeatherJSON(loc) {
 async function downloadWeatherImage(loc) {
   const fp = path.join(TEMP_DIR, `wimg_${Date.now()}.png`);
   const { data } = await axios.get(
-    `https://wttr.in/${encodeURIComponent(loc)}.png?1&lang=en`,
+    `https://wttr.in/${encodeURIComponent(loc)}.png?1&lang=tl`,
     { responseType: 'arraybuffer', timeout: 25000, headers: { 'User-Agent': UA } }
   );
   fs.writeFileSync(fp, Buffer.from(data));
@@ -64,7 +93,7 @@ async function checkPAGASA() {
 }
 
 // ── Run a shell command ───────────────────────────────────────────────────────
-function run(cmd, timeoutMs = 60000) {
+function run(cmd, timeoutMs = 90000) {
   return new Promise((res, rej) =>
     exec(cmd, { maxBuffer: 1024 * 1024 * 100, timeout: timeoutMs }, (e, _, se) =>
       e ? rej(new Error(se?.slice(0, 300) || e.message)) : res()
@@ -72,12 +101,13 @@ function run(cmd, timeoutMs = 60000) {
   );
 }
 
-// ── TTS voice ─────────────────────────────────────────────────────────────────
+// ── Tagalog TTS voice ─────────────────────────────────────────────────────────
+// male: fil-PH-AngeloNeural | female: fil-PH-BlessicaNeural
 async function makeVoice(text, gender = 'male') {
   const fp  = path.join(TEMP_DIR, `wvoice_${Date.now()}.mp3`);
   const tts = new MsEdgeTTS();
   await tts.setMetadata(
-    gender === 'female' ? 'en-US-JennyNeural' : 'en-US-GuyNeural',
+    gender === 'female' ? 'fil-PH-BlessicaNeural' : 'fil-PH-AngeloNeural',
     OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3
   );
   const { audioStream } = tts.toStream(text, { rate: '-5%', pitch: '+0Hz' });
@@ -86,15 +116,13 @@ async function makeVoice(text, gender = 'male') {
     audioStream.on('data',  d => chunks.push(d));
     audioStream.on('end',   () => { fs.writeFileSync(fp, Buffer.concat(chunks)); res(); });
     audioStream.on('error', rej);
-    setTimeout(() => rej(new Error('TTS timeout')), 30000);
+    setTimeout(() => rej(new Error('TTS timeout')), 35000);
   });
   if (!fs.existsSync(fp) || fs.statSync(fp).size < 500) throw new Error('TTS output empty');
   return fp;
 }
 
 // ── Breaking-news background music via ffmpeg synth ───────────────────────────
-// D minor chord (dramatic, authoritative broadcast feel)
-// Tremolo at 1.2 Hz gives an urgent "ticker" pulse
 const NEWS_BG_CHORD =
   '(0.28*sin(2*PI*146*t)+0.22*sin(2*PI*293*t)+0.18*sin(2*PI*349*t)' +
   '+0.14*sin(2*PI*440*t)+0.10*sin(2*PI*587*t))' +
@@ -117,14 +145,13 @@ async function mixVoiceWithBg(voiceFp) {
   const bgFp  = path.join(TEMP_DIR, `wbg_${Date.now()}.mp3`);
   const mixFp = path.join(TEMP_DIR, `wmix_${Date.now()}.mp3`);
 
-  // Get voice duration first
   const durRaw = await new Promise(r =>
     exec(
       `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${voiceFp}"`,
       (_, out) => r(out?.trim())
     )
   );
-  const dur = Math.ceil(parseFloat(durRaw) || 20) + 2; // +2s buffer
+  const dur = Math.ceil(parseFloat(durRaw) || 20) + 2;
 
   try {
     await makeNewsBgMusic(dur, bgFp);
@@ -145,36 +172,42 @@ async function mixVoiceWithBg(voiceFp) {
   } catch (e) {
     try { fs.removeSync(bgFp); } catch {}
     console.log('[Weather] BG mix failed, using plain voice:', e.message?.slice(0, 60));
-    return voiceFp; // fallback: plain voice
+    return voiceFp;
   }
 }
 
-// ── Weather video via ffmpeg (zoom + voice overlay) ───────────────────────────
+// ── Weather VIDEO — always exactly 59 seconds ─────────────────────────────────
 function makeWeatherVideo(imgFp, voiceFp, locationLabel) {
   return new Promise((resolve, reject) => {
     const outFp = path.join(TEMP_DIR, `wvid_${Date.now()}.mp4`);
-    const label = locationLabel.replace(/['"\\]/g, '');
+    const label = locationLabel.replace(/['"\\]/g, '').slice(0, 60);
+    const TARGET_SEC = 59;
 
-    // Try zoompan + drawtext first
-    const cmd1 =
+    // Build a 59s video: zoom-pan on weather image + voice overlay padded/trimmed to 59s
+    // If voice is shorter than 59s, pad with silence. If longer, cut at 59s.
+    const cmd =
       `ffmpeg -y -loop 1 -i "${imgFp}" -i "${voiceFp}" ` +
-      `-vf "zoompan=z='min(zoom+0.0012,1.4)':d=250:s=854x480,` +
-      `drawtext=text='${label} - Weather Update':fontsize=26:fontcolor=white:` +
-      `box=1:boxcolor=black@0.5:boxborderw=6:x=(w-tw)/2:y=14" ` +
-      `-c:v libx264 -preset fast -crf 28 -pix_fmt yuv420p ` +
-      `-c:a aac -b:a 64k -shortest -t 25 "${outFp}" 2>&1`;
+      `-vf "zoompan=z='min(zoom+0.0010,1.35)':d=1500:s=854x480,` +
+      `drawtext=text='${label}':fontsize=28:fontcolor=white:` +
+      `box=1:boxcolor=black@0.55:boxborderw=8:x=(w-tw)/2:y=18,` +
+      `drawtext=text='WEATHER UPDATE':fontsize=18:fontcolor=yellow:` +
+      `box=1:boxcolor=black@0.40:boxborderw=4:x=(w-tw)/2:y=58" ` +
+      `-c:v libx264 -preset fast -crf 26 -pix_fmt yuv420p ` +
+      `-af "apad=whole_dur=${TARGET_SEC}" ` +
+      `-c:a aac -b:a 96k -t ${TARGET_SEC} "${outFp}" 2>&1`;
 
-    exec(cmd1, { timeout: 90000 }, (e) => {
+    exec(cmd, { timeout: 120000, maxBuffer: 1024 * 1024 * 200 }, (e) => {
       if (!e && fs.existsSync(outFp) && fs.statSync(outFp).size > 20000) {
         return resolve(outFp);
       }
-      // Fallback: simple static video
+      // Fallback: simple 59s static video
       const cmd2 =
         `ffmpeg -y -loop 1 -i "${imgFp}" -i "${voiceFp}" ` +
         `-c:v libx264 -preset fast -crf 28 -pix_fmt yuv420p ` +
         `-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" ` +
-        `-c:a aac -b:a 64k -shortest -t 25 "${outFp}" 2>&1`;
-      exec(cmd2, { timeout: 90000 }, (e2) => {
+        `-af "apad=whole_dur=${TARGET_SEC}" ` +
+        `-c:a aac -b:a 64k -t ${TARGET_SEC} "${outFp}" 2>&1`;
+      exec(cmd2, { timeout: 120000 }, (e2) => {
         if (e2 || !fs.existsSync(outFp) || fs.statSync(outFp).size < 10000) {
           return reject(new Error('ffmpeg failed'));
         }
@@ -205,15 +238,76 @@ function parseWeather(data, fallbackLoc) {
   };
 }
 
-const PH_RE = /philippines|pilipinas|manila|cebu|davao|naga|quezon|makati|baguio|cagayan|zamboanga|batangas|pampanga|laguna|bicol|visayas|mindanao|luzon|iloilo|pasig|taguig/i;
+// ── Build Tagalog weather speech script ───────────────────────────────────────
+function buildTagalogWeatherScript(w, location, isPhil = false) {
+  if (!w) {
+    return `Magandang araw po! Ito ang weather update para sa ${location}. ` +
+      `Pakitingnan ang larawan para sa kumpletong forecast. ` +
+      `Manatiling ligtas ang lahat. Salamat po!`;
+  }
+
+  const condTagalog = tagalogCondition(w.desc);
+  let script =
+    `Magandang araw po sa inyong lahat! Ito ang inyong weather update para sa ${w.place}. ` +
+    `Kasalukuyang temperatura ay ${w.tempC} degrees Celsius, ` +
+    `at pakiramdam ay ${w.feelsC} degrees. ` +
+    `Ang lagay ng panahon ay ${condTagalog}. ` +
+    `Ang halumigmig ay ${w.humidity} porsyento. ` +
+    `Hangin: ${w.windKmph} kilometro bawat oras patungong ${w.windDir}. ` +
+    `Pinakamataas ngayong araw: ${w.maxC} degrees, pinakamababa: ${w.minC} degrees. `;
+
+  if (isPhil) {
+    script += `Para sa mga bagyo at storm signal, bisitahin ang pagasa punto dost punto gov punto ph. `;
+  }
+
+  script +=
+    `Mag-ingat po kayo lagi at manatiling ligtas. ` +
+    `Ang balita at weather na ito ay para sa inyo mula sa inyong bot. ` +
+    `Salamat sa pakikinig. Mabuhay tayong lahat!`;
+
+  return script;
+}
+
+function buildTagalogTyphoonScript(pg, w) {
+  let script = `Magandang araw po! Ito ang weather at typhoon update para sa Pilipinas. `;
+  if (pg.active) {
+    script += `BABALA! May aktibong tropical weather system sa Pilipinas. `;
+    if (pg.storms?.length) script += `${pg.storms.join(', ')}. `;
+    if (pg.lpa) script += `May Low Pressure Area o LPA na aktibo. `;
+    script += `Mangyaring subaybayan ang mga opisyal na abiso ng PAGASA para sa inyong kaligtasan. `;
+  } else {
+    script += `Wala pang aktibong bagyo sa Pilipinas sa kasalukuyan. Ang kalagayan ng panahon ay normal. `;
+  }
+  if (w) {
+    script += `Sa Manila, ang temperatura ay ${w.tempC} degrees Celsius. `;
+  }
+  script += `Manatiling ligtas ang lahat. Salamat sa pakikinig mula sa inyong bot!`;
+  return script;
+}
+
+function tagalogCondition(desc) {
+  const d = (desc || '').toLowerCase();
+  if (d.includes('sunny') || d.includes('clear'))       return 'maliwanag at maaraw';
+  if (d.includes('partly cloudy'))                       return 'bahagyang maulap';
+  if (d.includes('cloudy') || d.includes('overcast'))   return 'maulap';
+  if (d.includes('thunder') || d.includes('storm'))     return 'may kulog at kidlat';
+  if (d.includes('heavy rain') || d.includes('pouring')) return 'malakas na ulan';
+  if (d.includes('rain') || d.includes('drizzle'))      return 'makulimlim at may ulan';
+  if (d.includes('fog') || d.includes('mist'))          return 'may ambon at ulap';
+  if (d.includes('snow'))                               return 'may niyebe';
+  if (d.includes('haze'))                               return 'maalikabok';
+  return desc;
+}
+
+const PH_RE = /philippines|pilipinas|manila|cebu|davao|naga|quezon|makati|baguio|cagayan|zamboanga|batangas|pampanga|laguna|bicol|visayas|mindanao|luzon|iloilo|pasig|taguig|legazpi|tacloban|antipolo|caloocan|marikina|lucena|lipa|olongapo|dagupan|butuan|bacolod|general santos/i;
 
 // ── Module exports ────────────────────────────────────────────────────────────
 module.exports.config = {
   name:            'weather',
-  version:         '1.0.0',
+  version:         '2.0.0',
   hasPermssion:    0,
   credits:         'TEAM STARTCOPE BETA',
-  description:     'Real-time weather — image, voice, video, Philippines typhoon tracker. FREE, no API key.',
+  description:     'Real-time weather — image, Tagalog voice, 59s video, Philippines typhoon tracker. FREE.',
   commandCategory: 'Utility',
   usages:          '[location] | video [location] | typhoon | bagyo | male/female [location]',
   cooldowns:       10,
@@ -225,21 +319,21 @@ module.exports.run = async function ({ api, event, args }) {
 
   if (!args.length) {
     return api.sendMessage(
-      `🌤️ ${bold('WEATHER COMMAND — FREE & REAL-TIME!')}\n` +
+      `🌤️ ${bold('WEATHER COMMAND — TAGALOG VOICE + VIDEO!')}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `No API key needed — uses wttr.in!\n\n` +
-      `📋 ${bold('COMMANDS:')}\n` +
-      `${P}weather [location]         — Image + text + voice\n` +
-      `${P}weather video [location]   — Weather VIDEO clip\n` +
-      `${P}weather typhoon            — PH typhoon tracker\n` +
-      `${P}weather female [location]  — Female voice version\n\n` +
-      `📍 ${bold('EXAMPLES:')}\n` +
+      `Walang bayad! Gumagamit ng wttr.in!\n\n` +
+      `📋 ${bold('MGA COMMAND:')}\n` +
+      `${P}weather [lugar]         — Larawan + text + boses\n` +
+      `${P}weather video [lugar]   — 59-segundo na video\n` +
+      `${P}weather typhoon         — PH typhoon tracker\n` +
+      `${P}weather female [lugar]  — Boses ng babae\n\n` +
+      `📍 ${bold('MGA HALIMBAWA:')}\n` +
       `${P}weather Naga City\n` +
       `${P}weather Manila Philippines\n` +
       `${P}weather video Cebu\n` +
       `${P}weather female Baguio\n` +
       `${P}weather typhoon\n\n` +
-      `🎙️ Sends real weather image + voice announcement!`,
+      `🎙️ Nagse-send ng larawan + Tagalog voice!`,
       threadID, messageID
     );
   }
@@ -249,7 +343,7 @@ module.exports.run = async function ({ api, event, args }) {
   // ── Typhoon/Bagyo tracker ──────────────────────────────────────────────────
   if (sub === 'typhoon' || sub === 'bagyo') {
     api.setMessageReaction('🌀', messageID, () => {}, true);
-    api.sendMessage(`⏳ ${bold('Checking PAGASA data...')} Please wait.`, threadID);
+    api.sendMessage(`⏳ ${bold('Sinusuri ang datos ng PAGASA...')} Sandali lang po.`, threadID);
 
     try {
       const [phJSON, imgFp, pagasa] = await Promise.allSettled([
@@ -258,64 +352,58 @@ module.exports.run = async function ({ api, event, args }) {
         checkPAGASA(),
       ]);
 
-      const w = phJSON.status === 'fulfilled' ? parseWeather(phJSON.value, 'Manila') : null;
+      const w   = phJSON.status === 'fulfilled' ? parseWeather(phJSON.value, 'Manila') : null;
       const img = imgFp.status === 'fulfilled' ? imgFp.value : null;
       const pg  = pagasa.status === 'fulfilled' ? pagasa.value : { active: false };
-      const now = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
+      const now = new Date().toLocaleString('fil-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
 
       let body =
         `🌀 ${bold('PHILIPPINES TYPHOON TRACKER')} 🇵🇭\n` +
         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `📅 ${now} (Philippine Time)\n\n`;
+        `📅 ${now} (Oras ng Pilipinas)\n\n`;
 
       if (pg.active) {
-        body += `⚠️ ${bold('ACTIVE TROPICAL WEATHER SYSTEM!')}\n`;
-        if (pg.storms?.length) body += `🌀 ${bold('Storm(s):')} ${pg.storms.join(', ')}\n`;
-        if (pg.lpa) body += `🌩️ ${bold('Low Pressure Area (LPA) active')}\n`;
-        body += `\n📻 Monitor PAGASA for latest warnings!\n`;
+        body += `⚠️ ${bold('MAY AKTIBONG TROPICAL WEATHER SYSTEM!')}\n`;
+        if (pg.storms?.length) body += `🌀 ${bold('Bagyo:')} ${pg.storms.join(', ')}\n`;
+        if (pg.lpa) body += `🌩️ ${bold('Low Pressure Area (LPA) aktibo')}\n`;
+        body += `\n📻 Subaybayan ang PAGASA para sa pinakabagong balita!\n`;
       } else {
-        body += `✅ ${bold('No active typhoon detected')}\n` +
-          `Conditions appear normal in the Philippines.\n`;
+        body += `✅ ${bold('Walang aktibong bagyo')}\n` +
+          `Normal ang kalagayan ng panahon sa Pilipinas.\n`;
       }
 
       if (w) {
         body +=
-          `\n🌡️ ${bold('Manila Current Weather:')}\n` +
-          `  Temp: ${w.tempC}°C | Feels: ${w.feelsC}°C\n` +
-          `  Sky: ${w.desc}\n` +
-          `  Wind: ${w.windKmph} km/h ${w.windDir}\n` +
-          `  Humidity: ${w.humidity}%\n` +
-          `  Pressure: ${w.pressure} hPa\n`;
+          `\n🌡️ ${bold('Kasalukuyang Panahon sa Manila:')}\n` +
+          `  Temp: ${w.tempC}°C | Pakiramdam: ${w.feelsC}°C\n` +
+          `  Langit: ${w.desc}\n` +
+          `  Hangin: ${w.windKmph} km/h ${w.windDir}\n` +
+          `  Halumigmig: ${w.humidity}%\n` +
+          `  Presyon: ${w.pressure} hPa\n`;
       }
 
-      body += `\n📡 ${bold('Source:')} PAGASA · wttr.in\n` +
-        `🔗 pagasa.dost.gov.ph`;
+      body += `\n📡 ${bold('Pinagkukunan:')} PAGASA · wttr.in\n🔗 pagasa.dost.gov.ph`;
 
-      const voiceText = pg.active
-        ? `Attention! A tropical weather system is currently active in the Philippines. Please monitor official PAGASA advisories for updates and stay safe. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Stay safe everyone!`
-        : `Weather advisory: No active typhoon in the Philippines at this time. Current conditions are normal. Stay safe! Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day!`;
-
+      const voiceText = buildTagalogTyphoonScript(pg, w);
       const rawVoice = await makeVoice(voiceText, 'male').catch(() => null);
       const voice    = rawVoice ? await mixVoiceWithBg(rawVoice).catch(() => rawVoice) : null;
 
       api.setMessageReaction('✅', messageID, () => {}, true);
 
-      // Send image + text first
       if (img) {
         await new Promise(r => api.sendMessage({ body, attachment: fs.createReadStream(img) }, threadID, r));
         cleanup(img);
       } else {
         await new Promise(r => api.sendMessage(body, threadID, r));
       }
-      // Then send voice with background music
       if (voice) {
-        api.sendMessage({ body: '🎙️ Weather bulletin with news music:', attachment: fs.createReadStream(voice) }, threadID, () => cleanup(voice));
+        api.sendMessage({ body: '🎙️ Tagalog weather bulletin na may music:', attachment: fs.createReadStream(voice) }, threadID, () => cleanup(voice));
       }
       return;
 
     } catch (e) {
       api.setMessageReaction('❌', messageID, () => {}, true);
-      return api.sendMessage(`❌ ${bold('Typhoon data fetch failed.')}\n${e.message}`, threadID, messageID);
+      return api.sendMessage(`❌ ${bold('Hindi nakuha ang typhoon data.')}\n${e.message}`, threadID, messageID);
     }
   }
 
@@ -331,7 +419,7 @@ module.exports.run = async function ({ api, event, args }) {
   const location = locParts.join(' ').trim();
   if (!location) {
     return api.sendMessage(
-      `❌ Please provide a location.\nExample: ${P}weather ${isVideo ? 'video ' : ''}Naga City`,
+      `❌ Magbigay ng lugar.\nHalimbawa: ${P}weather ${isVideo ? 'video ' : ''}Naga City`,
       threadID, messageID
     );
   }
@@ -339,8 +427,8 @@ module.exports.run = async function ({ api, event, args }) {
   api.setMessageReaction('🌤️', messageID, () => {}, true);
   api.sendMessage(
     isVideo
-      ? `⏳ ${bold('Generating weather video for')} ${bold(location)}... (may take 30–60 sec)`
-      : `⏳ ${bold('Fetching weather for')} ${bold(location)}...`,
+      ? `⏳ ${bold('Gumagawa ng 59-segundo na weather video para sa')} ${bold(location)}... (30–90 segundo)`
+      : `⏳ ${bold('Kinukuha ang panahon para sa')} ${bold(location)}...`,
     threadID
   );
 
@@ -351,54 +439,54 @@ module.exports.run = async function ({ api, event, args }) {
     ]);
 
     if (jsonRes.status === 'rejected' && imgRes.status === 'rejected') {
-      throw new Error('Could not reach weather service. Check location name.');
+      throw new Error('Hindi maabot ang weather service. Tingnan ang pangalan ng lugar.');
     }
 
-    const wData = jsonRes.status === 'fulfilled' ? jsonRes.value : null;
-    const imgFp = imgRes.status === 'fulfilled' ? imgRes.value : null;
-    const w     = wData ? parseWeather(wData, location) : null;
+    const wData  = jsonRes.status === 'fulfilled' ? jsonRes.value : null;
+    const imgFp  = imgRes.status === 'fulfilled' ? imgRes.value : null;
+    const w      = wData ? parseWeather(wData, location) : null;
     const isPhil = PH_RE.test(location);
-    const now = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
+    const now    = new Date().toLocaleString('fil-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
 
     const hasTyphoon = w && /typhoon|tropical storm|depression|low pressure|LPA/i.test(w.desc);
 
     let body =
       `🌤️ ${bold('WEATHER UPDATE')} — ${bold(w ? `${w.place}${w.country ? ', ' + w.country : ''}` : location)}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📅 ${now} (PH Time)\n`;
+      `📅 ${now} (Oras ng PH)\n`;
 
-    if (hasTyphoon) body += `\n⚠️ ${bold('TROPICAL WEATHER SYSTEM DETECTED!')}\n`;
+    if (hasTyphoon) body += `\n⚠️ ${bold('MAY TROPICAL WEATHER SYSTEM NA NATUKOY!')}\n`;
 
     if (w) {
       body +=
-        `\n🌡️ ${bold('Temperature:')} ${w.tempC}°C  (Feels like ${w.feelsC}°C)\n` +
-        `🌤️ ${bold('Condition:')}   ${w.desc}\n` +
-        `💧 ${bold('Humidity:')}    ${w.humidity}%\n` +
-        `💨 ${bold('Wind:')}        ${w.windKmph} km/h ${w.windDir}\n` +
+        `\n🌡️ ${bold('Temperatura:')} ${w.tempC}°C  (Pakiramdam ${w.feelsC}°C)\n` +
+        `🌤️ ${bold('Kalagayan:')}   ${w.desc}\n` +
+        `💧 ${bold('Halumigmig:')}  ${w.humidity}%\n` +
+        `💨 ${bold('Hangin:')}      ${w.windKmph} km/h ${w.windDir}\n` +
         `👁️ ${bold('Visibility:')} ${w.visibility} km\n` +
-        `🌡️ ${bold('Pressure:')}   ${w.pressure} hPa\n` +
+        `🌡️ ${bold('Presyon:')}    ${w.pressure} hPa\n` +
         `☀️ ${bold('UV Index:')}   ${w.uvIndex}\n` +
-        `📈 ${bold('High:')} ${w.maxC}°C  |  ${bold('Low:')} ${w.minC}°C\n`;
+        `📈 ${bold('Pinakamataas:')} ${w.maxC}°C  |  ${bold('Pinakamababa:')} ${w.minC}°C\n`;
     }
 
     if (isPhil) {
       body += `\n🇵🇭 ${bold('PH Typhoon hotline:')} pagasa.dost.gov.ph`;
     }
-    body += `\n\n📡 ${bold('Source:')} wttr.in — Free real-time weather`;
+    body += `\n\n📡 ${bold('Pinagkukunan:')} wttr.in — Libreng real-time na panahon`;
 
-    const speechText = w
-      ? `Weather update for ${w.place}. Temperature is ${w.tempC} degrees Celsius, feels like ${w.feelsC} degrees. Conditions: ${w.desc}. Humidity ${w.humidity} percent. Wind ${w.windKmph} kilometers per hour. High of ${w.maxC}, low of ${w.minC} degrees today. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day and stay safe!`
-      : `Weather update for ${location}. Please check the weather image for full forecast details. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day and stay safe!`;
+    const speechText = buildTagalogWeatherScript(w, location, isPhil);
 
     if (isVideo) {
-      if (!imgFp) throw new Error('No weather image available for video.');
+      if (!imgFp) throw new Error('Walang weather image para sa video.');
       const rawVoice = await makeVoice(speechText, gender);
       const voiceFp  = await mixVoiceWithBg(rawVoice).catch(() => rawVoice);
-      const videoFp  = await makeWeatherVideo(imgFp, voiceFp, w ? w.place : location);
+      // Use the real location name for the video overlay
+      const overlayLabel = w ? `${w.place}${w.country && !isPhil ? ', ' + w.country : ''}` : location;
+      const videoFp  = await makeWeatherVideo(imgFp, voiceFp, overlayLabel);
 
       api.setMessageReaction('✅', messageID, () => {}, true);
       return api.sendMessage(
-        { body, attachment: fs.createReadStream(videoFp) },
+        { body: body + `\n\n🎬 ${bold('59-segundo na weather video na may Tagalog voice!')}`, attachment: fs.createReadStream(videoFp) },
         threadID,
         () => { cleanup(imgFp); cleanup(voiceFp); cleanup(videoFp); }
       );
@@ -408,7 +496,6 @@ module.exports.run = async function ({ api, event, args }) {
       const voiceFp  = rawVoice ? await mixVoiceWithBg(rawVoice).catch(() => rawVoice) : null;
       api.setMessageReaction('✅', messageID, () => {}, true);
 
-      // Send image + text first, then voice with background music
       if (imgFp) {
         await new Promise(r => api.sendMessage({ body, attachment: fs.createReadStream(imgFp) }, threadID, r));
         cleanup(imgFp);
@@ -417,7 +504,7 @@ module.exports.run = async function ({ api, event, args }) {
       }
       if (voiceFp) {
         api.sendMessage(
-          { body: '🎙️ Weather bulletin with news background music:', attachment: fs.createReadStream(voiceFp) },
+          { body: '🎙️ Tagalog weather bulletin na may background music:', attachment: fs.createReadStream(voiceFp) },
           threadID,
           () => cleanup(voiceFp)
         );
@@ -428,8 +515,8 @@ module.exports.run = async function ({ api, event, args }) {
   } catch (e) {
     api.setMessageReaction('❌', messageID, () => {}, true);
     return api.sendMessage(
-      `❌ ${bold('Weather failed.')}\n🔧 ${e.message}\n\n` +
-      `💡 Try: ${P}weather Manila Philippines`,
+      `❌ ${bold('Nabigo ang weather.')}\n🔧 ${e.message}\n\n` +
+      `💡 Subukan: ${P}weather Manila Philippines`,
       threadID, messageID
     );
   }

@@ -226,7 +226,32 @@ function onBot({ models }) {
 
     function listenerCallback(error, event) {
       if (error) {
-        if (JSON.stringify(error).includes("601051028565049")) {
+        const errStr = JSON.stringify(error).toLowerCase();
+
+        // ── "Automated behaviour" / checkpoint — strongest response ──────────
+        const isAutomated = errStr.includes('automated behaviour') ||
+          errStr.includes('automated behavior') ||
+          errStr.includes('prevent your account') ||
+          errStr.includes('temporarily restricted') ||
+          errStr.includes('terms of use') ||
+          errStr.includes('unauthorised access');
+
+        const isCheckpoint = errStr.includes('601051028565049') || errStr.includes('scraping');
+
+        if (isAutomated) {
+          logger('⚠️ "Automated behaviour" warning from Meta — entering stealth mode!', '[ PROTECTION ]');
+          const backoffMs = global.protection?.handleAutomatedBehaviourWarning
+            ? global.protection.handleAutomatedBehaviourWarning(api)
+            : 20 * 60 * 1000;
+          logger(`🔒 Pausing MQTT for ${Math.round(backoffMs / 60000)} min then reconnecting...`, '[ PROTECTION ]');
+          setTimeout(() => {
+            global.handleListen = api.listenMqtt(listenerCallback);
+            logger('🔄 MQTT reconnected after automated-behaviour backoff.', '[ PROTECTION ]');
+          }, backoffMs);
+          return;
+        }
+
+        if (isCheckpoint) {
           const form = {
             av: api.getCurrentUserID(),
             fb_api_caller_class: "RelayModern",
@@ -236,17 +261,20 @@ function onBot({ models }) {
             doc_id: "6339492849481770",
           };
           api.httpPost("https://www.facebook.com/api/graphql/", form, (e, i) => {
-            const res = JSON.parse(i);
-            if (e || res.errors) return logger("Failed to clear Facebook warning.", "error");
-            if (res.data.fb_scraping_warning_clear.success) {
-              logger("Facebook warning cleared successfully.", "[ SUCCESS ] >");
-              global.handleListen = api.listenMqtt(listenerCallback);
-              logger(global.getText('mirai', 'successConnectMQTT'), '[ MQTT ]');
-            }
+            try {
+              const res = JSON.parse(i);
+              if (e || res.errors) return logger("Failed to clear Facebook warning.", "error");
+              if (res.data.fb_scraping_warning_clear.success) {
+                logger("Facebook warning cleared successfully.", "[ SUCCESS ] >");
+                global.handleListen = api.listenMqtt(listenerCallback);
+                logger(global.getText('mirai', 'successConnectMQTT'), '[ MQTT ]');
+              }
+            } catch {}
           });
-        } else {
-          return logger(global.getText("mirai", "handleListenError", JSON.stringify(error)), "error");
+          return;
         }
+
+        return logger(global.getText("mirai", "handleListenError", JSON.stringify(error)), "error");
       }
       if (["presence", "typ", "read_receipt"].some((data) => data === event?.type)) return;
       if (global.config.DeveloperMode) console.log(event);

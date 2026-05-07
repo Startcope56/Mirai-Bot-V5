@@ -1,9 +1,9 @@
 /**
- * !news [keyword] — Search Philippine news and send image + Tagalog voice with news music
- * FREE, no API key — uses RSS feeds + Pollinations AI image + msedge-tts Tagalog voice
+ * !news [keyword] — Search Philippine news and send 59-SECOND VIDEO with Tagalog voice + music
+ * FREE, no API key — uses RSS feeds + Pollinations AI image + msedge-tts Tagalog voice + ffmpeg video
  *
  * Usage:
- *   !news [keyword]     — Search news by topic, sends image + Tagalog voice bulletin
+ *   !news [keyword]     — Search news by topic, sends 59s video with Tagalog voice
  *   !news latest        — Latest PH news (no filter)
  *   !news naga city     — News about Naga City
  *   !news bagyo         — Search typhoon/bagyo news
@@ -22,9 +22,9 @@ fs.ensureDirSync(TEMP_DIR);
 const UA      = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36';
 const cleanup = (fp) => setTimeout(() => fs.remove(fp).catch(() => {}), 300000);
 
-function run(cmd, ms = 45000) {
+function runCmd(cmd, ms = 120000) {
   return new Promise((res, rej) =>
-    exec(cmd, { maxBuffer: 1024 * 1024 * 100, timeout: ms }, (e, _, se) =>
+    exec(cmd, { maxBuffer: 1024 * 1024 * 200, timeout: ms }, (e, _, se) =>
       e ? rej(new Error(se?.slice(0, 300) || e.message)) : res()
     )
   );
@@ -109,13 +109,12 @@ async function generateNewsImage(title, source, category) {
   );
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=1080&height=600&nologo=true&model=flux&seed=${Date.now() % 99999}`;
   const fp  = path.join(TEMP_DIR, `nimg_${Date.now()}.jpg`);
-  const { data } = await axios.get(url, { responseType: 'arraybuffer', timeout: 70000 });
+  const { data } = await axios.get(url, { responseType: 'arraybuffer', timeout: 80000 });
   if (!data || data.byteLength < 2000) throw new Error('Image too small');
   fs.writeFileSync(fp, Buffer.from(data));
   return fp;
 }
 
-// ── Try to download article thumbnail ────────────────────────────────────────
 async function downloadThumb(url) {
   const fp = path.join(TEMP_DIR, `nthumb_${Date.now()}.jpg`);
   try {
@@ -139,7 +138,7 @@ async function makeNewsBg(durationSec, outPath) {
     '-map "[out]" -ar 44100 -ac 2 -b:a 64k',
     `"${outPath}"`,
   ].join(' ');
-  await run(cmd, 30000);
+  await runCmd(cmd, 30000);
 }
 
 async function mixWithBg(voiceFp) {
@@ -151,7 +150,7 @@ async function mixWithBg(voiceFp) {
     );
     const dur = Math.ceil(parseFloat(durRaw) || 25) + 2;
     await makeNewsBg(dur, bgFp);
-    await run([
+    await runCmd([
       'ffmpeg -y',
       `-i "${voiceFp}" -i "${bgFp}"`,
       `-filter_complex "[1:a]volume=0.20[bg];[0:a][bg]amix=inputs=2:duration=first:dropout_transition=2[out]"`,
@@ -179,13 +178,13 @@ async function makeTagalogVoice(script) {
     audioStream.on('data',  d => chunks.push(d));
     audioStream.on('end',   () => { fs.writeFileSync(fp, Buffer.concat(chunks)); res(); });
     audioStream.on('error', rej);
-    setTimeout(() => rej(new Error('TTS timeout')), 30000);
+    setTimeout(() => rej(new Error('TTS timeout')), 35000);
   });
   if (!fs.existsSync(fp) || fs.statSync(fp).size < 500) throw new Error('TTS output empty');
   return fp;
 }
 
-// ── Build Tagalog news script ─────────────────────────────────────────────────
+// ── Build Tagalog news script (100% Tagalog, walang English) ─────────────────
 function buildTagalogScript(articles, keyword) {
   const now = new Date().toLocaleString('fil-PH', {
     timeZone: 'Asia/Manila',
@@ -193,11 +192,11 @@ function buildTagalogScript(articles, keyword) {
     timeStyle: 'short',
   });
 
-  let script = `Magandang araw po sa inyong lahat! Ito ang pinakabagong balita mula sa Pilipinas, `;
+  let script = `Magandang araw po sa inyong lahat! `;
   if (keyword && keyword !== 'latest') {
-    script += `tungkol sa ${keyword}. `;
+    script += `Ito ang pinakabagong balita tungkol sa ${keyword}. `;
   } else {
-    script += `ika-${now}. `;
+    script += `Ito ang pinakabagong balita mula sa Pilipinas, ika-${now}. `;
   }
 
   articles.slice(0, 3).forEach((a, i) => {
@@ -210,15 +209,58 @@ function buildTagalogScript(articles, keyword) {
     script += `Ayon sa ${a.source}. `;
   });
 
-  script += `Iyan po ang mga pinakabagong balita. Manatiling ligtas ang lahat. Salamat sa pakikinig! Ang balita at weather na ito ay para sa inyo mula sa inyong bot. Maraming salamat sa pagmemensahe sa amin. Ginawa ito ni Manuelson Yasis. Magandang araw po!`;
+  script +=
+    `Iyan po ang mga pinakabagong balita ngayon. ` +
+    `Manatiling updated at manatiling ligtas ang lahat. ` +
+    `Salamat sa pakikinig! ` +
+    `Ang balita na ito ay para sa inyo mula sa inyong bot. ` +
+    `Ginawa ito ni Manuelson Yasis. ` +
+    `Magandang araw po sa inyong lahat!`;
   return script;
 }
 
-// ── Format timestamp ─────────────────────────────────────────────────────────
+// ── Generate 59-second news video: image + voice + music background ───────────
+async function makeNewsVideo(imgFp, audioFp, headline, source) {
+  const outFp     = path.join(TEMP_DIR, `nvid_${Date.now()}.mp4`);
+  const TARGET    = 59;
+  const safeHead  = (headline || '').replace(/['"\\:]/g, '').slice(0, 55);
+  const safeSrc   = (source  || '').replace(/['"\\:]/g, '').slice(0, 20);
+
+  // Attempt 1: zoom-pan + two text overlays + 59s pad/trim
+  const cmd1 =
+    `ffmpeg -y -loop 1 -i "${imgFp}" -i "${audioFp}" ` +
+    `-vf "zoompan=z='min(zoom+0.0008,1.30)':d=1500:s=1080x600,` +
+    `drawtext=text='BREAKING NEWS':fontsize=32:fontcolor=white:` +
+    `box=1:boxcolor=red@0.85:boxborderw=10:x=20:y=20,` +
+    `drawtext=text='${safeHead}':fontsize=24:fontcolor=white:` +
+    `box=1:boxcolor=black@0.65:boxborderw=8:x=(w-tw)/2:y=h-80,` +
+    `drawtext=text='${safeSrc} | TEAM STARTCOPE BETA':fontsize=16:fontcolor=yellow:` +
+    `box=1:boxcolor=black@0.55:boxborderw=5:x=(w-tw)/2:y=h-42" ` +
+    `-c:v libx264 -preset fast -crf 24 -pix_fmt yuv420p ` +
+    `-af "apad=whole_dur=${TARGET}" ` +
+    `-c:a aac -b:a 128k -t ${TARGET} "${outFp}" 2>&1`;
+
+  try {
+    await runCmd(cmd1, 120000);
+    if (fs.existsSync(outFp) && fs.statSync(outFp).size > 50000) return outFp;
+  } catch {}
+
+  // Attempt 2: simpler fallback
+  const cmd2 =
+    `ffmpeg -y -loop 1 -i "${imgFp}" -i "${audioFp}" ` +
+    `-c:v libx264 -preset fast -crf 28 -pix_fmt yuv420p ` +
+    `-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" ` +
+    `-af "apad=whole_dur=${TARGET}" ` +
+    `-c:a aac -b:a 96k -t ${TARGET} "${outFp}" 2>&1`;
+  await runCmd(cmd2, 120000);
+  if (!fs.existsSync(outFp) || fs.statSync(outFp).size < 10000) throw new Error('Video generation failed');
+  return outFp;
+}
+
 function fmtDate(pubDate) {
   if (!pubDate) return '';
   try {
-    return new Date(pubDate).toLocaleString('en-PH', {
+    return new Date(pubDate).toLocaleString('fil-PH', {
       timeZone: 'Asia/Manila',
       dateStyle: 'medium',
       timeStyle: 'short',
@@ -229,13 +271,13 @@ function fmtDate(pubDate) {
 // ── Module config ─────────────────────────────────────────────────────────────
 module.exports.config = {
   name:            'news',
-  version:         '1.0.0',
+  version:         '2.0.0',
   hasPermssion:    0,
   credits:         'TEAM STARTCOPE BETA',
-  description:     'Search Philippine news — sends AI news image + Tagalog voice bulletin with background music. FREE.',
+  description:     'Philippine news — nagse-send ng 59-segundo VIDEO na may Tagalog voice + music background. FREE.',
   commandCategory: 'Utility',
   usages:          '[keyword] | latest | bagyo | naga city | sports | ...',
-  cooldowns:       12,
+  cooldowns:       15,
 };
 
 module.exports.run = async function ({ api, event, args }) {
@@ -244,9 +286,9 @@ module.exports.run = async function ({ api, event, args }) {
 
   if (!args.length) {
     return api.sendMessage(
-      `📰 ${bold('NEWS SEARCH — TAGALOG VOICE!')}\n` +
+      `📰 ${bold('NEWS — 59-SEGUNDO VIDEO NA MAY TAGALOG VOICE!')}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🆓 FREE — No API key! RSS + AI image + Tagalog voice!\n\n` +
+      `🆓 LIBRE — Walang API key! RSS + AI image + Tagalog voice!\n\n` +
       `📋 ${bold('PAANO GAMITIN:')}\n` +
       `${P}news [keyword]   — Mag-search ng balita\n` +
       `${P}news latest      — Pinakabagong balita\n\n` +
@@ -257,10 +299,11 @@ module.exports.run = async function ({ api, event, args }) {
       `${P}news earthquake\n` +
       `${P}news sports\n` +
       `${P}news latest\n\n` +
-      `🎙️ Nagse-send ng:\n` +
-      `  📸 AI News Card Image\n` +
-      `  🔊 Tagalog voice bulletin\n` +
-      `  🎵 News background music`,
+      `🎬 Nagse-send ng:\n` +
+      `  📹 59-segundo na news VIDEO\n` +
+      `  🎙️ Tagalog voice bulletin (walang English)\n` +
+      `  🎵 News background music\n` +
+      `  📡 Mula sa: PhilStar, Rappler, Inquirer, GMA, CNN PH`,
       threadID, messageID
     );
   }
@@ -269,12 +312,11 @@ module.exports.run = async function ({ api, event, args }) {
   api.setMessageReaction('📰', messageID, () => {}, true);
   api.sendMessage(
     `⏳ ${bold('Naghahanap ng balita')}${keyword !== 'latest' ? ` tungkol sa "${keyword}"` : ''}...\n` +
-    `📸 Gagawa ng news image + 🎙️ Tagalog voice. Sandali lang po!`,
+    `🎬 Gagawa ng 59-segundo na news video + 🎙️ Tagalog voice. Sandali lang po! (1–2 minuto)`,
     threadID
   );
 
   try {
-    // ── Fetch all RSS feeds in parallel ────────────────────────────────────
     const allNews = await fetchAllNews();
     const results = searchNews(allNews, keyword);
 
@@ -290,10 +332,10 @@ module.exports.run = async function ({ api, event, args }) {
 
     const top = results[0];
 
-    // ── Build text body ────────────────────────────────────────────────────
-    const now = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
+    // Build text body
+    const now = new Date().toLocaleString('fil-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
     let body =
-      `📰 ${bold('BALITA')} — ${bold(keyword !== 'latest' ? keyword.toUpperCase() : 'PINAKABAGO')}\n` +
+      `📹 ${bold('NEWS VIDEO')} — ${bold(keyword !== 'latest' ? keyword.toUpperCase() : 'PINAKABAGO')}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
       `📅 ${now} (Oras ng Pilipinas)\n\n`;
 
@@ -305,13 +347,16 @@ module.exports.run = async function ({ api, event, args }) {
       body += '\n\n';
     });
 
-    body += `🎙️ ${bold('Pakinggan ang Tagalog voice bulletin sa susunod na mensahe!')}`;
+    body +=
+      `🎬 ${bold('59-segundo na news video na may Tagalog voice at music background!')}\n` +
+      `🎙️ ${bold('Voice:')} fil-PH-AngeloNeural (Tagalog)\n` +
+      `🏷️ ${bold('TEAM STARTCOPE BETA')} 🇵🇭`;
 
-    // ── Generate image + TTS in parallel ──────────────────────────────────
-    const taScript  = buildTagalogScript(results, keyword);
+    // Build Tagalog script
+    const taScript = buildTagalogScript(results, keyword);
 
+    // Generate image + TTS in parallel
     const [imgResult, ttsResult] = await Promise.allSettled([
-      // Image: try article thumb first, then AI generated
       (async () => {
         if (top.thumb?.startsWith('http')) {
           const th = await downloadThumb(top.thumb);
@@ -322,45 +367,35 @@ module.exports.run = async function ({ api, event, args }) {
       makeTagalogVoice(taScript),
     ]);
 
-    const imgFp   = imgResult.status === 'fulfilled' ? imgResult.value : null;
+    const imgFp    = imgResult.status === 'fulfilled' ? imgResult.value : null;
     const rawVoice = ttsResult.status === 'fulfilled' ? ttsResult.value : null;
+    if (!imgFp)    throw new Error('Hindi nagawa ang news image.');
+    if (!rawVoice) throw new Error('Hindi nagawa ang Tagalog voice.');
 
     // Mix voice with background news music
-    const voiceFp = rawVoice ? await mixWithBg(rawVoice).catch(() => rawVoice) : null;
+    const audioFp = await mixWithBg(rawVoice).catch(() => rawVoice);
+
+    // Generate 59-second video
+    const videoFp = await makeNewsVideo(imgFp, audioFp, top.title, top.source);
 
     api.setMessageReaction('✅', messageID, () => {}, true);
 
-    // ── Send image + text ─────────────────────────────────────────────────
-    if (imgFp) {
-      await new Promise(r =>
-        api.sendMessage({ body, attachment: fs.createReadStream(imgFp) }, threadID, r)
-      );
-      cleanup(imgFp);
-    } else {
-      await new Promise(r => api.sendMessage(body, threadID, r));
-    }
-
-    // ── Send Tagalog voice bulletin with background music ─────────────────
-    if (voiceFp) {
-      api.sendMessage(
-        {
-          body:
-            `🎙️ ${bold('TAGALOG VOICE BULLETIN')} 📻\n` +
-            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-            `🎵 May kasamang news background music!\n` +
-            `🗣️ Voice: fil-PH-AngeloNeural (Tagalog Male)\n` +
-            `📡 Source: PhilStar · Rappler · Inquirer · GMA · CNN PH`,
-          attachment: fs.createReadStream(voiceFp),
-        },
-        threadID,
-        () => cleanup(voiceFp)
-      );
-    }
+    // Send the video with caption
+    api.sendMessage(
+      { body, attachment: fs.createReadStream(videoFp) },
+      threadID,
+      () => {
+        cleanup(imgFp);
+        cleanup(rawVoice);
+        cleanup(audioFp);
+        cleanup(videoFp);
+      }
+    );
 
   } catch (e) {
     api.setMessageReaction('❌', messageID, () => {}, true);
     return api.sendMessage(
-      `❌ ${bold('News search failed.')}\n🔧 ${e.message?.slice(0, 120)}\n\n` +
+      `❌ ${bold('Nabigo ang news video.')}\n🔧 ${e.message?.slice(0, 120)}\n\n` +
       `💡 Subukan ulit: ${P}news latest`,
       threadID, messageID
     );
