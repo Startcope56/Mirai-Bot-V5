@@ -27,7 +27,7 @@
         "extract-zip": "^2.0.1",
         "figlet": "^1.11.0",
         "fluent-ffmpeg": "^2.1.3",
-        "fs-extra": "^11.3.4",
+        "fs-extra": "^11.3.5",
         "gradient-string": "^2.0.2",
         "jimp": "^1.6.1",
         "moment-timezone": "^0.5.48",
