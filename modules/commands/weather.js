@@ -292,8 +292,8 @@ module.exports.run = async function ({ api, event, args }) {
         `🔗 pagasa.dost.gov.ph`;
 
       const voiceText = pg.active
-        ? `Attention! A tropical weather system is currently active in the Philippines. Please monitor official PAGASA advisories for updates and stay safe.`
-        : `Weather advisory: No active typhoon in the Philippines at this time. Current conditions are normal. Stay safe!`;
+        ? `Attention! A tropical weather system is currently active in the Philippines. Please monitor official PAGASA advisories for updates and stay safe. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Stay safe everyone!`
+        : `Weather advisory: No active typhoon in the Philippines at this time. Current conditions are normal. Stay safe! Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day!`;
 
       const rawVoice = await makeVoice(voiceText, 'male').catch(() => null);
       const voice    = rawVoice ? await mixVoiceWithBg(rawVoice).catch(() => rawVoice) : null;
@@ -387,8 +387,8 @@ module.exports.run = async function ({ api, event, args }) {
     body += `\n\n📡 ${bold('Source:')} wttr.in — Free real-time weather`;
 
     const speechText = w
-      ? `Weather update for ${w.place}. Temperature is ${w.tempC} degrees Celsius, feels like ${w.feelsC} degrees. Conditions: ${w.desc}. Humidity ${w.humidity} percent. Wind ${w.windKmph} kilometers per hour. High of ${w.maxC}, low of ${w.minC} degrees today.`
-      : `Weather update for ${location}. Please check the weather image for full forecast details.`;
+      ? `Weather update for ${w.place}. Temperature is ${w.tempC} degrees Celsius, feels like ${w.feelsC} degrees. Conditions: ${w.desc}. Humidity ${w.humidity} percent. Wind ${w.windKmph} kilometers per hour. High of ${w.maxC}, low of ${w.minC} degrees today. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day and stay safe!`
+      : `Weather update for ${location}. Please check the weather image for full forecast details. Thanks for messaging us this news and weather. This was brought to you by Manuelson Yasis. Have a great day and stay safe!`;
 
     if (isVideo) {
       if (!imgFp) throw new Error('No weather image available for video.');

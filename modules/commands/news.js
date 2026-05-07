@@ -210,7 +210,7 @@ function buildTagalogScript(articles, keyword) {
     script += `Ayon sa ${a.source}. `;
   });
 
-  script += `Iyan po ang mga pinakabagong balita. Manatiling ligtas ang lahat. Salamat sa pakikinig!`;
+  script += `Iyan po ang mga pinakabagong balita. Manatiling ligtas ang lahat. Salamat sa pakikinig! Ang balita at weather na ito ay para sa inyo mula sa inyong bot. Maraming salamat sa pagmemensahe sa amin. Ginawa ito ni Manuelson Yasis. Magandang araw po!`;
   return script;
 }
 
