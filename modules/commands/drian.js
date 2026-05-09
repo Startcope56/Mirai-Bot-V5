@@ -137,14 +137,14 @@ function runCmd(cmd) {
   );
 }
 
-// ── Female Radio DJ Voice (DJ Jasmine style — Easy Rock 96.9) ────────────────
-// Voice: en-US-JennyNeural — warm, smooth, professional female radio voice
+// ── Malambing Female Voice (Sweet, soft, warm Tagalog female — fil-PH-BlessicaNeural)
 // + soft Fmaj7 ambient radio bed behind the voice
 async function generateVoice(text) {
   try {
     const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
     const tts = new MsEdgeTTS();
-    await tts.setMetadata('en-US-JennyNeural', OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+    // BlessicaNeural = naturally malambing (sweet/soft) Filipino female voice
+    await tts.setMetadata('fil-PH-BlessicaNeural', OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
 
     const clean = cleanForTTS(text);
     if (!clean || clean.length < 3) return null;
