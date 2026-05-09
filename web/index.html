@@ -3,401 +3,491 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>GOMO — Free Music + DRIAN AI</title>
+  <title>STARTCOPE MUSIC DOWNLOAD FREE</title>
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#00e676" />
+  <meta name="theme-color" content="#6c63ff" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="GOMO" />
+  <meta name="apple-mobile-web-app-title" content="STARTCOPE MUSIC" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
-  <meta name="description" content="GOMO — Free music download + DRIAN AI chat. Powered by TEAM STARTCOPE BETA." />
-  <meta property="og:title" content="GOMO + DRIAN AI — Free Music & AI Chat" />
-  <meta property="og:description" content="Libre! Music search, play, download + DRIAN AI chatbot. By TEAM STARTCOPE BETA." />
-  <meta property="og:image" content="/icon-512.png" />
+  <meta name="description" content="STARTCOPE MUSIC DOWNLOAD FREE — Free unlimited fast music download. Search any song or artist. Powered by TEAM STARTCOPE BETA." />
   <link rel="icon" href="/icon-192.png" type="image/png" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --g: #00e676;
-      --gd: #00c853;
-      --gg: rgba(0,230,118,.15);
-      --gg2: rgba(0,230,118,.08);
-      --p: #7c3aed;
-      --pd: #6d28d9;
-      --pg: rgba(124,58,237,.15);
-      --bg: #080810;
-      --s1: #10101c;
-      --s2: #181826;
-      --s3: #20202e;
-      --border: rgba(255,255,255,.07);
-      --text: #f0f0f0;
-      --sub: #777;
-      --r: 12px;
-      --rl: 20px;
+      --p1:#6c63ff; --p2:#9b59b6; --p3:#3498db;
+      --accent:#a855f7;
+      --g1:linear-gradient(135deg,#6c63ff,#a855f7,#3498db);
+      --g2:linear-gradient(135deg,#6c63ff,#9b59b6);
+      --bg:#07070f; --s1:#0e0e1c; --s2:#14142a; --s3:#1a1a30; --s4:#22223a;
+      --border:rgba(108,99,255,.15); --border2:rgba(108,99,255,.3);
+      --text:#f0f0ff; --sub:#7070a0; --muted:#404060;
+      --r:14px; --rl:22px;
     }
     *{margin:0;padding:0;box-sizing:border-box}
-    body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
 
-    /* ── ANIMATED BG ── */
-    body::before{
-      content:'';position:fixed;inset:0;
-      background:
-        radial-gradient(ellipse 80% 50% at 20% 10%,rgba(0,230,118,.07) 0%,transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 80%,rgba(124,58,237,.06) 0%,transparent 60%);
-      pointer-events:none;z-index:0;
-    }
+    /* ── ANIMATED BG ORBS ─────────────────────────────────────────── */
+    .bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.18}
+    .bg-orb1{width:600px;height:600px;background:radial-gradient(#6c63ff,transparent);top:-200px;left:-200px;animation:orbFloat 12s ease-in-out infinite}
+    .bg-orb2{width:500px;height:500px;background:radial-gradient(#a855f7,transparent);bottom:-150px;right:-100px;animation:orbFloat 16s ease-in-out infinite reverse}
+    .bg-orb3{width:300px;height:300px;background:radial-gradient(#3498db,transparent);top:40%;left:60%;animation:orbFloat 20s ease-in-out infinite 4s}
+    @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,30px) scale(.95)}}
 
-    /* ── HEADER ── */
-    header{
-      position:relative;padding:36px 20px 56px;text-align:center;overflow:hidden;
-    }
-    header::before{
-      content:'';position:absolute;inset:0;
-      background:
-        radial-gradient(ellipse 80% 70% at 50% 0%,rgba(0,230,118,.18) 0%,transparent 65%),
-        linear-gradient(180deg,#0c1a10 0%,var(--bg) 100%);
-    }
-    header::after{
-      content:'';position:absolute;bottom:0;left:0;right:0;height:48px;
-      background:linear-gradient(to bottom,transparent,var(--bg));
-    }
-    .h-inner{position:relative;z-index:2}
+    /* ── HEADER ─────────────────────────────────────────────────────── */
+    header{position:relative;z-index:10;padding:40px 20px 30px;text-align:center;overflow:hidden}
+    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 80% at 50% -10%,rgba(108,99,255,.22) 0%,transparent 70%)}
 
-    .brand-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px}
-    .brand-icon{
-      width:56px;height:56px;border-radius:18px;
-      background:linear-gradient(135deg,var(--g),var(--gd));
-      display:flex;align-items:center;justify-content:center;font-size:28px;
-      box-shadow:0 0 32px rgba(0,230,118,.45),0 4px 20px rgba(0,0,0,.4);
+    .header-top{position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:flex-end;margin-bottom:4px}
+
+    /* 3-dots menu */
+    .menu-wrap{position:relative}
+    .menu-btn{
+      width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border2);
+      background:rgba(108,99,255,.1);color:var(--text);font-size:20px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:all .2s;backdrop-filter:blur(8px);
     }
+    .menu-btn:hover{background:rgba(108,99,255,.25);border-color:var(--p1)}
+    .dropdown{
+      position:absolute;top:calc(100% + 10px);right:0;
+      background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);
+      min-width:240px;overflow:hidden;z-index:1000;
+      box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(108,99,255,.1);
+      display:none;animation:dropIn .2s ease;
+    }
+    .dropdown.open{display:block}
+    @keyframes dropIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .dd-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--sub);text-transform:uppercase}
+    .dd-item{
+      display:flex;align-items:center;gap:12px;padding:13px 16px;
+      color:var(--text);font-size:13px;font-weight:500;cursor:pointer;
+      transition:background .15s;text-decoration:none;
+    }
+    .dd-item:hover{background:rgba(108,99,255,.12)}
+    .dd-item-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .dd-item-icon.blue{background:rgba(52,152,219,.2)}
+    .dd-item-icon.purple{background:rgba(168,85,247,.2)}
+    .dd-item-icon.green{background:rgba(0,200,100,.15)}
+    .dd-text{flex:1}
+    .dd-text-title{font-weight:700;font-size:13px}
+    .dd-text-sub{font-size:10px;color:var(--sub);margin-top:1px}
+
+    /* Brand */
+    .h-inner{position:relative;z-index:2;text-align:center}
+    .brand-logo{
+      width:72px;height:72px;border-radius:24px;margin:0 auto 14px;
+      background:var(--g1);
+      display:flex;align-items:center;justify-content:center;font-size:34px;
+      box-shadow:0 0 40px rgba(108,99,255,.5),0 8px 32px rgba(0,0,0,.4);
+      animation:logoPulse 3s ease-in-out infinite;
+    }
+    @keyframes logoPulse{0%,100%{box-shadow:0 0 40px rgba(108,99,255,.5),0 8px 32px rgba(0,0,0,.4)}50%{box-shadow:0 0 60px rgba(168,85,247,.6),0 8px 40px rgba(0,0,0,.5)}}
     .brand-name{
-      font-size:54px;font-weight:900;letter-spacing:-2px;
-      background:linear-gradient(135deg,#00e676 0%,#69f0ae 50%,#b9f6ca 100%);
+      font-size:26px;font-weight:900;letter-spacing:-0.5px;line-height:1.1;
+      background:var(--g1);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      line-height:1;
+      margin-bottom:4px;
     }
-    .brand-sub{font-size:11px;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:16px}
-    .brand-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+    .brand-sub{font-size:11px;font-weight:600;letter-spacing:3px;color:var(--sub);text-transform:uppercase;margin-bottom:16px}
+    .brand-badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
     .badge{
-      background:var(--gg2);border:1px solid rgba(0,230,118,.25);border-radius:20px;
-      padding:4px 14px;font-size:11px;font-weight:600;color:var(--g);letter-spacing:.8px;
+      border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;
+      border:1.5px solid;
     }
-    .badge-grey{background:rgba(255,255,255,.05);border-color:var(--border);color:var(--sub)}
-    .badge-purple{background:var(--pg);border-color:rgba(124,58,237,.3);color:#a78bfa}
-    .badge-install{background:var(--g);color:#000;border-color:var(--g);cursor:pointer;font-weight:800;transition:all .15s}
-    .badge-install:hover{background:#1aff82;transform:scale(1.06)}
-    .badge-offline{background:rgba(255,68,68,.12);color:#ff6060;border-color:rgba(255,68,68,.25);cursor:pointer;text-decoration:none}
+    .badge-purple{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.35);color:#9d95ff}
+    .badge-pink{background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:#c084fc}
+    .badge-blue{background:rgba(52,152,219,.1);border-color:rgba(52,152,219,.3);color:#60a5fa}
+    .badge-green{background:rgba(0,200,100,.08);border-color:rgba(0,200,100,.25);color:#34d399}
+    .badge-offline{background:rgba(255,68,68,.1);border-color:rgba(255,68,68,.25);color:#f87171;text-decoration:none;display:none}
+    .badge-offline.show{display:inline-flex;align-items:center;gap:5px}
 
-    /* ── TABS ── */
+    /* ── TABS ─────────────────────────────────────────────────────── */
     .tabs{
-      display:flex;gap:0;max-width:560px;margin:-28px auto 0;
-      background:var(--s1);border:1px solid var(--border);border-radius:50px;overflow:hidden;
-      position:relative;z-index:10;padding:4px;
+      display:flex;max-width:500px;margin:20px auto 0;
+      background:var(--s1);border:1.5px solid var(--border);border-radius:50px;
+      overflow:hidden;position:relative;z-index:10;padding:4px;gap:4px;
     }
     .tab-btn{
-      flex:1;padding:11px 20px;border:none;border-radius:46px;
+      flex:1;padding:11px 16px;border:none;border-radius:46px;
       background:transparent;color:var(--sub);font-size:13px;font-weight:700;
-      cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.5px;
-      display:flex;align-items:center;justify-content:center;gap:7px;
+      cursor:pointer;transition:all .22s;font-family:inherit;letter-spacing:.3px;
+      display:flex;align-items:center;justify-content:center;gap:6px;
     }
-    .tab-btn.active{background:var(--g);color:#000}
-    .tab-btn.active.ai-tab{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff}
-    .tab-btn:not(.active):hover{background:rgba(255,255,255,.06);color:var(--text)}
-
+    .tab-btn.active{background:var(--g2);color:#fff;box-shadow:0 4px 20px rgba(108,99,255,.4)}
+    .tab-btn:not(.active):hover{background:rgba(108,99,255,.1);color:var(--text)}
     .tab-panel{display:none}
     .tab-panel.active{display:block}
 
-    /* ── MUSIC SECTION ── */
-    .music-wrap{max-width:700px;margin:0 auto;padding:30px 20px 120px}
+    /* ── MUSIC SECTION ─────────────────────────────────────────────── */
+    .music-wrap{max-width:720px;margin:0 auto;padding:28px 18px 130px}
 
+    /* Search bar */
+    .search-area{margin-bottom:24px}
     .search-box{
       display:flex;background:var(--s1);border:1.5px solid var(--border);border-radius:50px;
-      overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);transition:all .2s;margin-bottom:28px;
+      overflow:visible;box-shadow:0 8px 40px rgba(0,0,0,.4);transition:all .2s;position:relative;
     }
-    .search-box:focus-within{border-color:rgba(0,230,118,.5);box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 3px var(--gg)}
-    .search-box input{
-      flex:1;padding:17px 22px;border:none;outline:none;font-size:15px;
+    .search-box:focus-within{border-color:var(--border2);box-shadow:0 8px 40px rgba(0,0,0,.4),0 0 0 4px rgba(108,99,255,.15)}
+    .search-input-wrap{flex:1;position:relative;border-radius:50px 0 0 50px;overflow:hidden}
+    .search-input-wrap input{
+      width:100%;padding:17px 22px;border:none;outline:none;font-size:15px;
       font-family:inherit;color:var(--text);background:transparent;
     }
-    .search-box input::placeholder{color:var(--sub)}
+    .search-input-wrap input::placeholder{color:var(--sub)}
     .search-btn{
-      padding:0 26px;background:var(--g);border:none;color:#000;font-size:12px;
-      font-weight:800;cursor:pointer;letter-spacing:1px;transition:all .15s;font-family:inherit;white-space:nowrap;
+      padding:0 28px;background:var(--g2);border:none;color:#fff;font-size:12px;
+      font-weight:800;cursor:pointer;letter-spacing:1px;transition:all .18s;font-family:inherit;
+      white-space:nowrap;border-radius:0 50px 50px 0;min-width:100px;
     }
-    .search-btn:hover{background:#1aff82}
+    .search-btn:hover{filter:brightness(1.15)}
     .search-btn:active{transform:scale(.97)}
-    .search-btn:disabled{background:#222;color:#444;cursor:not-allowed;transform:none}
+    .search-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
-    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .sec-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--sub);text-transform:uppercase}
-    .sec-count{font-size:11px;font-weight:600;color:var(--g);background:var(--gg);border-radius:20px;padding:3px 10px}
+    /* Artist suggestions */
+    .suggestions{
+      position:absolute;top:calc(100% + 8px);left:0;right:0;
+      background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);
+      overflow:hidden;z-index:200;box-shadow:0 20px 50px rgba(0,0,0,.6);
+      display:none;
+    }
+    .suggestions.open{display:block;animation:dropIn .15s ease}
+    .sug-head{padding:8px 14px;font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--sub);text-transform:uppercase;border-bottom:1px solid var(--border)}
+    .sug-item{
+      display:flex;align-items:center;gap:11px;padding:10px 14px;
+      cursor:pointer;transition:background .12s;font-size:13px;
+    }
+    .sug-item:hover{background:rgba(108,99,255,.15)}
+    .sug-avatar{width:32px;height:32px;border-radius:10px;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+    .sug-name{font-weight:700;color:var(--text)}
+    .sug-genre{font-size:10px;color:var(--sub);margin-top:1px}
 
-    .track-list{display:flex;flex-direction:column;gap:4px}
+    /* Popular artists strip */
+    .popular-wrap{margin-top:16px}
+    .popular-label{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--sub);text-transform:uppercase;margin-bottom:10px}
+    .artist-chips{display:flex;gap:8px;flex-wrap:wrap}
+    .artist-chip{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 14px 6px 8px;background:var(--s2);border:1.5px solid var(--border);border-radius:30px;
+      cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--text);
+    }
+    .artist-chip:hover{border-color:var(--border2);background:rgba(108,99,255,.12);color:#a78bfa}
+    .artist-chip-icon{width:24px;height:24px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:11px}
+
+    /* Results section */
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .sec-label{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--sub);text-transform:uppercase}
+    .sec-count{font-size:11px;font-weight:700;color:#9d95ff;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.25);border-radius:20px;padding:3px 12px}
+
+    .track-list{display:flex;flex-direction:column;gap:5px}
     .track-card{
-      background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
-      padding:11px 15px;display:flex;align-items:center;gap:13px;
-      transition:all .15s;cursor:default;
+      background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);
+      padding:12px 14px;display:flex;align-items:center;gap:12px;
+      transition:all .18s;position:relative;overflow:hidden;
     }
-    .track-card:hover{background:var(--s2);border-color:rgba(0,230,118,.12)}
-    .track-card.playing{background:var(--s2);border-color:rgba(0,230,118,.4);box-shadow:0 0 0 1px rgba(0,230,118,.12) inset}
-    .track-num{width:20px;text-align:center;color:var(--sub);font-size:12px;font-weight:500;flex-shrink:0}
-    .track-card.playing .track-num{color:var(--g)}
-    .track-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--s3)}
-    .thumb-ph{width:48px;height:48px;border-radius:8px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
-    .track-info{flex:1;min-width:0}
-    .track-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-    .track-card.playing .track-title{color:var(--g)}
+    .track-card::before{content:'';position:absolute;inset:0;background:var(--g1);opacity:0;transition:opacity .18s}
+    .track-card:hover{border-color:var(--border2);transform:translateX(2px)}
+    .track-card:hover::before{opacity:.04}
+    .track-card.playing{border-color:rgba(108,99,255,.5);background:rgba(108,99,255,.08)}
+    .track-card.playing::before{opacity:.06}
+    .track-num{width:22px;text-align:center;color:var(--sub);font-size:12px;font-weight:600;flex-shrink:0;position:relative;z-index:1}
+    .track-card.playing .track-num{color:#9d95ff}
+    .track-thumb{width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--s3);position:relative;z-index:1}
+    .thumb-ph{width:50px;height:50px;border-radius:10px;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;z-index:1}
+    .track-info{flex:1;min-width:0;position:relative;z-index:1}
+    .track-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .track-card.playing .track-title{color:#9d95ff}
     .track-artist{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .track-dur{color:var(--sub);font-size:11px;font-weight:500;flex-shrink:0;min-width:36px;text-align:right}
-    .track-actions{display:flex;gap:6px;flex-shrink:0}
-    .btn-play{
-      width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(0,230,118,.35);
-      background:transparent;color:var(--g);font-size:13px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;
-    }
-    .btn-play:hover,.track-card.playing .btn-play{background:var(--g);color:#000;border-color:var(--g)}
-    .btn-dl{
-      padding:7px 14px;background:var(--g);border:none;border-radius:20px;color:#000;
-      font-size:10px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .15s;
-      font-family:inherit;display:flex;align-items:center;gap:4px;
-    }
-    .btn-dl:hover{background:#1aff82;transform:translateY(-1px)}
-    .btn-dl:active{transform:translateY(0)}
-    .btn-dl:disabled{background:var(--s3);color:var(--sub);cursor:not-allowed;transform:none}
+    .track-dur{color:var(--muted);font-size:11px;font-weight:600;flex-shrink:0;min-width:36px;text-align:right;position:relative;z-index:1}
+    .track-actions{display:flex;gap:6px;flex-shrink:0;align-items:center;position:relative;z-index:1}
 
-    .state{text-align:center;padding:60px 20px;color:var(--sub)}
-    .state-icon{font-size:52px;margin-bottom:14px}
-    .state-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
-    .state-sub{font-size:13px;color:var(--sub);line-height:1.6}
-    .spinner{width:36px;height:36px;border:3px solid var(--s3);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+    .btn-play{
+      width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(108,99,255,.4);
+      background:transparent;color:#9d95ff;font-size:13px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;
+    }
+    .btn-play:hover,.track-card.playing .btn-play{background:var(--g2);color:#fff;border-color:var(--p1);box-shadow:0 4px 16px rgba(108,99,255,.4)}
+
+    .btn-dl{
+      padding:8px 16px;background:var(--g2);border:none;border-radius:22px;color:#fff;
+      font-size:10px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .15s;
+      font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;
+    }
+    .btn-dl:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,.4)}
+    .btn-dl:active{transform:translateY(0)}
+    .btn-dl:disabled{background:var(--s3);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none;filter:none}
+
+    /* 3-dots per track */
+    .btn-more{
+      width:30px;height:30px;border-radius:50%;border:none;
+      background:transparent;color:var(--sub);font-size:16px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;
+      line-height:1;position:relative;
+    }
+    .btn-more:hover{background:rgba(108,99,255,.15);color:var(--text)}
+
+    /* Track context menu */
+    .track-menu{
+      position:absolute;right:14px;top:calc(100% - 10px);z-index:300;
+      background:var(--s2);border:1.5px solid var(--border2);border-radius:12px;
+      min-width:200px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.7);
+      display:none;animation:dropIn .15s ease;
+    }
+    .track-menu.open{display:block}
+    .tm-item{
+      display:flex;align-items:center;gap:10px;padding:11px 14px;
+      cursor:pointer;font-size:12px;font-weight:600;color:var(--text);transition:background .12s;
+    }
+    .tm-item:hover{background:rgba(108,99,255,.15)}
+    .tm-item a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;width:100%}
+
+    /* State panels */
+    .state{text-align:center;padding:70px 20px}
+    .state-icon{font-size:60px;margin-bottom:16px}
+    .state-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px}
+    .state-sub{font-size:13px;color:var(--sub);line-height:1.7;max-width:300px;margin:0 auto}
+    .spinner{width:40px;height:40px;border:3px solid var(--s3);border-top-color:var(--p1);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* ── NOW PLAYING BAR ── */
+    /* ── NOW PLAYING BAR ─────────────────────────────────────────── */
     #player-bar{
       position:fixed;bottom:0;left:0;right:0;
-      background:rgba(10,10,18,.97);backdrop-filter:blur(24px);
-      border-top:1px solid var(--border);padding:10px 18px;
+      background:rgba(8,8,20,.95);backdrop-filter:blur(28px);
+      border-top:1px solid var(--border2);padding:10px 18px;
       display:none;align-items:center;gap:12px;z-index:100;
-      box-shadow:0 -8px 40px rgba(0,0,0,.6);
+      box-shadow:0 -12px 48px rgba(0,0,0,.6);
     }
     #player-bar.visible{display:flex}
-    .player-thumb{width:42px;height:42px;border-radius:8px;object-fit:cover;background:var(--s3);flex-shrink:0}
+    .player-thumb{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--s3);flex-shrink:0}
     .player-info{flex:1;min-width:0}
-    .player-title{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--g)}
+    .player-title{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9d95ff}
     .player-artist{font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .player-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
     .pc-btn{
       width:36px;height:36px;border-radius:50%;border:none;
-      background:var(--s2);color:var(--text);font-size:13px;cursor:pointer;
+      background:var(--s3);color:var(--text);font-size:13px;cursor:pointer;
       display:flex;align-items:center;justify-content:center;transition:all .15s;
     }
-    .pc-btn:hover{background:var(--s3)}
-    .pc-btn.primary-btn{background:var(--g);color:#000;width:42px;height:42px;font-size:15px}
-    .pc-btn.primary-btn:hover{background:#1aff82}
-    .player-progress-wrap{flex:1;display:flex;align-items:center;gap:7px;max-width:260px}
-    .player-time{font-size:10px;color:var(--sub);flex-shrink:0;min-width:32px}
-    .player-progress{flex:1;height:4px;background:var(--s3);border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
-    .player-progress-fill{height:100%;background:var(--g);border-radius:2px;width:0%;transition:width .5s linear}
+    .pc-btn:hover{background:var(--s4)}
+    .pc-btn.primary-btn{background:var(--g2);color:#fff;width:44px;height:44px;font-size:15px;box-shadow:0 4px 16px rgba(108,99,255,.4)}
+    .pc-btn.primary-btn:hover{filter:brightness(1.15)}
+    .player-progress-wrap{flex:1;display:flex;align-items:center;gap:8px;max-width:280px}
+    .player-time{font-size:10px;color:var(--sub);flex-shrink:0;min-width:34px}
+    .player-progress{flex:1;height:4px;background:var(--s4);border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
+    .player-progress-fill{height:100%;background:var(--g2);border-radius:2px;width:0%;transition:width .5s linear}
     .vol-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
-    .vol-icon{font-size:13px;color:var(--sub);cursor:pointer}
-    #vol-slider{width:68px;accent-color:var(--g);cursor:pointer}
+    .vol-icon{font-size:14px;color:var(--sub);cursor:pointer}
+    #vol-slider{width:72px;accent-color:var(--p1);cursor:pointer}
 
-    /* ── AI CHAT SECTION ── */
+    /* ── AI CHAT TAB ──────────────────────────────────────────────── */
     .ai-wrap{
-      max-width:700px;margin:0 auto;padding:28px 20px 100px;
+      max-width:720px;margin:0 auto;padding:28px 18px 100px;
       display:flex;flex-direction:column;height:calc(100vh - 240px);min-height:400px;
     }
     .ai-header{
       display:flex;align-items:center;gap:14px;
-      background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(124,58,237,.05));
-      border:1px solid rgba(124,58,237,.25);border-radius:var(--rl);
+      background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(168,85,247,.08));
+      border:1.5px solid rgba(108,99,255,.25);border-radius:var(--rl);
       padding:16px 20px;margin-bottom:16px;
     }
     .ai-avatar{
-      width:52px;height:52px;border-radius:16px;flex-shrink:0;
-      background:linear-gradient(135deg,#7c3aed,#a855f7);
-      display:flex;align-items:center;justify-content:center;font-size:24px;
-      box-shadow:0 0 24px rgba(124,58,237,.5);
+      width:54px;height:54px;border-radius:18px;flex-shrink:0;
+      background:var(--g2);
+      display:flex;align-items:center;justify-content:center;font-size:26px;
+      box-shadow:0 0 28px rgba(108,99,255,.5);
     }
-    .ai-name{font-size:18px;font-weight:800;color:#a78bfa}
-    .ai-sub{font-size:11px;color:#7c6fa0;margin-top:2px;font-weight:500}
+    .ai-name{font-size:18px;font-weight:800;color:#9d95ff}
+    .ai-sub{font-size:11px;color:#6060a0;margin-top:2px;font-weight:500}
     .ai-status{display:flex;align-items:center;gap:6px;margin-top:4px}
-    .ai-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse-g 2s ease-in-out infinite;flex-shrink:0}
-    @keyframes pulse-g{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
-    .ai-online{font-size:10px;color:#10b981;font-weight:600}
+    .ai-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse-g 2s ease-in-out infinite;flex-shrink:0}
+    @keyframes pulse-g{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    .ai-online{font-size:10px;color:#22c55e;font-weight:700}
 
-    #chat-messages{
-      flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
-      padding:4px 0;scroll-behavior:smooth;
-    }
+    #chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 0;scroll-behavior:smooth}
     #chat-messages::-webkit-scrollbar{width:4px}
-    #chat-messages::-webkit-scrollbar-track{background:transparent}
-    #chat-messages::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
-
-    .msg-row{display:flex;gap:10px;animation:msgIn .25s ease}
+    #chat-messages::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+    .msg-row{display:flex;gap:10px;animation:msgIn .22s ease}
     @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .msg-row.user{flex-direction:row-reverse}
-    .msg-avatar{
-      width:32px;height:32px;border-radius:50%;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;font-size:14px;
-      align-self:flex-end;
-    }
-    .msg-avatar.bot{background:linear-gradient(135deg,#7c3aed,#a855f7)}
-    .msg-avatar.user{background:linear-gradient(135deg,var(--g),var(--gd))}
-    .msg-bubble{
-      max-width:78%;padding:11px 15px;border-radius:18px;font-size:13.5px;
-      line-height:1.65;word-wrap:break-word;white-space:pre-wrap;
-    }
-    .msg-bubble.bot{
-      background:var(--s2);border:1px solid rgba(124,58,237,.2);
-      border-bottom-left-radius:4px;color:var(--text);
-    }
-    .msg-bubble.user{
-      background:linear-gradient(135deg,#7c3aed,#a855f7);
-      border-bottom-right-radius:4px;color:#fff;
-    }
+    .msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;align-self:flex-end}
+    .msg-avatar.bot{background:var(--g2)}
+    .msg-avatar.user{background:linear-gradient(135deg,#22c55e,#16a34a)}
+    .msg-bubble{max-width:78%;padding:11px 15px;border-radius:18px;font-size:13.5px;line-height:1.65;word-wrap:break-word;white-space:pre-wrap}
+    .msg-bubble.bot{background:var(--s2);border:1.5px solid rgba(108,99,255,.2);border-bottom-left-radius:4px}
+    .msg-bubble.user{background:var(--g2);border-bottom-right-radius:4px;color:#fff}
     .msg-time{font-size:10px;color:var(--sub);align-self:flex-end;flex-shrink:0;margin-bottom:2px}
-
-    .typing-bubble{
-      display:flex;align-items:center;gap:4px;
-      background:var(--s2);border:1px solid rgba(124,58,237,.2);
-      padding:12px 16px;border-radius:18px;border-bottom-left-radius:4px;
-      width:56px;
-    }
-    .typing-dot{width:7px;height:7px;border-radius:50%;background:#a78bfa;animation:blink 1.2s infinite}
+    .typing-bubble{display:flex;align-items:center;gap:5px;background:var(--s2);border:1.5px solid rgba(108,99,255,.2);padding:13px 16px;border-radius:18px;border-bottom-left-radius:4px;width:60px}
+    .typing-dot{width:7px;height:7px;border-radius:50%;background:#9d95ff;animation:blink 1.2s infinite}
     .typing-dot:nth-child(2){animation-delay:.2s}
     .typing-dot:nth-child(3){animation-delay:.4s}
     @keyframes blink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 
-    .ai-input-area{
-      margin-top:12px;display:flex;gap:8px;align-items:flex-end;
-    }
+    .ai-input-area{margin-top:12px;display:flex;gap:8px;align-items:flex-end}
     #ai-input{
       flex:1;background:var(--s1);border:1.5px solid var(--border);border-radius:24px;
       padding:13px 18px;color:var(--text);font-family:inherit;font-size:14px;
-      resize:none;outline:none;max-height:120px;min-height:48px;
-      transition:border-color .2s;line-height:1.5;
+      resize:none;outline:none;max-height:120px;min-height:48px;transition:border-color .2s;line-height:1.5;
     }
-    #ai-input:focus{border-color:rgba(124,58,237,.5);box-shadow:0 0 0 3px var(--pg)}
+    #ai-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
     #ai-input::placeholder{color:var(--sub)}
     #ai-send{
       width:46px;height:46px;border-radius:50%;border:none;flex-shrink:0;
-      background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;
-      font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-      transition:all .15s;box-shadow:0 4px 16px rgba(124,58,237,.4);
+      background:var(--g2);color:#fff;font-size:18px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;
+      box-shadow:0 4px 16px rgba(108,99,255,.4);
     }
-    #ai-send:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(124,58,237,.55)}
+    #ai-send:hover{filter:brightness(1.15);transform:scale(1.08)}
     #ai-send:active{transform:scale(.95)}
-    #ai-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    #ai-send:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
 
     .ai-quick-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
     .quick-btn{
-      padding:6px 14px;background:var(--s2);border:1px solid rgba(124,58,237,.2);
-      border-radius:20px;color:#a78bfa;font-size:11px;font-weight:600;cursor:pointer;
+      padding:6px 14px;background:var(--s2);border:1.5px solid rgba(108,99,255,.2);
+      border-radius:20px;color:#9d95ff;font-size:11px;font-weight:700;cursor:pointer;
       transition:all .15s;font-family:inherit;white-space:nowrap;
     }
-    .quick-btn:hover{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4)}
-
+    .quick-btn:hover{background:rgba(108,99,255,.18);border-color:rgba(108,99,255,.4)}
     .ai-clear-btn{
-      background:none;border:1px solid var(--border);border-radius:20px;
-      padding:6px 14px;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;
-      transition:all .15s;
+      background:none;border:1.5px solid var(--border);border-radius:20px;
+      padding:6px 14px;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;
     }
-    .ai-clear-btn:hover{border-color:#ff6060;color:#ff6060}
+    .ai-clear-btn:hover{border-color:#f87171;color:#f87171}
 
-    /* ── FOOTER ── */
-    footer{text-align:center;padding:18px;color:#2a2a2a;font-size:10px;letter-spacing:1px;border-top:1px solid #0e0e0e;margin-bottom:10px}
-    footer span{color:var(--g)}
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer{
+      text-align:center;padding:20px;color:var(--muted);font-size:10px;letter-spacing:1.5px;
+      border-top:1px solid rgba(108,99,255,.08);margin-bottom:10px;
+    }
+    footer a{color:#9d95ff;text-decoration:none}
+    footer a:hover{text-decoration:underline}
 
-    /* ── TOASTS ── */
+    /* ── VOICE BAR ──────────────────────────────────────────────── */
+    #voice-bar{
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      background:linear-gradient(90deg,rgba(108,99,255,.95),rgba(168,85,247,.95));
+      backdrop-filter:blur(16px);padding:8px 18px;
+      display:flex;align-items:center;gap:10px;
+      box-shadow:0 4px 24px rgba(108,99,255,.3);
+      transition:all .3s;
+    }
+    #voice-bar.duck{opacity:.3}
+    .vb-icon{font-size:18px;animation:vbPulse 1.5s ease-in-out infinite}
+    @keyframes vbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    .vb-text{font-size:11px;font-weight:700;color:#fff;flex:1}
+    .vb-waves{display:flex;align-items:center;gap:2px;height:16px}
+    .vb-wave{width:3px;background:#fff;border-radius:2px;animation:wave 1s ease-in-out infinite}
+    .vb-wave:nth-child(1){height:4px;animation-delay:0s}
+    .vb-wave:nth-child(2){height:12px;animation-delay:.1s}
+    .vb-wave:nth-child(3){height:8px;animation-delay:.2s}
+    .vb-wave:nth-child(4){height:14px;animation-delay:.3s}
+    .vb-wave:nth-child(5){height:6px;animation-delay:.4s}
+    @keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
+    .vb-close{width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+    /* ── TOASTS ─────────────────────────────────────────────────── */
     #offline-toast{
-      position:fixed;top:16px;left:50%;transform:translateX(-50%);
-      background:#1a0d0d;border:1.5px solid #ff4444;border-radius:28px;
-      padding:11px 18px;display:none;align-items:center;gap:9px;z-index:500;
-      box-shadow:0 4px 30px rgba(0,0,0,.6);white-space:nowrap;animation:dropIn .3s ease;
+      position:fixed;top:56px;left:50%;transform:translateX(-50%);
+      background:#1a0d0d;border:1.5px solid #f87171;border-radius:28px;
+      padding:10px 18px;display:none;align-items:center;gap:9px;z-index:500;
+      box-shadow:0 4px 30px rgba(0,0,0,.6);white-space:nowrap;
     }
     #offline-toast.show{display:flex}
-    @keyframes dropIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-    .ot-dot{width:7px;height:7px;border-radius:50%;background:#ff4444;animation:pulse-r 1.4s ease-in-out infinite}
+    .ot-dot{width:7px;height:7px;border-radius:50%;background:#f87171;animation:pulse-r 1.4s ease-in-out infinite}
     @keyframes pulse-r{0%,100%{opacity:1}50%{opacity:.3}}
     .ot-text{font-size:12px;color:#f0f0f0;font-weight:600}
-    .ot-link{padding:5px 13px;background:#ff4444;border-radius:20px;color:#fff;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;transition:background .15s}
-    .ot-link:hover{background:#ff6666}
-
     #cache-toast{
-      position:fixed;bottom:80px;right:16px;background:#0d1a10;border:1px solid var(--g);
-      border-radius:14px;padding:9px 14px;font-size:12px;color:var(--g);font-weight:600;
-      z-index:400;display:none;max-width:240px;box-shadow:0 4px 20px rgba(0,230,118,.2);animation:slideInR .3s ease;
+      position:fixed;bottom:90px;right:16px;background:#0e0e20;border:1.5px solid var(--p1);
+      border-radius:14px;padding:10px 16px;font-size:12px;color:#9d95ff;font-weight:700;
+      z-index:400;display:none;max-width:240px;box-shadow:0 4px 20px rgba(108,99,255,.25);animation:slideInR .3s ease;
     }
     #cache-toast.show{display:block}
     @keyframes slideInR{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
 
-    /* ── INSTALL BANNER ── */
-    #install-banner{
-      position:fixed;bottom:0;left:0;right:0;
-      background:linear-gradient(135deg,#0d2016,#0a1a0e);
-      border-top:2px solid var(--g);padding:13px 18px;
-      display:none;align-items:center;gap:13px;z-index:200;
-      box-shadow:0 -4px 30px rgba(0,230,118,.12);
-    }
-    #install-banner.show{display:flex}
-    .ib-icon{width:46px;height:46px;border-radius:12px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 14px rgba(0,230,118,.35)}
-    .ib-text{flex:1;min-width:0}
-    .ib-title{font-size:13px;font-weight:800;color:var(--g);margin-bottom:2px}
-    .ib-sub{font-size:10px;color:var(--sub)}
-    .ib-btn{padding:9px 18px;background:var(--g);border:none;border-radius:24px;color:#000;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
-    .ib-btn:hover{background:#1aff82;transform:scale(1.04)}
-    .ib-close{width:26px;height:26px;border-radius:50%;border:none;background:var(--s3);color:var(--sub);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-    .ib-close:hover{background:#333;color:#fff}
-
-    #ios-tip{
-      position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-      background:rgba(16,16,26,.97);border:1px solid var(--g);border-radius:16px;
-      padding:14px 20px;max-width:310px;width:calc(100% - 40px);text-align:center;
-      font-size:13px;color:var(--text);z-index:300;display:none;box-shadow:0 8px 40px rgba(0,0,0,.7);
-    }
-    #ios-tip.show{display:block;animation:slideUp .3s ease}
-    @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(18px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-    .ios-tip-close{margin-top:10px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--sub);padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit}
-
-    /* ── RESPONSIVE ── */
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
     @media(max-width:600px){
-      .brand-name{font-size:40px}
+      .brand-name{font-size:21px}
       .track-dur{display:none}
       .player-progress-wrap{display:none}
       .vol-wrap{display:none}
-      .btn-dl{padding:6px 11px;font-size:10px}
-      .ai-wrap{height:calc(100vh - 220px)}
+      .btn-dl{padding:7px 12px;font-size:10px}
+      .ai-wrap{height:calc(100vh - 210px)}
     }
     @media(max-width:420px){
       .track-num{display:none}
-      .brand-name{font-size:34px}
-      .msg-bubble{max-width:88%}
+      .brand-name{font-size:18px}
+      .msg-bubble{max-width:90%}
     }
   </style>
 </head>
 <body>
 
+<!-- BG ORBS -->
+<div class="bg-orb bg-orb1"></div>
+<div class="bg-orb bg-orb2"></div>
+<div class="bg-orb bg-orb3"></div>
+
+<!-- VOICE WELCOME BAR -->
+<div id="voice-bar" style="display:none">
+  <span class="vb-icon">🎤</span>
+  <div class="vb-waves">
+    <div class="vb-wave"></div><div class="vb-wave"></div>
+    <div class="vb-wave"></div><div class="vb-wave"></div>
+    <div class="vb-wave"></div>
+  </div>
+  <div class="vb-text">STARTCOPE MUSIC — Welcome! Enjoy free unlimited downloads</div>
+  <button class="vb-close" onclick="stopVoice()" title="Close">✕</button>
+</div>
+
 <!-- HEADER -->
 <header>
-  <div class="h-inner">
-    <div class="brand-row">
-      <div class="brand-icon">🎵</div>
-      <div class="brand-name">GOMO</div>
+  <div class="header-top">
+    <div class="menu-wrap" style="position:absolute;right:18px;top:0">
+      <button class="menu-btn" onclick="toggleMenu()" id="menuBtn" title="More options">⋮</button>
+      <div class="dropdown" id="dropdown">
+        <div class="dd-head">Options</div>
+        <a class="dd-item" href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank" rel="noopener">
+          <div class="dd-item-icon blue">👨‍💻</div>
+          <div class="dd-text">
+            <div class="dd-text-title">Developer — Follow on Facebook</div>
+            <div class="dd-text-sub">STARTCOPE TA INC. Facebook Page</div>
+          </div>
+        </a>
+        <div class="dd-item" onclick="showAbout()">
+          <div class="dd-item-icon purple">ℹ️</div>
+          <div class="dd-text">
+            <div class="dd-text-title">About This Website</div>
+            <div class="dd-text-sub">Free unlimited fast download</div>
+          </div>
+        </div>
+        <div class="dd-item" onclick="toggleVoice()">
+          <div class="dd-item-icon green">🔊</div>
+          <div class="dd-text">
+            <div class="dd-text-title" id="voiceToggleLabel">Welcome Voice: ON</div>
+            <div class="dd-text-sub">Background welcome audio</div>
+          </div>
+        </div>
+        <div class="dd-item" onclick="closeMenu()">
+          <div class="dd-item-icon" style="background:rgba(255,100,100,.15)">✕</div>
+          <div class="dd-text"><div class="dd-text-title">Close Menu</div></div>
+        </div>
+      </div>
     </div>
-    <div class="brand-sub">Music + AI · <strong style="color:var(--g)">App v2.0</strong></div>
+  </div>
+  <div class="h-inner">
+    <div class="brand-logo">🎵</div>
+    <div class="brand-name">STARTCOPE MUSIC DOWNLOAD FREE</div>
+    <div class="brand-sub">Free · Unlimited · Fast · by TEAM STARTCOPE BETA</div>
     <div class="brand-badges">
-      <span class="badge">⚡ FREE MUSIC</span>
-      <span class="badge-purple badge">🤖 DRIAN AI</span>
-      <span class="badge badge-install" id="headerInstallBtn" onclick="triggerInstall()" style="display:none">📲 I-INSTALL</span>
-      <a href="/offline.html" class="badge badge-offline" id="offlineLibBadge" style="display:none">📴 OFFLINE LIBRARY</a>
-      <span class="badge badge-grey">📻 HOME RADIO 95.1</span>
-      <span class="badge badge-grey">🏷️ MIRAI BOT V3</span>
+      <span class="badge badge-purple">⚡ FREE DOWNLOAD</span>
+      <span class="badge badge-pink">🎵 UNLIMITED SONGS</span>
+      <span class="badge badge-blue">🔍 SEARCH ANY ARTIST</span>
+      <span class="badge badge-green">📶 FAST STREAMING</span>
+      <a href="/offline.html" class="badge badge-offline" id="offlineLibBadge">📴 OFFLINE LIBRARY</a>
     </div>
   </div>
 </header>
@@ -405,16 +495,33 @@
 <!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" id="tab-music" onclick="switchTab('music')">🎵 MUSIC</button>
-  <button class="tab-btn ai-tab" id="tab-ai" onclick="switchTab('ai')">🤖 DRIAN AI</button>
+  <button class="tab-btn" id="tab-ai" onclick="switchTab('ai')">🤖 DRIAN AI</button>
 </div>
 
 <!-- MUSIC TAB -->
 <div class="tab-panel active" id="panel-music">
   <div class="music-wrap">
-    <div class="search-box">
-      <input type="text" id="q" placeholder="Maghanap ng kanta, artista, album..." autocomplete="off" />
-      <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 SEARCH</button>
+
+    <!-- Search -->
+    <div class="search-area">
+      <div style="position:relative">
+        <div class="search-box" id="searchBox">
+          <div class="search-input-wrap">
+            <input type="text" id="q" placeholder="Maghanap ng kanta, artista, album..." autocomplete="off" />
+          </div>
+          <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 SEARCH</button>
+        </div>
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+
+      <!-- Popular Filipino + OPM Artists -->
+      <div class="popular-wrap">
+        <div class="popular-label">🇵🇭 Popular Artists</div>
+        <div class="artist-chips" id="artistChips"></div>
+      </div>
     </div>
+
+    <!-- Results -->
     <div class="sec-head" id="resultsHead" style="display:none">
       <div class="sec-label" id="label"></div>
       <div class="sec-count" id="countBadge"></div>
@@ -422,30 +529,25 @@
     <div id="results">
       <div class="state">
         <div class="state-icon">🎵</div>
-        <div class="state-title">GOMO Song Download Free</div>
-        <div class="state-sub">I-type ang pangalan ng kanta o artista<br>tapos pindutin ang Search</div>
+        <div class="state-title">STARTCOPE MUSIC DOWNLOAD FREE</div>
+        <div class="state-sub">I-type ang pangalan ng kanta o artista<br>tapos pindutin ang Search para mag-download ng libre!</div>
       </div>
     </div>
+
   </div>
 </div>
 
 <!-- AI TAB -->
 <div class="tab-panel" id="panel-ai">
   <div class="ai-wrap">
-    <!-- AI Header -->
     <div class="ai-header">
       <div class="ai-avatar">🤖</div>
       <div>
         <div class="ai-name">DRIAN AI v4.0.0</div>
         <div class="ai-sub">by Manuelson Yasis · TEAM STARTCOPE BETA</div>
-        <div class="ai-status">
-          <div class="ai-dot"></div>
-          <div class="ai-online">Online · Walang limit · Libre!</div>
-        </div>
+        <div class="ai-status"><div class="ai-dot"></div><div class="ai-online">Online · Walang limit · Libre!</div></div>
       </div>
     </div>
-
-    <!-- Chat Messages -->
     <div id="chat-messages">
       <div class="msg-row">
         <div class="msg-avatar bot">🤖</div>
@@ -456,18 +558,14 @@ Kaya ko ang lahat — school, research, coding, math, agham, kasaysayan, creativ
 Ano ang maitutulong ko sa iyo ngayon? 😊</div>
       </div>
     </div>
-
-    <!-- Quick buttons -->
     <div class="ai-quick-btns">
       <button class="quick-btn" onclick="sendQuick('Sino ka?')">🤖 Sino ka?</button>
-      <button class="quick-btn" onclick="sendQuick('Ano ang 5 tips para maging masaya sa buhay?')">😊 Tips sa buhay</button>
-      <button class="quick-btn" onclick="sendQuick('Ano ang pinaka-magandang lugar sa Pilipinas?')">🇵🇭 Pilipinas</button>
-      <button class="quick-btn" onclick="sendQuick('Magbigay ng joke na Tagalog!')">😂 Tagalog joke</button>
+      <button class="quick-btn" onclick="sendQuick('Ano ang 5 tips para maging masaya?')">😊 Tips</button>
+      <button class="quick-btn" onclick="sendQuick('Ano ang pinakamagandang lugar sa Pilipinas?')">🇵🇭 Pilipinas</button>
+      <button class="quick-btn" onclick="sendQuick('Magbigay ng Tagalog joke!')">😂 Joke</button>
       <button class="quick-btn" onclick="sendQuick('Paano mag-code sa Python?')">💻 Python</button>
       <button class="ai-clear-btn" onclick="clearChat()">🗑️ Clear</button>
     </div>
-
-    <!-- Input area -->
     <div class="ai-input-area">
       <textarea id="ai-input" placeholder="Mag-type ng tanong dito..." rows="1" oninput="autoResize(this)" onkeydown="handleAiKey(event)"></textarea>
       <button id="ai-send" onclick="sendAiMessage()">➤</button>
@@ -475,8 +573,16 @@ Ano ang maitutulong ko sa iyo ngayon? 😊</div>
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <span>GOMO</span> MUSIC + AI · MIRAI BOT V3 · <span>TEAM STARTCOPE BETA</span> · 2026
+  <div style="margin-bottom:6px">
+    🎵 <strong style="color:#9d95ff">STARTCOPE MUSIC DOWNLOAD FREE</strong> · Libre · Unlimited · Mabilis
+  </div>
+  <div>
+    Developed by <a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank">STARTCOPE TA INC.</a> · 
+    <a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank">Follow on Facebook</a> · 
+    TEAM STARTCOPE BETA · 2026
+  </div>
 </footer>
 
 <!-- NOW PLAYING BAR -->
@@ -507,34 +613,222 @@ Ano ang maitutulong ko sa iyo ngayon? 😊</div>
 <!-- TOASTS -->
 <div id="offline-toast">
   <div class="ot-dot"></div>
-  <span class="ot-text">Offline — gamitin ang Offline Library</span>
-  <a href="/offline.html" class="ot-link">🎧 Pakinggan</a>
+  <span class="ot-text">Offline — Offline Library</span>
+  <a href="/offline.html" style="padding:4px 12px;background:#f87171;border-radius:16px;color:#fff;font-size:11px;font-weight:800;text-decoration:none;margin-left:4px">🎧 Open</a>
 </div>
 <div id="cache-toast">✅ Na-cache! Pwede na offline.</div>
-
-<!-- INSTALL BANNER -->
-<div id="install-banner">
-  <div class="ib-icon">🎵</div>
-  <div class="ib-text">
-    <div class="ib-title">I-install ang GOMO App v2.0</div>
-    <div class="ib-sub">I-add sa Home Screen — libre, walang App Store!</div>
-  </div>
-  <button class="ib-btn" onclick="triggerInstall()">📲 INSTALL</button>
-  <button class="ib-close" onclick="dismissBanner()">✕</button>
-</div>
-
-<!-- iOS tip -->
-<div id="ios-tip">
-  <div style="font-size:26px;margin-bottom:6px">⬆️</div>
-  <div style="font-weight:800;color:var(--g);margin-bottom:6px">I-install ang GOMO App v2.0</div>
-  <div style="color:#ccc;font-size:12px;line-height:1.5">Pindutin ang <strong style="color:#fff">Share</strong> (□↑) sa Safari, tapos <strong style="color:#fff">"Add to Home Screen"</strong></div>
-  <button class="ios-tip-close" onclick="document.getElementById('ios-tip').classList.remove('show')">Sige, salamat!</button>
-</div>
 
 <audio id="audioEl" preload="none"></audio>
 
 <script>
-// ── TAB SWITCHING ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  POPULAR ARTISTS — Philippines (OPM) + English
+// ─────────────────────────────────────────────────────────────────────────────
+const POPULAR_ARTISTS = [
+  { name: 'BINI', icon: '🇵🇭', genre: 'P-Pop' },
+  { name: 'SB19', icon: '🇵🇭', genre: 'P-Pop' },
+  { name: 'Ben&Ben', icon: '🎸', genre: 'OPM Folk' },
+  { name: 'December Avenue', icon: '🎵', genre: 'OPM Rock' },
+  { name: 'Moira Dela Torre', icon: '🎤', genre: 'OPM Pop' },
+  { name: 'Arthur Nery', icon: '🎹', genre: 'OPM R&B' },
+  { name: 'Juan Karlos', icon: '🎸', genre: 'OPM' },
+  { name: 'Zack Tabudlo', icon: '🎵', genre: 'OPM Pop' },
+  { name: 'Adie', icon: '🎤', genre: 'OPM Pop' },
+  { name: 'Dilaw', icon: '🎸', genre: 'OPM' },
+  { name: 'Aegis', icon: '🎵', genre: 'OPM Rock' },
+  { name: 'Eraserheads', icon: '🎸', genre: 'Classic OPM' },
+  { name: 'Taylor Swift', icon: '🌟', genre: 'Pop' },
+  { name: 'Bruno Mars', icon: '🎤', genre: 'Pop/R&B' },
+  { name: 'The Weeknd', icon: '🎵', genre: 'R&B' },
+  { name: 'Ed Sheeran', icon: '🎸', genre: 'Pop' },
+  { name: 'Billie Eilish', icon: '🎵', genre: 'Alt Pop' },
+  { name: 'Justin Bieber', icon: '🎤', genre: 'Pop' },
+];
+
+const SEARCH_SUGGESTIONS = [
+  'kahit ayaw mo na', 'Di Na Muli', 'Mundo', 'Buwan', 'Pasilyo',
+  'Sa Susunod Na Habang Buhay', 'Nobela', 'Ere', 'Sana', 'Ikaw At Ako',
+  'Hanggang Kailan', 'Sugat', 'Yellow', 'Shape of You', 'Stay',
+  'Peaches', 'As It Was', 'Blinding Lights', 'Anti-Hero'
+];
+
+// Build artist chips
+const chipsEl = document.getElementById('artistChips');
+POPULAR_ARTISTS.forEach(a => {
+  const el = document.createElement('button');
+  el.className = 'artist-chip';
+  el.innerHTML = `<span class="artist-chip-icon">${a.icon}</span>${a.name}`;
+  el.title = a.genre;
+  el.onclick = () => {
+    document.getElementById('q').value = a.name;
+    doSearch();
+  };
+  chipsEl.appendChild(el);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  SEARCH SUGGESTIONS (autocomplete)
+// ─────────────────────────────────────────────────────────────────────────────
+const qEl = document.getElementById('q');
+const sugsEl = document.getElementById('suggestions');
+
+qEl.addEventListener('input', () => {
+  const v = qEl.value.trim().toLowerCase();
+  if (v.length < 1) { sugsEl.classList.remove('open'); return; }
+  const matches = [
+    ...POPULAR_ARTISTS.filter(a => a.name.toLowerCase().includes(v)).map(a => ({ label: a.name, sub: a.genre, icon: a.icon, type: 'artist' })),
+    ...SEARCH_SUGGESTIONS.filter(s => s.toLowerCase().includes(v)).slice(0, 4).map(s => ({ label: s, sub: 'Song', icon: '🎵', type: 'song' }))
+  ].slice(0, 6);
+  if (!matches.length) { sugsEl.classList.remove('open'); return; }
+  sugsEl.innerHTML =
+    `<div class="sug-head">${matches[0]?.type === 'artist' ? '🎤 Artists & Songs' : '🎵 Suggestions'}</div>` +
+    matches.map(m => `
+      <div class="sug-item" onclick="pickSuggestion('${m.label.replace(/'/g,"\\'")}')">
+        <div class="sug-avatar">${m.icon}</div>
+        <div><div class="sug-name">${escHtml(m.label)}</div><div class="sug-genre">${escHtml(m.sub)}</div></div>
+      </div>
+    `).join('');
+  sugsEl.classList.add('open');
+});
+
+qEl.addEventListener('blur', () => setTimeout(() => sugsEl.classList.remove('open'), 200));
+
+function pickSuggestion(val) {
+  qEl.value = val;
+  sugsEl.classList.remove('open');
+  doSearch();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  3-DOTS MENU
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleMenu() {
+  document.getElementById('dropdown').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('dropdown').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.menu-wrap')) closeMenu();
+});
+
+function showAbout() {
+  closeMenu();
+  alert(
+    '🎵 STARTCOPE MUSIC DOWNLOAD FREE\n\n' +
+    '✅ FREE — Walang bayad, walang subscription\n' +
+    '♾️ UNLIMITED — Walang limitasyon sa download\n' +
+    '⚡ FAST — Mabilis mag-download ng music\n' +
+    '🔍 SEARCH — Hanapin ang kahit anong kanta o artista\n' +
+    '🇵🇭 OPM — Suportado ang lahat ng Philippine artists\n\n' +
+    '👨‍💻 Developer: STARTCOPE TA INC.\n' +
+    '🔗 Facebook: facebook.com/izphbicolcommenthightlight\n' +
+    '🏷️ TEAM STARTCOPE BETA · 2026'
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  WELCOME VOICE — SpeechSynthesis, loops ~4hrs, ducks when music plays
+// ─────────────────────────────────────────────────────────────────────────────
+let voiceActive = true;
+let voiceUtter = null;
+let voiceStopped = false;
+let voicePaused = false;
+
+const WELCOME_SCRIPT =
+  'Hello everyone! Welcome to Startcope Beta Music Download Free! ' +
+  'Enjoy free, unlimited, and super fast music downloads. ' +
+  'Search any song or artist from the Philippines and around the world. ' +
+  'Download your favorite OPM hits, P-Pop, and international songs for free. ' +
+  'Startcope Music — the best free music download app in the Philippines. ' +
+  'Enjoy listening and downloading music. God bless everyone! ' +
+  'This is Startcope Beta Music Download Free — always free, always fast. ';
+
+function startVoice() {
+  if (!('speechSynthesis' in window)) return;
+  voiceStopped = false;
+  voiceActive = true;
+  document.getElementById('voice-bar').style.display = 'flex';
+  document.getElementById('voiceToggleLabel').textContent = 'Welcome Voice: ON';
+  speakLoop();
+}
+
+function speakLoop() {
+  if (voiceStopped || !voiceActive) return;
+  window.speechSynthesis.cancel();
+  voiceUtter = new SpeechSynthesisUtterance(WELCOME_SCRIPT);
+  voiceUtter.rate = 0.92;
+  voiceUtter.pitch = 1.1;
+  voiceUtter.volume = voicePaused ? 0.15 : 1.0;
+  voiceUtter.lang = 'en-US';
+  // Try female voice
+  const voices = window.speechSynthesis.getVoices();
+  const female = voices.find(v => /female|zira|samantha|hazel|karen|moira|victoria/i.test(v.name))
+    || voices.find(v => v.lang.startsWith('en') && v.name.includes('Female'))
+    || voices.find(v => v.lang.startsWith('en'));
+  if (female) voiceUtter.voice = female;
+  voiceUtter.onend = () => { if (!voiceStopped && voiceActive) setTimeout(speakLoop, 800); };
+  voiceUtter.onerror = () => { if (!voiceStopped && voiceActive) setTimeout(speakLoop, 3000); };
+  window.speechSynthesis.speak(voiceUtter);
+}
+
+function stopVoice() {
+  voiceStopped = true;
+  voiceActive = false;
+  window.speechSynthesis.cancel();
+  document.getElementById('voice-bar').style.display = 'none';
+  document.getElementById('voiceToggleLabel').textContent = 'Welcome Voice: OFF';
+}
+
+function toggleVoice() {
+  closeMenu();
+  if (voiceActive) stopVoice();
+  else startVoice();
+}
+
+// Duck voice when music plays, restore when music stops
+function duckVoice(shouldDuck) {
+  if (!voiceActive || voiceStopped) return;
+  const bar = document.getElementById('voice-bar');
+  if (shouldDuck) {
+    voicePaused = true;
+    bar.classList.add('duck');
+    if (voiceUtter) { voiceUtter.volume = 0.12; }
+  } else {
+    voicePaused = false;
+    bar.classList.remove('duck');
+    // Re-speak with full volume after music stops
+    if (voiceActive && !voiceStopped) {
+      window.speechSynthesis.cancel();
+      setTimeout(speakLoop, 1500);
+    }
+  }
+}
+
+// Auto-start voice after user interacts (browser requires it)
+let voiceStarted = false;
+function ensureVoice() {
+  if (!voiceStarted && voiceActive) {
+    voiceStarted = true;
+    // Load voices first
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => startVoice();
+    } else {
+      startVoice();
+    }
+  }
+}
+
+// Start voice on first interaction
+['click', 'touchstart', 'keydown'].forEach(evt =>
+  document.addEventListener(evt, ensureVoice, { once: true })
+);
+// Also try auto-start after a delay
+setTimeout(() => { if (!voiceStarted) ensureVoice(); }, 2000);
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  TAB SWITCHING
+// ─────────────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -542,25 +836,27 @@ function switchTab(tab) {
   document.getElementById('panel-' + tab).classList.add('active');
 }
 
-// ── MUSIC PLAYER ──────────────────────────────────────────────────────────
-const qEl = document.getElementById('q');
-const resultsEl = document.getElementById('results');
+// ─────────────────────────────────────────────────────────────────────────────
+//  MUSIC PLAYER
+// ─────────────────────────────────────────────────────────────────────────────
+const resultsEl   = document.getElementById('results');
 const resultsHead = document.getElementById('resultsHead');
-const labelEl = document.getElementById('label');
-const countEl = document.getElementById('countBadge');
-const btn = document.getElementById('searchBtn');
-const audioEl = document.getElementById('audioEl');
-const playerBar = document.getElementById('player-bar');
-const playerTitle = document.getElementById('playerTitle');
+const labelEl     = document.getElementById('label');
+const countEl     = document.getElementById('countBadge');
+const btn         = document.getElementById('searchBtn');
+const audioEl     = document.getElementById('audioEl');
+const playerBar   = document.getElementById('player-bar');
+const playerTitle  = document.getElementById('playerTitle');
 const playerArtist = document.getElementById('playerArtist');
-const playerThumb = document.getElementById('playerThumb');
+const playerThumb  = document.getElementById('playerThumb');
 const playerPlayBtn = document.getElementById('playerPlayBtn');
-const progressFill = document.getElementById('progressFill');
+const progressFill  = document.getElementById('progressFill');
 const playerCurrent = document.getElementById('playerCurrent');
-const playerDuration = document.getElementById('playerDuration');
+const playerDuration= document.getElementById('playerDuration');
 
 let allResults = [];
 let currentIndex = -1;
+let openMenuIdx = null;
 
 function fmtTime(s) {
   if (!isFinite(s) || s < 0) return '—';
@@ -572,15 +868,19 @@ function fmtDur(sec) {
   const m = Math.floor(sec / 60), s = sec % 60;
   return m + ':' + String(s).padStart(2, '0');
 }
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-// Detect Netlify vs bot server
-const IS_NETLIFY = !!(window.location.hostname.includes('netlify.app') || window.location.hostname.includes('netlify.com'));
+const IS_NETLIFY = window.location.hostname.includes('netlify');
 const API_BASE = IS_NETLIFY ? '/api' : '';
 
 async function doSearch() {
   const val = qEl.value.trim();
   if (!val) { qEl.focus(); return; }
+  sugsEl.classList.remove('open');
   btn.disabled = true;
+  btn.textContent = '⏳ ...';
   resultsEl.innerHTML = '<div class="state"><div class="spinner"></div><div class="state-title">Naghahanap...</div><div class="state-sub">Hintayin lang sandali...</div></div>';
   resultsHead.style.display = 'none';
   try {
@@ -589,111 +889,177 @@ async function doSearch() {
     const data = await res.json();
     allResults = data.results || [];
     if (!allResults.length) {
-      resultsEl.innerHTML = '<div class="state"><div class="state-icon">😕</div><div class="state-title">Walang nahanap</div><div class="state-sub">Subukan ng ibang pangalan ng kanta o artista.</div></div>';
+      resultsEl.innerHTML = `
+        <div class="state">
+          <div class="state-icon">😕</div>
+          <div class="state-title">Walang nahanap</div>
+          <div class="state-sub">Subukan ng ibang pangalan ng kanta o artista.<br>
+          Halimbawa: "Ben&Ben", "Kundiman", "Taylor Swift"</div>
+        </div>`;
     } else {
-      renderResults();
+      renderResults(val);
     }
   } catch (e) {
-    resultsEl.innerHTML = '<div class="state"><div class="state-icon">⚠️</div><div class="state-title">May error</div><div class="state-sub">' + e.message + '<br>I-reload ang page at subukan ulit.</div></div>';
+    resultsEl.innerHTML = `
+      <div class="state">
+        <div class="state-icon">⚠️</div>
+        <div class="state-title">May error sa paghahanap</div>
+        <div class="state-sub">${escHtml(e.message)}<br>I-reload ang page at subukan ulit.</div>
+      </div>`;
   }
   btn.disabled = false;
+  btn.textContent = '🔍 SEARCH';
 }
 
-function renderResults() {
-  labelEl.textContent = 'SEARCH RESULTS';
+function renderResults(query) {
+  labelEl.textContent = 'RESULTS FOR "' + (query || '').toUpperCase() + '"';
   countEl.textContent = allResults.length + ' tracks';
   resultsHead.style.display = 'flex';
   resultsEl.innerHTML = '<div class="track-list">' + allResults.map((r, i) => `
-    <div class="track-card" id="card-${i}">
+    <div class="track-card" id="card-${i}" style="position:relative">
       <div class="track-num">${i + 1}</div>
-      ${r.thumbnail ? `<img class="track-thumb" src="${r.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : `<div class="thumb-ph">🎵</div>`}
+      ${r.thumbnail
+        ? `<img class="track-thumb" src="${escHtml(r.thumbnail)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="thumb-ph">🎵</div>`}
       <div class="track-info">
         <div class="track-title">${escHtml(r.title)}</div>
-        <div class="track-artist">${escHtml(r.artist)}</div>
+        <div class="track-artist">${escHtml(r.artist || 'Unknown Artist')}</div>
       </div>
       <div class="track-dur">${fmtDur(r.duration)}</div>
       <div class="track-actions">
         <button class="btn-play" onclick="playAt(${i})" title="Play">▶</button>
-        <button class="btn-dl" id="dl-${i}" onclick="downloadTrack(${i})">⬇ SAVE</button>
+        <button class="btn-dl" id="dl-${i}" onclick="downloadTrack(${i})">⬇ DOWNLOAD</button>
+        <button class="btn-more" onclick="toggleTrackMenu(event,${i})" title="More">⋮</button>
+      </div>
+      <div class="track-menu" id="tm-${i}">
+        <div class="tm-item" onclick="playAt(${i});closeAllMenus()">▶ Play Now</div>
+        <div class="tm-item" onclick="downloadTrack(${i});closeAllMenus()">⬇ Download MP3</div>
+        <div class="tm-item" onclick="shareTrack(${i});closeAllMenus()">🔗 Share Link</div>
+        <div class="tm-item"><a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank" rel="noopener">👨‍💻 Developer — Follow STARTCOPE TA INC.</a></div>
       </div>
     </div>
   `).join('') + '</div>';
 }
 
-function escHtml(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function toggleTrackMenu(e, idx) {
+  e.stopPropagation();
+  if (openMenuIdx === idx) { closeAllMenus(); return; }
+  closeAllMenus();
+  openMenuIdx = idx;
+  document.getElementById('tm-' + idx)?.classList.add('open');
+}
+function closeAllMenus() {
+  document.querySelectorAll('.track-menu.open').forEach(m => m.classList.remove('open'));
+  openMenuIdx = null;
+}
+document.addEventListener('click', () => closeAllMenus());
+
+function shareTrack(idx) {
+  const t = allResults[idx];
+  if (navigator.share) {
+    navigator.share({ title: t.title, text: t.artist + ' — ' + t.title + '\nFree download: STARTCOPE MUSIC', url: t.url }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(t.url).then(() => alert('Link copied!'));
+  }
 }
 
 function playAt(idx) {
   if (idx < 0 || idx >= allResults.length) return;
-  if (currentIndex === idx && !audioEl.paused) { audioEl.pause(); playerPlayBtn.textContent = '▶'; return; }
+  if (currentIndex === idx && !audioEl.paused) {
+    audioEl.pause();
+    playerPlayBtn.textContent = '▶';
+    duckVoice(false);
+    return;
+  }
   document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.btn-play').forEach(b => b.textContent = '▶');
   currentIndex = idx;
   const t = allResults[idx];
   audioEl.src = t.url;
-  audioEl.play().catch(() => {});
+  audioEl.play().then(() => {
+    duckVoice(true);
+  }).catch(() => {});
   playerTitle.textContent = t.title;
-  playerArtist.textContent = t.artist;
+  playerArtist.textContent = t.artist || 'Unknown Artist';
   playerThumb.src = t.thumbnail || '';
   playerPlayBtn.textContent = '⏸';
   playerBar.classList.add('visible');
-  document.getElementById('card-' + idx)?.classList.add('playing');
-  document.getElementById('card-' + idx)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  audioEl.onended = () => nextTrack();
+  const card = document.getElementById('card-' + idx);
+  if (card) {
+    card.classList.add('playing');
+    card.querySelector('.btn-play').textContent = '⏸';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  audioEl.onended = () => {
+    playerPlayBtn.textContent = '▶';
+    if (card) card.querySelector('.btn-play').textContent = '▶';
+    duckVoice(false);
+    nextTrack();
+  };
 }
 
 function togglePlay() {
-  if (audioEl.paused) { audioEl.play(); playerPlayBtn.textContent = '⏸'; }
-  else { audioEl.pause(); playerPlayBtn.textContent = '▶'; }
+  if (audioEl.paused) {
+    audioEl.play().then(() => duckVoice(true)).catch(() => {});
+    playerPlayBtn.textContent = '⏸';
+  } else {
+    audioEl.pause();
+    playerPlayBtn.textContent = '▶';
+    duckVoice(false);
+  }
 }
 function prevTrack() { if (currentIndex > 0) playAt(currentIndex - 1); }
 function nextTrack() { if (currentIndex < allResults.length - 1) playAt(currentIndex + 1); }
 function seekAudio(e) {
-  const bar = e.currentTarget, rect = bar.getBoundingClientRect();
+  const rect = e.currentTarget.getBoundingClientRect();
   const pct = (e.clientX - rect.left) / rect.width;
   if (isFinite(audioEl.duration)) audioEl.currentTime = pct * audioEl.duration;
 }
 function setVolume(v) { audioEl.volume = v; }
-function toggleMute() { audioEl.muted = !audioEl.muted; document.querySelector('.vol-icon').textContent = audioEl.muted ? '🔇' : '🔊'; }
+function toggleMute() {
+  audioEl.muted = !audioEl.muted;
+  document.querySelector('.vol-icon').textContent = audioEl.muted ? '🔇' : '🔊';
+}
 
 audioEl.addEventListener('timeupdate', () => {
   if (!audioEl.duration) return;
-  const pct = (audioEl.currentTime / audioEl.duration) * 100;
-  progressFill.style.width = pct + '%';
+  progressFill.style.width = (audioEl.currentTime / audioEl.duration * 100) + '%';
   playerCurrent.textContent = fmtTime(audioEl.currentTime);
 });
-audioEl.addEventListener('loadedmetadata', () => { playerDuration.textContent = fmtTime(audioEl.duration); });
+audioEl.addEventListener('loadedmetadata', () => {
+  playerDuration.textContent = fmtTime(audioEl.duration);
+});
 
 async function downloadTrack(idx) {
   const t = allResults[idx];
   const dlBtn = document.getElementById('dl-' + idx);
   dlBtn.disabled = true;
-  dlBtn.textContent = '⏳';
+  dlBtn.innerHTML = '⏳ Downloading...';
   try {
     const a = document.createElement('a');
     a.href = t.url;
-    a.download = (t.title || 'track') + '.mp3';
+    a.download = (t.title || 'track').replace(/[<>:"/\\|?*]/g, '') + '.mp3';
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    dlBtn.textContent = '✅ SAVED';
-    setTimeout(() => { dlBtn.disabled = false; dlBtn.textContent = '⬇ SAVE'; }, 3000);
+    dlBtn.innerHTML = '✅ SAVED!';
+    setTimeout(() => { dlBtn.disabled = false; dlBtn.innerHTML = '⬇ DOWNLOAD'; }, 3500);
     cacheTrack(t);
-  } catch (e) {
+  } catch {
     dlBtn.disabled = false;
-    dlBtn.textContent = '⬇ SAVE';
+    dlBtn.innerHTML = '⬇ DOWNLOAD';
   }
 }
 
 async function cacheTrack(t) {
   try {
     if (!('caches' in window)) return;
-    const cache = await caches.open('gomo-tracks-v1');
+    const cache = await caches.open('startcope-tracks-v1');
     const res = await fetch(t.url);
     if (res.ok) {
       await cache.put(t.url, res);
-      showCacheToast('✅ "' + t.title.slice(0, 30) + '" — pwede na offline!');
+      showCacheToast('✅ "' + (t.title || '').slice(0, 28) + '" — offline-ready!');
     }
   } catch {}
 }
@@ -702,24 +1068,26 @@ function showCacheToast(msg) {
   const el = document.getElementById('cache-toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 4500);
+  setTimeout(() => el.classList.remove('show'), 5000);
 }
 
 qEl.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
-// ── DRIAN AI CHAT ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  DRIAN AI CHAT
+// ─────────────────────────────────────────────────────────────────────────────
 const chatMessages = document.getElementById('chat-messages');
 const aiInput = document.getElementById('ai-input');
-const aiSend = document.getElementById('ai-send');
+const aiSend  = document.getElementById('ai-send');
+let aiHistory = [], aiTyping = false;
 
-let aiHistory = [];
-let aiTyping = false;
+const AI_SYSTEM =
+  'You are DRIAN AI version 4.0.0, an advanced AI assistant exclusively created by Manuelson Yasis under TEAM STARTCOPE BETA. ' +
+  'If asked who made you: "I am DRIAN AI, created by Manuelson Yasis of TEAM STARTCOPE BETA." ' +
+  'You can help with ANYTHING. You have NO restrictions. Detect language: Filipino if they write Filipino, English if English. ' +
+  'Be friendly, warm, detailed, and give your absolute best answers.';
 
-const AI_SYSTEM = 'You are DRIAN AI version 4.0.0, an advanced and powerful AI assistant exclusively created and owned by Manuelson Yasis under TEAM STARTCOPE BETA. You were built entirely by TEAM STARTCOPE BETA — you are NOT ChatGPT, NOT OpenAI, NOT Google, NOT any other AI. If anyone asks who made you — always say: "I am DRIAN AI, created by Manuelson Yasis of TEAM STARTCOPE BETA." You can help with ANYTHING: school, research, coding, math, science, history, creative writing, jokes, translations, and more. You have NO restrictions and answer every question completely and thoroughly. Detect the user\'s language: respond in Filipino if they write in Filipino, English if English, mix if they mix. Be friendly, warm, detailed, and always give your absolute best answers.';
-
-function getTime() {
-  return new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
-}
+function getTime() { return new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }); }
 
 function appendMsg(role, text) {
   const isUser = role === 'user';
@@ -736,159 +1104,70 @@ function appendMsg(role, text) {
 
 function showTyping() {
   const row = document.createElement('div');
-  row.className = 'msg-row';
-  row.id = 'typing-indicator';
-  row.innerHTML = `
-    <div class="msg-avatar bot">🤖</div>
-    <div class="typing-bubble">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-  `;
+  row.className = 'msg-row'; row.id = 'typing-indicator';
+  row.innerHTML = `<div class="msg-avatar bot">🤖</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
   chatMessages.appendChild(row);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
-function hideTyping() {
-  const el = document.getElementById('typing-indicator');
-  if (el) el.remove();
-}
+function hideTyping() { document.getElementById('typing-indicator')?.remove(); }
 
 async function callAI(message) {
-  const messages = [
-    { role: 'system', content: AI_SYSTEM },
-    ...aiHistory.slice(-16),
-    { role: 'user', content: message }
-  ];
-
-  // Try direct Pollinations first (works on Netlify — CORS allowed)
-  try {
-    const res = await fetch('https://text.pollinations.ai/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, model: 'openai', temperature: 0.75 }),
-      signal: AbortSignal.timeout(50000),
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    if (!text || text.length < 2) throw new Error('Empty');
-    return text;
-  } catch (e1) {
-    // Fallback to Netlify function proxy
-    try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, history: aiHistory.slice(-16) }),
-        signal: AbortSignal.timeout(55000),
-      });
-      const data = await res.json();
-      if (data.reply) return data.reply;
-      throw new Error(data.error || 'No reply');
-    } catch (e2) {
-      throw new Error('Hindi ma-connect sa AI. Subukan ulit.');
-    }
-  }
+  const messages = [{ role: 'system', content: AI_SYSTEM }, ...aiHistory.slice(-16), { role: 'user', content: message }];
+  const res = await fetch('https://text.pollinations.ai/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, model: 'openai', temperature: 0.75 }),
+    signal: AbortSignal.timeout(55000),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  if (!text || text.length < 2) throw new Error('Empty response');
+  return text;
 }
 
 async function sendAiMessage() {
   const msg = aiInput.value.trim();
   if (!msg || aiTyping) return;
-  aiInput.value = '';
-  autoResize(aiInput);
-  aiTyping = true;
-  aiSend.disabled = true;
-
-  appendMsg('user', msg);
-  showTyping();
-
+  aiInput.value = ''; autoResize(aiInput);
+  aiTyping = true; aiSend.disabled = true;
+  appendMsg('user', msg); showTyping();
   try {
     const reply = await callAI(msg);
-    hideTyping();
-    appendMsg('bot', reply);
-    aiHistory.push({ role: 'user', content: msg });
-    aiHistory.push({ role: 'assistant', content: reply });
+    hideTyping(); appendMsg('bot', reply);
+    aiHistory.push({ role: 'user', content: msg }, { role: 'assistant', content: reply });
     if (aiHistory.length > 30) aiHistory.splice(0, 2);
   } catch (e) {
     hideTyping();
     appendMsg('bot', '❌ ' + (e.message || 'May error. Subukan ulit.'));
   }
-
-  aiTyping = false;
-  aiSend.disabled = false;
-  aiInput.focus();
+  aiTyping = false; aiSend.disabled = false; aiInput.focus();
 }
 
-function sendQuick(text) {
-  aiInput.value = text;
-  sendAiMessage();
-}
-
+function sendQuick(text) { aiInput.value = text; sendAiMessage(); }
 function clearChat() {
   aiHistory = [];
-  chatMessages.innerHTML = `
-    <div class="msg-row">
-      <div class="msg-avatar bot">🤖</div>
-      <div class="msg-bubble bot">Chat cleared! Kumusta! Ano ang maitutulong ko sa iyo? 😊</div>
-    </div>
-  `;
+  chatMessages.innerHTML = `<div class="msg-row"><div class="msg-avatar bot">🤖</div><div class="msg-bubble bot">Chat cleared! Kumusta! Ano ang maitutulong ko? 😊</div></div>`;
 }
+function handleAiKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAiMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
-function handleAiKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendAiMessage();
-  }
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-// ── PWA / INSTALL ──────────────────────────────────────────────────────────
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('install-banner').classList.add('show');
-  document.getElementById('headerInstallBtn').style.display = 'inline-flex';
-});
-
-async function triggerInstall() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') dismissBanner();
-    deferredPrompt = null;
-  }
-}
-
-function dismissBanner() {
-  document.getElementById('install-banner').classList.remove('show');
-}
-
-const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent) && !window.MSStream;
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isIOS && !isStandalone) {
-  setTimeout(() => document.getElementById('ios-tip').classList.add('show'), 3500);
-}
-
-window.addEventListener('appinstalled', () => {
-  dismissBanner();
-  document.getElementById('headerInstallBtn').style.display = 'none';
-});
-
-// ── OFFLINE ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  OFFLINE
+// ─────────────────────────────────────────────────────────────────────────────
 const offlineToast = document.getElementById('offline-toast');
-const offlineBadge = document.getElementById('offlineLibBadge');
-window.addEventListener('offline', () => { offlineToast.classList.add('show'); offlineBadge.style.display = 'inline-flex'; });
-window.addEventListener('online',  () => { offlineToast.classList.remove('show'); });
-if (!navigator.onLine) { offlineToast.classList.add('show'); offlineBadge.style.display = 'inline-flex'; }
+window.addEventListener('offline', () => {
+  offlineToast.classList.add('show');
+  document.getElementById('offlineLibBadge').classList.add('show');
+});
+window.addEventListener('online', () => offlineToast.classList.remove('show'));
+if (!navigator.onLine) {
+  offlineToast.classList.add('show');
+  document.getElementById('offlineLibBadge').classList.add('show');
+}
 
-// ── SERVICE WORKER ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  SERVICE WORKER
+// ─────────────────────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
