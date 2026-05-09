@@ -1,17 +1,19 @@
-const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
-const bold = require('../../utils/bold');
+'use strict';
+const axios  = require('axios');
+const fs     = require('fs-extra');
+const path   = require('path');
+const { exec } = require('child_process');
+const bold   = require('../../utils/bold');
 
 const AI_NAME  = "DRIAN AI";
-const VERSION  = "3.0.0";
+const VERSION  = "4.0.0";
 const CREATOR  = "Manuelson Yasis";
 const TEAM     = "TEAM STARTCOPE BETA";
 const POWERED  = "POWERED BY TEAM STARTCOPE BETA";
 const TEMP_DIR = path.join(process.cwd(), 'utils/data/drian_temp');
 fs.ensureDirSync(TEMP_DIR);
 
-// ── System prompt: ALWAYS STARTCOPE BETA, NEVER ChatGPT ──────────────────────
+// ── System prompt ─────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT =
   `You are DRIAN AI version ${VERSION}, an advanced and powerful AI assistant exclusively created and owned by ${CREATOR} under ${TEAM}.\n` +
   `You were built entirely by ${TEAM} — you are NOT ChatGPT, NOT OpenAI, NOT Google Gemini, NOT Claude, NOT any other AI.\n` +
@@ -25,7 +27,6 @@ const SYSTEM_PROMPT =
 
 const history = new Map();
 
-// ── Beautiful header/footer ───────────────────────────────────────────────────
 function makeHeader() {
   return (
     `╔══════════════════════════════════╗\n` +
@@ -55,9 +56,7 @@ async function pollinate(messages, temperature = 0.75) {
       if (!text || text.length < 2) throw new Error('Empty response from AI');
       return text;
     } catch (e) {
-      const is429    = e.response?.status === 429;
-      const isTimeout = e.code === 'ECONNABORTED' || e.message?.includes('timeout');
-      if ((is429 || isTimeout) && i < 3) {
+      if ((e.response?.status === 429 || e.code === 'ECONNABORTED' || e.message?.includes('timeout')) && i < 3) {
         await new Promise(r => setTimeout(r, (i + 1) * 4000 + Math.random() * 2000));
         continue;
       }
@@ -71,7 +70,7 @@ async function chat(msg, threadID) {
   h.push({ role: 'user', content: msg });
   const reply = await pollinate([{ role: 'system', content: SYSTEM_PROMPT }, ...h], 0.75);
   h.push({ role: 'assistant', content: reply });
-  if (h.length > 20) h.splice(0, 2); // keep last 10 exchanges
+  if (h.length > 20) h.splice(0, 2);
   history.set(threadID, h);
   return reply;
 }
@@ -91,9 +90,7 @@ async function analyzeImage(imageUrl, prompt) {
       if (!result) throw new Error('Empty vision response');
       return result;
     } catch (e) {
-      const is429    = e.response?.status === 429;
-      const isTimeout = e.code === 'ECONNABORTED' || e.message?.includes('timeout');
-      if ((is429 || isTimeout) && i < 3) {
+      if ((e.response?.status === 429 || e.code === 'ECONNABORTED' || e.message?.includes('timeout')) && i < 3) {
         await new Promise(r => setTimeout(r, (i + 1) * 4000 + Math.random() * 2000));
         continue;
       }
@@ -119,42 +116,87 @@ async function genImage(prompt) {
   }
 }
 
-// ── Male Voice Message (msedge-tts, free) ─────────────────────────────────────
+// ── Clean text for TTS ────────────────────────────────────────────────────────
+function cleanForTTS(text) {
+  return [...text].map(c => {
+    const cp = c.codePointAt(0);
+    if (!cp) return '';
+    if (cp >= 0x1D400 && cp <= 0x1D419) return String.fromCharCode(cp - 0x1D400 + 65);
+    if (cp >= 0x1D41A && cp <= 0x1D433) return String.fromCharCode(cp - 0x1D41A + 97);
+    if (cp >= 0x1D7EC && cp <= 0x1D7F5) return String.fromCharCode(cp - 0x1D7EC + 48);
+    if (cp > 127) return ' ';
+    return c;
+  }).join('').replace(/\s+/g, ' ').trim().slice(0, 500);
+}
+
+function runCmd(cmd) {
+  return new Promise((resolve, reject) =>
+    exec(cmd, { maxBuffer: 1024 * 1024 * 30, timeout: 60000 }, (err, so, se) =>
+      err ? reject(new Error(se?.slice(0, 200) || err.message)) : resolve()
+    )
+  );
+}
+
+// ── Female Radio DJ Voice (DJ Jasmine style — Easy Rock 96.9) ────────────────
+// Voice: en-US-JennyNeural — warm, smooth, professional female radio voice
+// + soft Fmaj7 ambient radio bed behind the voice
 async function generateVoice(text) {
   try {
     const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
-    const tts  = new MsEdgeTTS();
-    // en-US-GuyNeural = natural male voice
-    await tts.setMetadata('en-US-GuyNeural', OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata('en-US-JennyNeural', OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
 
-    // Clean text for TTS — convert unicode bold letters back to ASCII, strip emojis
-    const clean = [...text].map(c => {
-      const cp = c.codePointAt(0);
-      if (!cp) return '';
-      // Unicode bold uppercase A-Z (𝗔-𝗭)
-      if (cp >= 0x1D400 && cp <= 0x1D419) return String.fromCharCode(cp - 0x1D400 + 65);
-      // Unicode bold lowercase a-z (𝗮-𝘇)
-      if (cp >= 0x1D41A && cp <= 0x1D433) return String.fromCharCode(cp - 0x1D41A + 97);
-      // Unicode bold digits 0-9 (𝟬-𝟵)
-      if (cp >= 0x1D7EC && cp <= 0x1D7F5) return String.fromCharCode(cp - 0x1D7EC + 48);
-      // Emoji / non-ASCII — replace with space
-      if (cp > 127) return ' ';
-      return c;
-    }).join('').replace(/\s+/g, ' ').trim().slice(0, 450);
-
+    const clean = cleanForTTS(text);
     if (!clean || clean.length < 3) return null;
 
-    const fp = path.join(TEMP_DIR, `drian_voice_${Date.now()}.mp3`);
-    const { audioStream } = await tts.toStream(clean);
+    const ts       = Date.now();
+    const voiceRaw = path.join(TEMP_DIR, `dr_raw_${ts}.mp3`);
+    const bgPath   = path.join(TEMP_DIR, `dr_bg_${ts}.mp3`);
+    const outPath  = path.join(TEMP_DIR, `dr_out_${ts}.mp3`);
+
+    // Step 1: Generate female DJ voice
+    const { audioStream } = await tts.toStream(clean, { rate: '-6%', pitch: '+12Hz' });
     await new Promise((resolve, reject) => {
-      const ws = require('fs').createWriteStream(fp);
+      const ws = require('fs').createWriteStream(voiceRaw);
       audioStream.pipe(ws);
       ws.on('finish', resolve);
       ws.on('error', reject);
     });
-    return fp;
+
+    if (!fs.existsSync(voiceRaw) || fs.statSync(voiceRaw).size < 500) return null;
+
+    // Step 2: Generate soft radio ambient pad (Fmaj7: F3+A3+C4+E4 with echo/reverb)
+    // Sounds like a soft, warm background music bed — typical of Easy Rock radio stations
+    const bgCmd = [
+      'ffmpeg -y',
+      '-f lavfi -i "aevalsrc=(0.14*sin(2*PI*174.6*t)+0.11*sin(2*PI*220.0*t)+0.09*sin(2*PI*261.6*t)+0.07*sin(2*PI*329.6*t)+0.05*sin(2*PI*349.2*t))*exp(-t*0.04):s=44100:d=180"',
+      '-filter_complex "[0:a]aecho=0.85:0.75:200|400:0.45|0.25,equalizer=f=3000:width_type=o:width=2:g=-3,afade=t=in:st=0:d=2,afade=t=out:st=175:d=5,volume=0.65[out]"',
+      '-map "[out]"',
+      '-ar 44100 -ac 2 -b:a 64k',
+      `"${bgPath}"`,
+    ].join(' ');
+    await runCmd(bgCmd);
+
+    // Step 3: Mix voice (loud) + radio bed (soft)
+    const mixCmd = [
+      'ffmpeg -y',
+      `-i "${voiceRaw}"`,
+      `-i "${bgPath}"`,
+      '-filter_complex "[0:a]volume=1.95,equalizer=f=200:width_type=o:width=2:g=2[v];[1:a]volume=0.18[b];[v][b]amix=inputs=2:duration=first[out]"',
+      '-map "[out]"',
+      '-ar 44100 -ac 2 -b:a 128k',
+      `"${outPath}"`,
+    ].join(' ');
+    await runCmd(mixCmd);
+
+    setTimeout(() => {
+      fs.remove(voiceRaw).catch(() => {});
+      fs.remove(bgPath).catch(() => {});
+    }, 30000);
+
+    return fs.existsSync(outPath) && fs.statSync(outPath).size > 1000 ? outPath : null;
   } catch (e) {
-    console.error('[Drian Voice]', e.message?.slice(0, 80));
+    console.error('[Drian Voice]', e.message?.slice(0, 100));
     return null;
   }
 }
@@ -168,19 +210,17 @@ function pushReply(info, senderID, threadID, extra = {}) {
 
 // ── Send text + voice together ────────────────────────────────────────────────
 async function sendWithVoice(api, textBody, threadID, senderID, extra = {}) {
-  // Send text first (fast)
   api.sendMessage(
     { body: textBody },
     threadID,
     (err, info) => pushReply(info, senderID, threadID, extra)
   );
 
-  // Generate and send voice in background (non-blocking)
   generateVoice(textBody).then(voiceFp => {
     if (!voiceFp) return;
     api.sendMessage(
       {
-        body: `🎙️ ${bold('DRIAN AI')} — ${bold('Voice Message')} 🔊`,
+        body: `🎙️ ${bold('DRIAN AI')} — ${bold('Voice Message')} 🔊\n📻 ${bold('DJ Jasmine Style · Easy Rock 96.9')}`,
         attachment: fs.createReadStream(voiceFp)
       },
       threadID,
@@ -195,7 +235,7 @@ module.exports.config = {
   version:         VERSION,
   hasPermssion:    0,
   credits:         `${CREATOR} | ${TEAM}`,
-  description:     `DRIAN AI v${VERSION} — Unlimited chat, image gen, image analysis + voice reply`,
+  description:     `DRIAN AI v${VERSION} — Unlimited chat, image gen, image analysis + female radio DJ voice`,
   commandCategory: 'AI',
   usages:          '[tanong] | imagine [prompt] | analyze [tanong]+photo | reset',
   cooldowns:       3
@@ -207,7 +247,6 @@ module.exports.run = async function ({ api, event, args }) {
   const photos = (event.attachments || []).filter(a => ['photo', 'sticker'].includes(a.type));
   const sub    = args[0]?.toLowerCase();
 
-  // ── Help menu ───────────────────────────────────────────────────────────────
   if (!args.length && !photos.length) {
     return api.sendMessage(
       `╔══════════════════════════════════╗\n` +
@@ -216,7 +255,9 @@ module.exports.run = async function ({ api, event, args }) {
       `║  ⚡ ${bold(POWERED)} ║\n` +
       `╚══════════════════════════════════╝\n\n` +
       `✨ ${bold('Libre! Walang Limit! Kaya LAHAT!')}\n` +
-      `🎙️ ${bold('May kasama pang VOICE MESSAGE sa bawat reply!')}\n\n` +
+      `🎙️ ${bold('BAGONG BOSES!')}\n` +
+      `📻 ${bold('DJ Jasmine style · Easy Rock 96.9')}\n` +
+      `🎵 ${bold('May kasama pang radio music bed!')}\n\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
       `📋 ${bold('MGA COMMANDS:')}\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -237,7 +278,6 @@ module.exports.run = async function ({ api, event, args }) {
     );
   }
 
-  // ── Reset ───────────────────────────────────────────────────────────────────
   if (sub === 'reset') {
     history.delete(threadID);
     return api.sendMessage(
@@ -251,7 +291,6 @@ module.exports.run = async function ({ api, event, args }) {
     );
   }
 
-  // ── Image generation ────────────────────────────────────────────────────────
   if (['imagine', 'gen', 'generate'].includes(sub)) {
     const prompt = args.slice(1).join(' ').trim();
     if (!prompt) return api.sendMessage(
@@ -275,17 +314,13 @@ module.exports.run = async function ({ api, event, args }) {
       }, threadID, (err, info) => { cleanup(fp); pushReply(info, senderID, threadID, { type: 'image', prompt }); });
     } catch (e) {
       api.setMessageReaction('❌', messageID, () => {}, true);
-      return api.sendMessage(
-        `❌ ${bold('Hindi ma-generate ang image.')}\n🔧 ${e.message}`, threadID, messageID
-      );
+      return api.sendMessage(`❌ ${bold('Hindi ma-generate ang image.')}\n🔧 ${e.message}`, threadID, messageID);
     }
   }
 
-  // ── Image analysis ──────────────────────────────────────────────────────────
   if (photos.length) {
     const imageUrl = photos[0].url || photos[0].previewUrl;
-    const question = (sub === 'analyze' ? args.slice(1) : args).join(' ').trim()
-      || 'Describe this image in full detail.';
+    const question = (sub === 'analyze' ? args.slice(1) : args).join(' ').trim() || 'Describe this image in full detail.';
     api.setMessageReaction('🔍', messageID, () => {}, true);
     try {
       const result = await analyzeImage(imageUrl, question);
@@ -298,13 +333,11 @@ module.exports.run = async function ({ api, event, args }) {
     } catch (e) {
       api.setMessageReaction('❌', messageID, () => {}, true);
       return api.sendMessage(
-        `❌ ${bold('Hindi masuri ang image.')}\n💡 Subukan ulit mamaya.\n🔧 ${e.message}`,
-        threadID, messageID
+        `❌ ${bold('Hindi masuri ang image.')}\n💡 Subukan ulit mamaya.\n🔧 ${e.message}`, threadID, messageID
       );
     }
   }
 
-  // ── Chat ────────────────────────────────────────────────────────────────────
   const question = args.join(' ').trim();
   api.setMessageReaction('⏳', messageID, () => {}, true);
   try {
@@ -328,11 +361,10 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
   const { threadID, messageID, senderID, body } = event;
   if (!body?.trim()) return;
 
-  const low      = body.toLowerCase().trim();
-  const isEdit   = /^edit\s+\S/.test(low);
+  const low       = body.toLowerCase().trim();
+  const isEdit    = /^edit\s+\S/.test(low);
   const isImagine = /^(imagine|gen)\s+\S/.test(low);
 
-  // ── Edit image ──────────────────────────────────────────────────────────────
   if (isEdit) {
     const editPrompt = body.replace(/^edit\s+/i, '').trim();
     api.setMessageReaction('✏️', messageID, () => {}, true);
@@ -358,7 +390,6 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
     }
   }
 
-  // ── New image from reply ────────────────────────────────────────────────────
   if (isImagine) {
     const prompt = body.replace(/^(imagine|gen)\s+/i, '').trim();
     api.setMessageReaction('🎨', messageID, () => {}, true);
@@ -382,7 +413,6 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
     }
   }
 
-  // ── Follow-up chat with voice ───────────────────────────────────────────────
   api.setMessageReaction('⏳', messageID, () => {}, true);
   try {
     const answer = await chat(body.trim(), threadID);

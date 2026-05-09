@@ -3,692 +3,483 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>GOMO — Free Song Download</title>
-
-  <!-- ── PWA / Web App Install ─────────────────────────── -->
+  <title>GOMO — Free Music + DRIAN AI</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#00e676" />
   <meta name="mobile-web-app-capable" content="yes" />
-
-  <!-- ── Apple iOS (Add to Home Screen) ───────────────── -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="GOMO" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
-
-  <!-- ── Windows / MS Tile ─────────────────────────────── -->
-  <meta name="msapplication-TileColor" content="#00e676" />
-  <meta name="msapplication-TileImage" content="/icon-144.png" />
-
-  <!-- ── SEO / Share ───────────────────────────────────── -->
-  <meta name="description" content="GOMO — Libreng music search, play at download app. GOMO App v1.0 by TEAM STARTCOPE BETA." />
-  <meta property="og:title" content="GOMO Song Download Free" />
-  <meta property="og:description" content="Libre! Search, play at i-download ang iyong paboritong kanta." />
+  <meta name="description" content="GOMO — Free music download + DRIAN AI chat. Powered by TEAM STARTCOPE BETA." />
+  <meta property="og:title" content="GOMO + DRIAN AI — Free Music & AI Chat" />
+  <meta property="og:description" content="Libre! Music search, play, download + DRIAN AI chatbot. By TEAM STARTCOPE BETA." />
   <meta property="og:image" content="/icon-512.png" />
-  <meta property="og:type" content="website" />
-
   <link rel="icon" href="/icon-192.png" type="image/png" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
     :root {
-      --primary: #00e676;
-      --primary-dark: #00c853;
-      --primary-glow: rgba(0,230,118,0.18);
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --surface2: #1e1e1e;
-      --surface3: #272727;
-      --border: rgba(255,255,255,0.07);
+      --g: #00e676;
+      --gd: #00c853;
+      --gg: rgba(0,230,118,.15);
+      --gg2: rgba(0,230,118,.08);
+      --p: #7c3aed;
+      --pd: #6d28d9;
+      --pg: rgba(124,58,237,.15);
+      --bg: #080810;
+      --s1: #10101c;
+      --s2: #181826;
+      --s3: #20202e;
+      --border: rgba(255,255,255,.07);
       --text: #f0f0f0;
-      --sub: #888;
-      --radius: 12px;
-      --radius-lg: 20px;
+      --sub: #777;
+      --r: 12px;
+      --rl: 20px;
     }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      padding-bottom: 100px;
-    }
-
-    /* ── HEADER ───────────────────────────────────── */
-    header {
-      position: relative;
-      padding: 48px 20px 72px;
-      text-align: center;
-      overflow: hidden;
-    }
-    header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+    /* ── ANIMATED BG ── */
+    body::before{
+      content:'';position:fixed;inset:0;
       background:
-        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0,230,118,0.22) 0%, transparent 70%),
-        linear-gradient(180deg, #0e1f14 0%, var(--bg) 100%);
-    }
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 50px;
-      background: linear-gradient(to bottom, transparent, var(--bg));
-    }
-    .header-inner { position: relative; z-index: 2; }
-
-    .brand-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      margin-bottom: 10px;
-    }
-    .brand-icon {
-      width: 54px; height: 54px;
-      background: var(--primary);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      box-shadow: 0 0 28px rgba(0,230,118,0.5);
-    }
-    .brand-name {
-      font-size: 52px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, #00e676 0%, #69f0ae 60%, #b9f6ca 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
-    .brand-sub {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-    .brand-badges {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .badge {
-      background: rgba(0,230,118,0.1);
-      border: 1px solid rgba(0,230,118,0.3);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--primary);
-      letter-spacing: 1px;
-    }
-    .badge-grey {
-      background: rgba(255,255,255,0.06);
-      border-color: var(--border);
-      color: var(--sub);
+        radial-gradient(ellipse 80% 50% at 20% 10%,rgba(0,230,118,.07) 0%,transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%,rgba(124,58,237,.06) 0%,transparent 60%);
+      pointer-events:none;z-index:0;
     }
 
-    /* ── SEARCH ───────────────────────────────────── */
-    .search-section {
-      max-width: 680px;
-      margin: -30px auto 40px;
-      padding: 0 20px;
-      position: relative;
-      z-index: 10;
+    /* ── HEADER ── */
+    header{
+      position:relative;padding:36px 20px 56px;text-align:center;overflow:hidden;
     }
-    .search-box {
-      display: flex;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 50px;
-      overflow: hidden;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 0 transparent;
-      transition: box-shadow 0.2s, border-color 0.2s;
+    header::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 80% 70% at 50% 0%,rgba(0,230,118,.18) 0%,transparent 65%),
+        linear-gradient(180deg,#0c1a10 0%,var(--bg) 100%);
     }
-    .search-box:focus-within {
-      border-color: rgba(0,230,118,0.5);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 3px var(--primary-glow);
+    header::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:48px;
+      background:linear-gradient(to bottom,transparent,var(--bg));
     }
-    .search-box input {
-      flex: 1;
-      padding: 18px 24px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      font-family: inherit;
-      color: var(--text);
-      background: transparent;
-    }
-    .search-box input::placeholder { color: var(--sub); }
-    .search-btn {
-      padding: 0 28px;
-      background: var(--primary);
-      border: none;
-      color: #000;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: background 0.2s, transform 0.1s;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .search-btn:hover  { background: #1aff82; }
-    .search-btn:active { transform: scale(0.97); }
-    .search-btn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; transform: none; }
+    .h-inner{position:relative;z-index:2}
 
-    /* ── RESULTS ──────────────────────────────────── */
-    .results-section {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .brand-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px}
+    .brand-icon{
+      width:56px;height:56px;border-radius:18px;
+      background:linear-gradient(135deg,var(--g),var(--gd));
+      display:flex;align-items:center;justify-content:center;font-size:28px;
+      box-shadow:0 0 32px rgba(0,230,118,.45),0 4px 20px rgba(0,0,0,.4);
     }
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
+    .brand-name{
+      font-size:54px;font-weight:900;letter-spacing:-2px;
+      background:linear-gradient(135deg,#00e676 0%,#69f0ae 50%,#b9f6ca 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      line-height:1;
     }
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: var(--sub);
-      text-transform: uppercase;
+    .brand-sub{font-size:11px;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:16px}
+    .brand-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+    .badge{
+      background:var(--gg2);border:1px solid rgba(0,230,118,.25);border-radius:20px;
+      padding:4px 14px;font-size:11px;font-weight:600;color:var(--g);letter-spacing:.8px;
     }
-    .section-count {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--primary);
-      background: var(--primary-glow);
-      border-radius: 20px;
-      padding: 3px 10px;
-    }
+    .badge-grey{background:rgba(255,255,255,.05);border-color:var(--border);color:var(--sub)}
+    .badge-purple{background:var(--pg);border-color:rgba(124,58,237,.3);color:#a78bfa}
+    .badge-install{background:var(--g);color:#000;border-color:var(--g);cursor:pointer;font-weight:800;transition:all .15s}
+    .badge-install:hover{background:#1aff82;transform:scale(1.06)}
+    .badge-offline{background:rgba(255,68,68,.12);color:#ff6060;border-color:rgba(255,68,68,.25);cursor:pointer;text-decoration:none}
 
-    .track-list { display: flex; flex-direction: column; gap: 4px; }
+    /* ── TABS ── */
+    .tabs{
+      display:flex;gap:0;max-width:560px;margin:-28px auto 0;
+      background:var(--s1);border:1px solid var(--border);border-radius:50px;overflow:hidden;
+      position:relative;z-index:10;padding:4px;
+    }
+    .tab-btn{
+      flex:1;padding:11px 20px;border:none;border-radius:46px;
+      background:transparent;color:var(--sub);font-size:13px;font-weight:700;
+      cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.5px;
+      display:flex;align-items:center;justify-content:center;gap:7px;
+    }
+    .tab-btn.active{background:var(--g);color:#000}
+    .tab-btn.active.ai-tab{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff}
+    .tab-btn:not(.active):hover{background:rgba(255,255,255,.06);color:var(--text)}
 
-    .track-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
-      cursor: default;
-    }
-    .track-card:hover {
-      background: var(--surface2);
-      border-color: rgba(0,230,118,0.15);
-    }
-    .track-card.playing {
-      background: var(--surface2);
-      border-color: rgba(0,230,118,0.4);
-      box-shadow: 0 0 0 1px rgba(0,230,118,0.15) inset;
-    }
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
 
-    .track-num {
-      width: 22px;
-      text-align: center;
-      color: var(--sub);
-      font-size: 13px;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
-    .track-card.playing .track-num { color: var(--primary); }
+    /* ── MUSIC SECTION ── */
+    .music-wrap{max-width:700px;margin:0 auto;padding:30px 20px 120px}
 
-    .track-thumb {
-      width: 50px; height: 50px;
-      border-radius: 8px;
-      object-fit: cover;
-      flex-shrink: 0;
-      background: var(--surface3);
+    .search-box{
+      display:flex;background:var(--s1);border:1.5px solid var(--border);border-radius:50px;
+      overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);transition:all .2s;margin-bottom:28px;
     }
-    .thumb-placeholder {
-      width: 50px; height: 50px;
-      border-radius: 8px;
-      background: var(--surface3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
+    .search-box:focus-within{border-color:rgba(0,230,118,.5);box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 3px var(--gg)}
+    .search-box input{
+      flex:1;padding:17px 22px;border:none;outline:none;font-size:15px;
+      font-family:inherit;color:var(--text);background:transparent;
     }
+    .search-box input::placeholder{color:var(--sub)}
+    .search-btn{
+      padding:0 26px;background:var(--g);border:none;color:#000;font-size:12px;
+      font-weight:800;cursor:pointer;letter-spacing:1px;transition:all .15s;font-family:inherit;white-space:nowrap;
+    }
+    .search-btn:hover{background:#1aff82}
+    .search-btn:active{transform:scale(.97)}
+    .search-btn:disabled{background:#222;color:#444;cursor:not-allowed;transform:none}
 
-    .track-info { flex: 1; min-width: 0; }
-    .track-title {
-      font-size: 14px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 3px;
-    }
-    .track-card.playing .track-title { color: var(--primary); }
-    .track-artist {
-      font-size: 12px;
-      color: var(--sub);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .sec-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--sub);text-transform:uppercase}
+    .sec-count{font-size:11px;font-weight:600;color:var(--g);background:var(--gg);border-radius:20px;padding:3px 10px}
 
-    .track-dur {
-      color: var(--sub);
-      font-size: 12px;
-      font-weight: 500;
-      flex-shrink: 0;
-      min-width: 40px;
-      text-align: right;
+    .track-list{display:flex;flex-direction:column;gap:4px}
+    .track-card{
+      background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+      padding:11px 15px;display:flex;align-items:center;gap:13px;
+      transition:all .15s;cursor:default;
     }
+    .track-card:hover{background:var(--s2);border-color:rgba(0,230,118,.12)}
+    .track-card.playing{background:var(--s2);border-color:rgba(0,230,118,.4);box-shadow:0 0 0 1px rgba(0,230,118,.12) inset}
+    .track-num{width:20px;text-align:center;color:var(--sub);font-size:12px;font-weight:500;flex-shrink:0}
+    .track-card.playing .track-num{color:var(--g)}
+    .track-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--s3)}
+    .thumb-ph{width:48px;height:48px;border-radius:8px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .track-info{flex:1;min-width:0}
+    .track-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+    .track-card.playing .track-title{color:var(--g)}
+    .track-artist{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .track-dur{color:var(--sub);font-size:11px;font-weight:500;flex-shrink:0;min-width:36px;text-align:right}
+    .track-actions{display:flex;gap:6px;flex-shrink:0}
+    .btn-play{
+      width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(0,230,118,.35);
+      background:transparent;color:var(--g);font-size:13px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;
+    }
+    .btn-play:hover,.track-card.playing .btn-play{background:var(--g);color:#000;border-color:var(--g)}
+    .btn-dl{
+      padding:7px 14px;background:var(--g);border:none;border-radius:20px;color:#000;
+      font-size:10px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .15s;
+      font-family:inherit;display:flex;align-items:center;gap:4px;
+    }
+    .btn-dl:hover{background:#1aff82;transform:translateY(-1px)}
+    .btn-dl:active{transform:translateY(0)}
+    .btn-dl:disabled{background:var(--s3);color:var(--sub);cursor:not-allowed;transform:none}
 
-    .track-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .state{text-align:center;padding:60px 20px;color:var(--sub)}
+    .state-icon{font-size:52px;margin-bottom:14px}
+    .state-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
+    .state-sub{font-size:13px;color:var(--sub);line-height:1.6}
+    .spinner{width:36px;height:36px;border:3px solid var(--s3);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .btn-play {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(0,230,118,0.4);
-      background: transparent;
-      color: var(--primary);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-      flex-shrink: 0;
+    /* ── NOW PLAYING BAR ── */
+    #player-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      background:rgba(10,10,18,.97);backdrop-filter:blur(24px);
+      border-top:1px solid var(--border);padding:10px 18px;
+      display:none;align-items:center;gap:12px;z-index:100;
+      box-shadow:0 -8px 40px rgba(0,0,0,.6);
     }
-    .btn-play:hover { background: var(--primary); color: #000; border-color: var(--primary); }
-    .track-card.playing .btn-play { background: var(--primary); color: #000; border-color: var(--primary); }
+    #player-bar.visible{display:flex}
+    .player-thumb{width:42px;height:42px;border-radius:8px;object-fit:cover;background:var(--s3);flex-shrink:0}
+    .player-info{flex:1;min-width:0}
+    .player-title{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--g)}
+    .player-artist{font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .player-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .pc-btn{
+      width:36px;height:36px;border-radius:50%;border:none;
+      background:var(--s2);color:var(--text);font-size:13px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all .15s;
+    }
+    .pc-btn:hover{background:var(--s3)}
+    .pc-btn.primary-btn{background:var(--g);color:#000;width:42px;height:42px;font-size:15px}
+    .pc-btn.primary-btn:hover{background:#1aff82}
+    .player-progress-wrap{flex:1;display:flex;align-items:center;gap:7px;max-width:260px}
+    .player-time{font-size:10px;color:var(--sub);flex-shrink:0;min-width:32px}
+    .player-progress{flex:1;height:4px;background:var(--s3);border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
+    .player-progress-fill{height:100%;background:var(--g);border-radius:2px;width:0%;transition:width .5s linear}
+    .vol-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .vol-icon{font-size:13px;color:var(--sub);cursor:pointer}
+    #vol-slider{width:68px;accent-color:var(--g);cursor:pointer}
 
-    .btn-dl {
-      padding: 8px 16px;
-      background: var(--primary);
-      border: none;
-      border-radius: 20px;
-      color: #000;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: all 0.15s;
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    /* ── AI CHAT SECTION ── */
+    .ai-wrap{
+      max-width:700px;margin:0 auto;padding:28px 20px 100px;
+      display:flex;flex-direction:column;height:calc(100vh - 240px);min-height:400px;
     }
-    .btn-dl:hover  { background: #1aff82; transform: translateY(-1px); }
-    .btn-dl:active { transform: translateY(0); }
-    .btn-dl:disabled { background: var(--surface3); color: var(--sub); cursor: not-allowed; transform: none; }
+    .ai-header{
+      display:flex;align-items:center;gap:14px;
+      background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(124,58,237,.05));
+      border:1px solid rgba(124,58,237,.25);border-radius:var(--rl);
+      padding:16px 20px;margin-bottom:16px;
+    }
+    .ai-avatar{
+      width:52px;height:52px;border-radius:16px;flex-shrink:0;
+      background:linear-gradient(135deg,#7c3aed,#a855f7);
+      display:flex;align-items:center;justify-content:center;font-size:24px;
+      box-shadow:0 0 24px rgba(124,58,237,.5);
+    }
+    .ai-name{font-size:18px;font-weight:800;color:#a78bfa}
+    .ai-sub{font-size:11px;color:#7c6fa0;margin-top:2px;font-weight:500}
+    .ai-status{display:flex;align-items:center;gap:6px;margin-top:4px}
+    .ai-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse-g 2s ease-in-out infinite;flex-shrink:0}
+    @keyframes pulse-g{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+    .ai-online{font-size:10px;color:#10b981;font-weight:600}
 
-    /* ── STATES ───────────────────────────────────── */
-    .state { text-align: center; padding: 70px 20px; color: var(--sub); }
-    .state-icon { font-size: 56px; margin-bottom: 16px; }
-    .state-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .state-sub { font-size: 14px; color: var(--sub); }
+    #chat-messages{
+      flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+      padding:4px 0;scroll-behavior:smooth;
+    }
+    #chat-messages::-webkit-scrollbar{width:4px}
+    #chat-messages::-webkit-scrollbar-track{background:transparent}
+    #chat-messages::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
 
-    .spinner {
-      width: 38px; height: 38px;
-      border: 3px solid var(--surface3);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 16px;
+    .msg-row{display:flex;gap:10px;animation:msgIn .25s ease}
+    @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .msg-row.user{flex-direction:row-reverse}
+    .msg-avatar{
+      width:32px;height:32px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:14px;
+      align-self:flex-end;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .msg-avatar.bot{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+    .msg-avatar.user{background:linear-gradient(135deg,var(--g),var(--gd))}
+    .msg-bubble{
+      max-width:78%;padding:11px 15px;border-radius:18px;font-size:13.5px;
+      line-height:1.65;word-wrap:break-word;white-space:pre-wrap;
+    }
+    .msg-bubble.bot{
+      background:var(--s2);border:1px solid rgba(124,58,237,.2);
+      border-bottom-left-radius:4px;color:var(--text);
+    }
+    .msg-bubble.user{
+      background:linear-gradient(135deg,#7c3aed,#a855f7);
+      border-bottom-right-radius:4px;color:#fff;
+    }
+    .msg-time{font-size:10px;color:var(--sub);align-self:flex-end;flex-shrink:0;margin-bottom:2px}
 
-    /* ── NOW PLAYING BAR (mini player) ───────────────────────────────────────── */
-    #player-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(14,14,14,0.97);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      padding: 10px 20px;
-      display: none;
-      align-items: center;
-      gap: 14px;
-      z-index: 100;
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+    .typing-bubble{
+      display:flex;align-items:center;gap:4px;
+      background:var(--s2);border:1px solid rgba(124,58,237,.2);
+      padding:12px 16px;border-radius:18px;border-bottom-left-radius:4px;
+      width:56px;
     }
-    #player-bar.visible { display: flex; }
+    .typing-dot{width:7px;height:7px;border-radius:50%;background:#a78bfa;animation:blink 1.2s infinite}
+    .typing-dot:nth-child(2){animation-delay:.2s}
+    .typing-dot:nth-child(3){animation-delay:.4s}
+    @keyframes blink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 
-    .player-thumb {
-      width: 44px; height: 44px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: var(--surface3);
-      flex-shrink: 0;
+    .ai-input-area{
+      margin-top:12px;display:flex;gap:8px;align-items:flex-end;
     }
-    .player-info { flex: 1; min-width: 0; }
-    .player-title {
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--primary);
+    #ai-input{
+      flex:1;background:var(--s1);border:1.5px solid var(--border);border-radius:24px;
+      padding:13px 18px;color:var(--text);font-family:inherit;font-size:14px;
+      resize:none;outline:none;max-height:120px;min-height:48px;
+      transition:border-color .2s;line-height:1.5;
     }
-    .player-artist {
-      font-size: 11px;
-      color: var(--sub);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    #ai-input:focus{border-color:rgba(124,58,237,.5);box-shadow:0 0 0 3px var(--pg)}
+    #ai-input::placeholder{color:var(--sub)}
+    #ai-send{
+      width:46px;height:46px;border-radius:50%;border:none;flex-shrink:0;
+      background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;
+      font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:all .15s;box-shadow:0 4px 16px rgba(124,58,237,.4);
     }
+    #ai-send:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(124,58,237,.55)}
+    #ai-send:active{transform:scale(.95)}
+    #ai-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
-    .player-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .pc-btn {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: var(--surface2);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
+    .ai-quick-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+    .quick-btn{
+      padding:6px 14px;background:var(--s2);border:1px solid rgba(124,58,237,.2);
+      border-radius:20px;color:#a78bfa;font-size:11px;font-weight:600;cursor:pointer;
+      transition:all .15s;font-family:inherit;white-space:nowrap;
     }
-    .pc-btn:hover { background: var(--surface3); }
-    .pc-btn.primary-btn { background: var(--primary); color: #000; width: 44px; height: 44px; font-size: 16px; }
-    .pc-btn.primary-btn:hover { background: #1aff82; }
+    .quick-btn:hover{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4)}
 
-    .player-progress-wrap {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      max-width: 280px;
+    .ai-clear-btn{
+      background:none;border:1px solid var(--border);border-radius:20px;
+      padding:6px 14px;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;
+      transition:all .15s;
     }
-    .player-time { font-size: 11px; color: var(--sub); flex-shrink: 0; min-width: 34px; }
-    .player-progress {
-      flex: 1;
-      height: 4px;
-      background: var(--surface3);
-      border-radius: 2px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    .player-progress-fill {
-      height: 100%;
-      background: var(--primary);
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.5s linear;
-      pointer-events: none;
-    }
+    .ai-clear-btn:hover{border-color:#ff6060;color:#ff6060}
 
-    .vol-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .vol-icon { font-size: 14px; color: var(--sub); cursor: pointer; }
-    #vol-slider {
-      width: 72px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
+    /* ── FOOTER ── */
+    footer{text-align:center;padding:18px;color:#2a2a2a;font-size:10px;letter-spacing:1px;border-top:1px solid #0e0e0e;margin-bottom:10px}
+    footer span{color:var(--g)}
 
-    /* ── OFFLINE TOAST ────────────────────────────── */
-    #offline-toast {
-      position: fixed;
-      top: 16px; left: 50%; transform: translateX(-50%);
-      background: #1a0d0d;
-      border: 1.5px solid #ff4444;
-      border-radius: 28px;
-      padding: 12px 20px;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      z-index: 500;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.6);
-      white-space: nowrap;
-      animation: dropIn 0.3s ease;
+    /* ── TOASTS ── */
+    #offline-toast{
+      position:fixed;top:16px;left:50%;transform:translateX(-50%);
+      background:#1a0d0d;border:1.5px solid #ff4444;border-radius:28px;
+      padding:11px 18px;display:none;align-items:center;gap:9px;z-index:500;
+      box-shadow:0 4px 30px rgba(0,0,0,.6);white-space:nowrap;animation:dropIn .3s ease;
     }
-    #offline-toast.show { display: flex; }
-    @keyframes dropIn { from { opacity:0; transform: translateX(-50%) translateY(-12px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
-    .ot-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff4444; flex-shrink: 0; animation: pulse-red2 1.4s ease-in-out infinite; }
-    @keyframes pulse-red2 { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .ot-text { font-size: 12px; color: #f0f0f0; font-weight: 600; }
-    .ot-link {
-      padding: 5px 14px;
-      background: #ff4444;
-      border-radius: 20px;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 800;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .ot-link:hover { background: #ff6666; }
+    #offline-toast.show{display:flex}
+    @keyframes dropIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    .ot-dot{width:7px;height:7px;border-radius:50%;background:#ff4444;animation:pulse-r 1.4s ease-in-out infinite}
+    @keyframes pulse-r{0%,100%{opacity:1}50%{opacity:.3}}
+    .ot-text{font-size:12px;color:#f0f0f0;font-weight:600}
+    .ot-link{padding:5px 13px;background:#ff4444;border-radius:20px;color:#fff;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;transition:background .15s}
+    .ot-link:hover{background:#ff6666}
 
-    /* ── OFFLINE LIBRARY BADGE in header ─────────── */
-    .badge-offline {
-      background: rgba(255,68,68,0.15);
-      color: #ff4444;
-      border-color: rgba(255,68,68,0.3);
-      cursor: pointer;
-      text-decoration: none;
+    #cache-toast{
+      position:fixed;bottom:80px;right:16px;background:#0d1a10;border:1px solid var(--g);
+      border-radius:14px;padding:9px 14px;font-size:12px;color:var(--g);font-weight:600;
+      z-index:400;display:none;max-width:240px;box-shadow:0 4px 20px rgba(0,230,118,.2);animation:slideInR .3s ease;
     }
-    .badge-offline:hover { background: rgba(255,68,68,0.25); }
+    #cache-toast.show{display:block}
+    @keyframes slideInR{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
 
-    /* ── TRACK CACHED notification ───────────────── */
-    #cache-toast {
-      position: fixed;
-      bottom: 80px; right: 16px;
-      background: #0d1a10;
-      border: 1px solid var(--primary);
-      border-radius: 14px;
-      padding: 10px 16px;
-      font-size: 12px;
-      color: var(--primary);
-      font-weight: 600;
-      z-index: 400;
-      display: none;
-      max-width: 260px;
-      box-shadow: 0 4px 20px rgba(0,230,118,0.2);
-      animation: slideInRight 0.3s ease;
+    /* ── INSTALL BANNER ── */
+    #install-banner{
+      position:fixed;bottom:0;left:0;right:0;
+      background:linear-gradient(135deg,#0d2016,#0a1a0e);
+      border-top:2px solid var(--g);padding:13px 18px;
+      display:none;align-items:center;gap:13px;z-index:200;
+      box-shadow:0 -4px 30px rgba(0,230,118,.12);
     }
-    #cache-toast.show { display: block; }
-    @keyframes slideInRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+    #install-banner.show{display:flex}
+    .ib-icon{width:46px;height:46px;border-radius:12px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 14px rgba(0,230,118,.35)}
+    .ib-text{flex:1;min-width:0}
+    .ib-title{font-size:13px;font-weight:800;color:var(--g);margin-bottom:2px}
+    .ib-sub{font-size:10px;color:var(--sub)}
+    .ib-btn{padding:9px 18px;background:var(--g);border:none;border-radius:24px;color:#000;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;flex-shrink:0}
+    .ib-btn:hover{background:#1aff82;transform:scale(1.04)}
+    .ib-close{width:26px;height:26px;border-radius:50%;border:none;background:var(--s3);color:var(--sub);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+    .ib-close:hover{background:#333;color:#fff}
 
-    /* ── FOOTER ───────────────────────────────────── */
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #333;
-      font-size: 11px;
-      letter-spacing: 1px;
-      border-top: 1px solid #111;
-      margin-bottom: 10px;
+    #ios-tip{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+      background:rgba(16,16,26,.97);border:1px solid var(--g);border-radius:16px;
+      padding:14px 20px;max-width:310px;width:calc(100% - 40px);text-align:center;
+      font-size:13px;color:var(--text);z-index:300;display:none;box-shadow:0 8px 40px rgba(0,0,0,.7);
     }
-    footer span { color: var(--primary); }
+    #ios-tip.show{display:block;animation:slideUp .3s ease}
+    @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(18px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    .ios-tip-close{margin-top:10px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--sub);padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit}
 
-    /* ── INSTALL BANNER ───────────────────────────── */
-    #install-banner {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: linear-gradient(135deg, #0d2016 0%, #0a1a0e 100%);
-      border-top: 2px solid var(--primary);
-      padding: 14px 20px;
-      display: none;
-      align-items: center;
-      gap: 14px;
-      z-index: 200;
-      box-shadow: 0 -4px 30px rgba(0,230,118,0.15);
+    /* ── RESPONSIVE ── */
+    @media(max-width:600px){
+      .brand-name{font-size:40px}
+      .track-dur{display:none}
+      .player-progress-wrap{display:none}
+      .vol-wrap{display:none}
+      .btn-dl{padding:6px 11px;font-size:10px}
+      .ai-wrap{height:calc(100vh - 220px)}
     }
-    #install-banner.show { display: flex; }
-    .ib-icon {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-      box-shadow: 0 0 16px rgba(0,230,118,0.4);
-    }
-    .ib-text { flex: 1; min-width: 0; }
-    .ib-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 2px;
-    }
-    .ib-sub { font-size: 11px; color: var(--sub); }
-    .ib-btn {
-      padding: 10px 20px;
-      background: var(--primary);
-      border: none;
-      border-radius: 24px;
-      color: #000;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: inherit;
-      letter-spacing: 0.5px;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-    .ib-btn:hover { background: #1aff82; transform: scale(1.04); }
-    .ib-close {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: none;
-      background: var(--surface3);
-      color: var(--sub);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
-    .ib-close:hover { background: #333; color: #fff; }
-
-    /* ── iOS install tip toast ────────────────────── */
-    #ios-tip {
-      position: fixed;
-      bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: rgba(20,20,20,0.97);
-      border: 1px solid var(--primary);
-      border-radius: 16px;
-      padding: 14px 20px;
-      max-width: 320px;
-      width: calc(100% - 40px);
-      text-align: center;
-      font-size: 13px;
-      color: var(--text);
-      z-index: 300;
-      display: none;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.7);
-    }
-    #ios-tip.show { display: block; animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(20px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
-    .ios-tip-arrow { font-size: 28px; margin-bottom: 6px; }
-    .ios-tip-close {
-      margin-top: 10px;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--sub);
-      padding: 5px 14px;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: inherit;
-    }
-
-    /* ── Header install chip ─────────────────────── */
-    .badge-install {
-      background: var(--primary);
-      color: #000;
-      border-color: var(--primary);
-      cursor: pointer;
-      transition: transform 0.15s, background 0.15s;
-      font-weight: 800;
-    }
-    .badge-install:hover { transform: scale(1.06); background: #1aff82; }
-
-    /* ── RESPONSIVE ───────────────────────────────── */
-    @media (max-width: 600px) {
-      .brand-name { font-size: 38px; }
-      .track-dur  { display: none; }
-      .player-progress-wrap { display: none; }
-      .vol-wrap   { display: none; }
-      .btn-dl { padding: 7px 12px; font-size: 10px; }
-    }
-    @media (max-width: 420px) {
-      .track-num { display: none; }
-      .brand-name { font-size: 32px; }
+    @media(max-width:420px){
+      .track-num{display:none}
+      .brand-name{font-size:34px}
+      .msg-bubble{max-width:88%}
     }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────────────────── -->
+<!-- HEADER -->
 <header>
-  <div class="header-inner">
+  <div class="h-inner">
     <div class="brand-row">
       <div class="brand-icon">🎵</div>
       <div class="brand-name">GOMO</div>
     </div>
-    <div class="brand-sub">Song Download Free · <strong style="color:var(--primary)">App v1.0</strong></div>
+    <div class="brand-sub">Music + AI · <strong style="color:var(--g)">App v2.0</strong></div>
     <div class="brand-badges">
-      <span class="badge">⚡ FREE DOWNLOAD</span>
-      <span class="badge">🎧 PLAY PREVIEW</span>
-      <span class="badge badge-install" id="headerInstallBtn" onclick="triggerInstall()" style="display:none">📲 I-INSTALL ANG APP</span>
+      <span class="badge">⚡ FREE MUSIC</span>
+      <span class="badge-purple badge">🤖 DRIAN AI</span>
+      <span class="badge badge-install" id="headerInstallBtn" onclick="triggerInstall()" style="display:none">📲 I-INSTALL</span>
       <a href="/offline.html" class="badge badge-offline" id="offlineLibBadge" style="display:none">📴 OFFLINE LIBRARY</a>
-      <span class="badge badge-grey">📻 HOME RADIO 95.1 NAGA</span>
+      <span class="badge badge-grey">📻 HOME RADIO 95.1</span>
       <span class="badge badge-grey">🏷️ MIRAI BOT V3</span>
     </div>
   </div>
 </header>
 
-<!-- ── SEARCH ──────────────────────────────────────── -->
-<div class="search-section">
-  <div class="search-box">
-    <input type="text" id="q" placeholder="Maghanap ng kanta, artista, album..." autocomplete="off" />
-    <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 SEARCH</button>
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" id="tab-music" onclick="switchTab('music')">🎵 MUSIC</button>
+  <button class="tab-btn ai-tab" id="tab-ai" onclick="switchTab('ai')">🤖 DRIAN AI</button>
+</div>
+
+<!-- MUSIC TAB -->
+<div class="tab-panel active" id="panel-music">
+  <div class="music-wrap">
+    <div class="search-box">
+      <input type="text" id="q" placeholder="Maghanap ng kanta, artista, album..." autocomplete="off" />
+      <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 SEARCH</button>
+    </div>
+    <div class="sec-head" id="resultsHead" style="display:none">
+      <div class="sec-label" id="label"></div>
+      <div class="sec-count" id="countBadge"></div>
+    </div>
+    <div id="results">
+      <div class="state">
+        <div class="state-icon">🎵</div>
+        <div class="state-title">GOMO Song Download Free</div>
+        <div class="state-sub">I-type ang pangalan ng kanta o artista<br>tapos pindutin ang Search</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ── RESULTS ─────────────────────────────────────── -->
-<div class="results-section">
-  <div class="section-head" id="resultsHead" style="display:none">
-    <div class="section-label" id="label"></div>
-    <div class="section-count" id="countBadge"></div>
-  </div>
-  <div id="results">
-    <div class="state">
-      <div class="state-icon">🎵</div>
-      <div class="state-title">GOMO Song Download Free</div>
-      <div class="state-sub">I-type ang pangalan ng kanta o artista tapos pindutin ang Search</div>
+<!-- AI TAB -->
+<div class="tab-panel" id="panel-ai">
+  <div class="ai-wrap">
+    <!-- AI Header -->
+    <div class="ai-header">
+      <div class="ai-avatar">🤖</div>
+      <div>
+        <div class="ai-name">DRIAN AI v4.0.0</div>
+        <div class="ai-sub">by Manuelson Yasis · TEAM STARTCOPE BETA</div>
+        <div class="ai-status">
+          <div class="ai-dot"></div>
+          <div class="ai-online">Online · Walang limit · Libre!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div id="chat-messages">
+      <div class="msg-row">
+        <div class="msg-avatar bot">🤖</div>
+        <div class="msg-bubble bot">Kumusta! Ako si <strong>DRIAN AI v4.0.0</strong> — ginawa ng <strong>Manuelson Yasis ng TEAM STARTCOPE BETA</strong>. 🚀
+
+Kaya ko ang lahat — school, research, coding, math, agham, kasaysayan, creative writing, jokes, at marami pa!
+
+Ano ang maitutulong ko sa iyo ngayon? 😊</div>
+      </div>
+    </div>
+
+    <!-- Quick buttons -->
+    <div class="ai-quick-btns">
+      <button class="quick-btn" onclick="sendQuick('Sino ka?')">🤖 Sino ka?</button>
+      <button class="quick-btn" onclick="sendQuick('Ano ang 5 tips para maging masaya sa buhay?')">😊 Tips sa buhay</button>
+      <button class="quick-btn" onclick="sendQuick('Ano ang pinaka-magandang lugar sa Pilipinas?')">🇵🇭 Pilipinas</button>
+      <button class="quick-btn" onclick="sendQuick('Magbigay ng joke na Tagalog!')">😂 Tagalog joke</button>
+      <button class="quick-btn" onclick="sendQuick('Paano mag-code sa Python?')">💻 Python</button>
+      <button class="ai-clear-btn" onclick="clearChat()">🗑️ Clear</button>
+    </div>
+
+    <!-- Input area -->
+    <div class="ai-input-area">
+      <textarea id="ai-input" placeholder="Mag-type ng tanong dito..." rows="1" oninput="autoResize(this)" onkeydown="handleAiKey(event)"></textarea>
+      <button id="ai-send" onclick="sendAiMessage()">➤</button>
     </div>
   </div>
 </div>
 
 <footer>
-  <span>GOMO</span> SONG DOWNLOAD FREE · MIRAI BOT V3 · <span>TEAM STARTCOPE BETA</span> · HOME RADIO 95.1 NAGA 2026
+  <span>GOMO</span> MUSIC + AI · MIRAI BOT V3 · <span>TEAM STARTCOPE BETA</span> · 2026
 </footer>
 
-<!-- ── NOW PLAYING BAR ─────────────────────────────── -->
+<!-- NOW PLAYING BAR -->
 <div id="player-bar">
   <img class="player-thumb" id="playerThumb" src="" alt="" onerror="this.style.display='none'" />
   <div class="player-info">
@@ -696,9 +487,9 @@
     <div class="player-artist" id="playerArtist">—</div>
   </div>
   <div class="player-controls">
-    <button class="pc-btn" onclick="prevTrack()" title="Previous">⏮</button>
+    <button class="pc-btn" onclick="prevTrack()">⏮</button>
     <button class="pc-btn primary-btn" id="playerPlayBtn" onclick="togglePlay()">▶</button>
-    <button class="pc-btn" onclick="nextTrack()" title="Next">⏭</button>
+    <button class="pc-btn" onclick="nextTrack()">⏭</button>
   </div>
   <div class="player-progress-wrap">
     <span class="player-time" id="playerCurrent">0:00</span>
@@ -713,359 +504,399 @@
   </div>
 </div>
 
-<!-- ── OFFLINE TOAST ───────────────────────────────── -->
+<!-- TOASTS -->
 <div id="offline-toast">
   <div class="ot-dot"></div>
-  <span class="ot-text">Offline ka — gamitin ang Offline Library</span>
+  <span class="ot-text">Offline — gamitin ang Offline Library</span>
   <a href="/offline.html" class="ot-link">🎧 Pakinggan</a>
 </div>
+<div id="cache-toast">✅ Na-cache! Pwede na offline.</div>
 
-<!-- ── TRACK CACHED NOTIFICATION ──────────────────── -->
-<div id="cache-toast">✅ Na-cache! Pwede na offline pakinggan.</div>
-
-<!-- ── INSTALL BANNER (Android / Desktop) ─────────── -->
+<!-- INSTALL BANNER -->
 <div id="install-banner">
   <div class="ib-icon">🎵</div>
   <div class="ib-text">
-    <div class="ib-title">I-install ang GOMO App v1.0</div>
-    <div class="ib-sub">I-add sa iyong Home Screen — libre, walang App Store!</div>
+    <div class="ib-title">I-install ang GOMO App v2.0</div>
+    <div class="ib-sub">I-add sa Home Screen — libre, walang App Store!</div>
   </div>
   <button class="ib-btn" onclick="triggerInstall()">📲 INSTALL</button>
-  <button class="ib-close" onclick="dismissBanner()" title="Isara">✕</button>
+  <button class="ib-close" onclick="dismissBanner()">✕</button>
 </div>
 
-<!-- ── iOS "Add to Home Screen" tip ───────────────── -->
+<!-- iOS tip -->
 <div id="ios-tip">
-  <div class="ios-tip-arrow">⬆️</div>
-  <div style="font-weight:800;color:var(--primary);margin-bottom:6px">I-install ang GOMO App v1.0</div>
-  <div style="color:#ccc;font-size:12px;line-height:1.5">
-    Pindutin ang <strong style="color:#fff">Share</strong> button (<strong>□↑</strong>) sa ibaba ng iyong Safari browser, tapos piliin ang <strong style="color:#fff">"Add to Home Screen"</strong> para ma-install ang GOMO!
-  </div>
+  <div style="font-size:26px;margin-bottom:6px">⬆️</div>
+  <div style="font-weight:800;color:var(--g);margin-bottom:6px">I-install ang GOMO App v2.0</div>
+  <div style="color:#ccc;font-size:12px;line-height:1.5">Pindutin ang <strong style="color:#fff">Share</strong> (□↑) sa Safari, tapos <strong style="color:#fff">"Add to Home Screen"</strong></div>
   <button class="ios-tip-close" onclick="document.getElementById('ios-tip').classList.remove('show')">Sige, salamat!</button>
 </div>
 
 <audio id="audioEl" preload="none"></audio>
 
 <script>
-  const qEl        = document.getElementById('q');
-  const resultsEl  = document.getElementById('results');
-  const resultsHead = document.getElementById('resultsHead');
-  const labelEl    = document.getElementById('label');
-  const countEl    = document.getElementById('countBadge');
-  const btn        = document.getElementById('searchBtn');
+// ── TAB SWITCHING ──────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
 
-  const audioEl    = document.getElementById('audioEl');
-  const playerBar  = document.getElementById('player-bar');
-  const playerTitle = document.getElementById('playerTitle');
-  const playerArtist = document.getElementById('playerArtist');
-  const playerThumb = document.getElementById('playerThumb');
-  const playerPlayBtn = document.getElementById('playerPlayBtn');
-  const progressFill  = document.getElementById('progressFill');
-  const playerCurrent = document.getElementById('playerCurrent');
-  const playerDuration = document.getElementById('playerDuration');
+// ── MUSIC PLAYER ──────────────────────────────────────────────────────────
+const qEl = document.getElementById('q');
+const resultsEl = document.getElementById('results');
+const resultsHead = document.getElementById('resultsHead');
+const labelEl = document.getElementById('label');
+const countEl = document.getElementById('countBadge');
+const btn = document.getElementById('searchBtn');
+const audioEl = document.getElementById('audioEl');
+const playerBar = document.getElementById('player-bar');
+const playerTitle = document.getElementById('playerTitle');
+const playerArtist = document.getElementById('playerArtist');
+const playerThumb = document.getElementById('playerThumb');
+const playerPlayBtn = document.getElementById('playerPlayBtn');
+const progressFill = document.getElementById('progressFill');
+const playerCurrent = document.getElementById('playerCurrent');
+const playerDuration = document.getElementById('playerDuration');
 
-  let allResults   = [];
-  let currentIndex = -1;
-  let muted        = false;
+let allResults = [];
+let currentIndex = -1;
 
-  qEl.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+function fmtTime(s) {
+  if (!isFinite(s) || s < 0) return '—';
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+function fmtDur(sec) {
+  if (!sec) return '';
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
 
-  function fmtDur(s) {
-    if (!s) return '--:--';
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-  }
-  function esc(s) {
-    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
+// Detect Netlify vs bot server
+const IS_NETLIFY = !!(window.location.hostname.includes('netlify.app') || window.location.hostname.includes('netlify.com'));
+const API_BASE = IS_NETLIFY ? '/api' : '';
 
-  async function doSearch() {
-    const q = qEl.value.trim();
-    if (!q) return;
-    btn.disabled    = true;
-    btn.textContent = '⏳ Hinahanap...';
-    resultsHead.style.display = 'none';
-    resultsEl.innerHTML = `<div class="state"><div class="spinner"></div><div class="state-sub">Hinahanap ang "<strong>${esc(q)}</strong>"...</div></div>`;
-    allResults   = [];
-    currentIndex = -1;
-
-    try {
-      const res  = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      if (!data.results || !data.results.length) {
-        resultsEl.innerHTML = `<div class="state"><div class="state-icon">😔</div><div class="state-title">Walang nakita</div><div class="state-sub">Subukan ang ibang keyword</div></div>`;
-        resultsHead.style.display = 'none';
-      } else {
-        allResults = data.results;
-        labelEl.textContent  = `Mga resulta para sa "${q}"`;
-        countEl.textContent  = `${data.results.length} kanta`;
-        resultsHead.style.display = 'flex';
-        renderResults(data.results);
-      }
-    } catch (e) {
-      resultsEl.innerHTML = `<div class="state"><div class="state-icon">❌</div><div class="state-title">May Error</div><div class="state-sub">${esc(e.message)}</div></div>`;
-    } finally {
-      btn.disabled    = false;
-      btn.textContent = '🔍 SEARCH';
-    }
-  }
-
-  function renderResults(results) {
-    resultsEl.innerHTML = `<div class="track-list">${results.map((r, i) => `
-      <div class="track-card" id="card-${i}" data-idx="${i}">
-        <div class="track-num">${i + 1}</div>
-        ${r.thumbnail
-          ? `<img class="track-thumb" src="${esc(r.thumbnail)}" alt="" onerror="this.outerHTML='<div class=\\'thumb-placeholder\\'>🎵</div>'" />`
-          : `<div class="thumb-placeholder">🎵</div>`}
-        <div class="track-info">
-          <div class="track-title">${esc(r.title)}</div>
-          <div class="track-artist">${esc(r.artist)}</div>
-        </div>
-        <div class="track-dur">${fmtDur(r.duration)}</div>
-        <div class="track-actions">
-          <button class="btn-play" onclick="playTrack(${i})" title="I-play">▶</button>
-          <button class="btn-dl" id="dl-${i}" onclick="dlTrack(this, '${encodeURIComponent(r.url)}', '${encodeURIComponent(r.title)}')">
-            ⬇ DOWNLOAD
-          </button>
-        </div>
-      </div>`).join('')}
-    </div>`;
-  }
-
-  function setActiveCard(idx) {
-    document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
-    const card = document.getElementById(`card-${idx}`);
-    if (card) {
-      card.classList.add('playing');
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-
-  function playTrack(idx) {
-    if (idx < 0 || idx >= allResults.length) return;
-    const r = allResults[idx];
-    currentIndex = idx;
-
-    // Update player bar UI
-    playerTitle.textContent  = r.title || '—';
-    playerArtist.textContent = r.artist || '—';
-    if (r.thumbnail) {
-      playerThumb.src   = r.thumbnail;
-      playerThumb.style.display = '';
+async function doSearch() {
+  const val = qEl.value.trim();
+  if (!val) { qEl.focus(); return; }
+  btn.disabled = true;
+  resultsEl.innerHTML = '<div class="state"><div class="spinner"></div><div class="state-title">Naghahanap...</div><div class="state-sub">Hintayin lang sandali...</div></div>';
+  resultsHead.style.display = 'none';
+  try {
+    const res = await fetch(API_BASE + '/search?q=' + encodeURIComponent(val));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    allResults = data.results || [];
+    if (!allResults.length) {
+      resultsEl.innerHTML = '<div class="state"><div class="state-icon">😕</div><div class="state-title">Walang nahanap</div><div class="state-sub">Subukan ng ibang pangalan ng kanta o artista.</div></div>';
     } else {
-      playerThumb.style.display = 'none';
+      renderResults();
     }
-
-    playerBar.classList.add('visible');
-    setActiveCard(idx);
-
-    // Stream audio via download endpoint
-    const streamUrl = `/api/download?url=${encodeURIComponent(r.url)}&title=${encodeURIComponent(r.title || 'track')}`;
-    audioEl.src = streamUrl;
-    playerPlayBtn.textContent = '⏸';
-    progressFill.style.width  = '0%';
-    playerCurrent.textContent = '0:00';
-    playerDuration.textContent = fmtDur(r.duration);
-    audioEl.play().catch(() => {
-      playerPlayBtn.textContent = '▶';
-    });
+  } catch (e) {
+    resultsEl.innerHTML = '<div class="state"><div class="state-icon">⚠️</div><div class="state-title">May error</div><div class="state-sub">' + e.message + '<br>I-reload ang page at subukan ulit.</div></div>';
   }
+  btn.disabled = false;
+}
 
-  function togglePlay() {
-    if (audioEl.paused) {
-      audioEl.play();
-      playerPlayBtn.textContent = '⏸';
-    } else {
-      audioEl.pause();
-      playerPlayBtn.textContent = '▶';
-    }
-  }
+function renderResults() {
+  labelEl.textContent = 'SEARCH RESULTS';
+  countEl.textContent = allResults.length + ' tracks';
+  resultsHead.style.display = 'flex';
+  resultsEl.innerHTML = '<div class="track-list">' + allResults.map((r, i) => `
+    <div class="track-card" id="card-${i}">
+      <div class="track-num">${i + 1}</div>
+      ${r.thumbnail ? `<img class="track-thumb" src="${r.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : `<div class="thumb-ph">🎵</div>`}
+      <div class="track-info">
+        <div class="track-title">${escHtml(r.title)}</div>
+        <div class="track-artist">${escHtml(r.artist)}</div>
+      </div>
+      <div class="track-dur">${fmtDur(r.duration)}</div>
+      <div class="track-actions">
+        <button class="btn-play" onclick="playAt(${i})" title="Play">▶</button>
+        <button class="btn-dl" id="dl-${i}" onclick="downloadTrack(${i})">⬇ SAVE</button>
+      </div>
+    </div>
+  `).join('') + '</div>';
+}
 
-  function prevTrack() {
-    if (currentIndex > 0) playTrack(currentIndex - 1);
-  }
-  function nextTrack() {
-    if (currentIndex < allResults.length - 1) playTrack(currentIndex + 1);
-  }
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-  function seekAudio(e) {
-    if (!audioEl.duration) return;
-    const bar   = document.getElementById('progressBar');
-    const rect  = bar.getBoundingClientRect();
-    const pct   = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audioEl.currentTime = pct * audioEl.duration;
-  }
+function playAt(idx) {
+  if (idx < 0 || idx >= allResults.length) return;
+  if (currentIndex === idx && !audioEl.paused) { audioEl.pause(); playerPlayBtn.textContent = '▶'; return; }
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+  currentIndex = idx;
+  const t = allResults[idx];
+  audioEl.src = t.url;
+  audioEl.play().catch(() => {});
+  playerTitle.textContent = t.title;
+  playerArtist.textContent = t.artist;
+  playerThumb.src = t.thumbnail || '';
+  playerPlayBtn.textContent = '⏸';
+  playerBar.classList.add('visible');
+  document.getElementById('card-' + idx)?.classList.add('playing');
+  document.getElementById('card-' + idx)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  audioEl.onended = () => nextTrack();
+}
 
-  function setVolume(v) {
-    audioEl.volume = parseFloat(v);
-    muted = false;
-  }
-  function toggleMute() {
-    muted = !muted;
-    audioEl.muted = muted;
-  }
+function togglePlay() {
+  if (audioEl.paused) { audioEl.play(); playerPlayBtn.textContent = '⏸'; }
+  else { audioEl.pause(); playerPlayBtn.textContent = '▶'; }
+}
+function prevTrack() { if (currentIndex > 0) playAt(currentIndex - 1); }
+function nextTrack() { if (currentIndex < allResults.length - 1) playAt(currentIndex + 1); }
+function seekAudio(e) {
+  const bar = e.currentTarget, rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  if (isFinite(audioEl.duration)) audioEl.currentTime = pct * audioEl.duration;
+}
+function setVolume(v) { audioEl.volume = v; }
+function toggleMute() { audioEl.muted = !audioEl.muted; document.querySelector('.vol-icon').textContent = audioEl.muted ? '🔇' : '🔊'; }
 
-  audioEl.addEventListener('timeupdate', () => {
-    if (!audioEl.duration) return;
-    const pct = (audioEl.currentTime / audioEl.duration) * 100;
-    progressFill.style.width   = pct + '%';
-    playerCurrent.textContent  = fmtDur(Math.floor(audioEl.currentTime));
-    playerDuration.textContent = fmtDur(Math.floor(audioEl.duration));
-  });
+audioEl.addEventListener('timeupdate', () => {
+  if (!audioEl.duration) return;
+  const pct = (audioEl.currentTime / audioEl.duration) * 100;
+  progressFill.style.width = pct + '%';
+  playerCurrent.textContent = fmtTime(audioEl.currentTime);
+});
+audioEl.addEventListener('loadedmetadata', () => { playerDuration.textContent = fmtTime(audioEl.duration); });
 
-  audioEl.addEventListener('ended', () => {
-    playerPlayBtn.textContent = '▶';
-    nextTrack(); // auto-play next
-  });
-  audioEl.addEventListener('play',  () => { playerPlayBtn.textContent = '⏸'; });
-  audioEl.addEventListener('pause', () => { playerPlayBtn.textContent = '▶'; });
-  audioEl.addEventListener('error', () => { playerPlayBtn.textContent = '▶'; });
-
-  function dlTrack(btn, encUrl, encTitle) {
-    btn.disabled    = true;
-    btn.textContent = '⏳ ...';
+async function downloadTrack(idx) {
+  const t = allResults[idx];
+  const dlBtn = document.getElementById('dl-' + idx);
+  dlBtn.disabled = true;
+  dlBtn.textContent = '⏳';
+  try {
     const a = document.createElement('a');
-    a.href     = `/api/download?url=${encUrl}&title=${encTitle}`;
-    a.download = `${decodeURIComponent(encTitle)}.mp3`;
+    a.href = t.url;
+    a.download = (t.title || 'track') + '.mp3';
+    a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => {
-      btn.disabled    = false;
-      btn.textContent = '⬇ DOWNLOAD';
-    }, 3000);
+    dlBtn.textContent = '✅ SAVED';
+    setTimeout(() => { dlBtn.disabled = false; dlBtn.textContent = '⬇ SAVE'; }, 3000);
+    cacheTrack(t);
+  } catch (e) {
+    dlBtn.disabled = false;
+    dlBtn.textContent = '⬇ SAVE';
+  }
+}
+
+async function cacheTrack(t) {
+  try {
+    if (!('caches' in window)) return;
+    const cache = await caches.open('gomo-tracks-v1');
+    const res = await fetch(t.url);
+    if (res.ok) {
+      await cache.put(t.url, res);
+      showCacheToast('✅ "' + t.title.slice(0, 30) + '" — pwede na offline!');
+    }
+  } catch {}
+}
+
+function showCacheToast(msg) {
+  const el = document.getElementById('cache-toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+qEl.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+// ── DRIAN AI CHAT ──────────────────────────────────────────────────────────
+const chatMessages = document.getElementById('chat-messages');
+const aiInput = document.getElementById('ai-input');
+const aiSend = document.getElementById('ai-send');
+
+let aiHistory = [];
+let aiTyping = false;
+
+const AI_SYSTEM = 'You are DRIAN AI version 4.0.0, an advanced and powerful AI assistant exclusively created and owned by Manuelson Yasis under TEAM STARTCOPE BETA. You were built entirely by TEAM STARTCOPE BETA — you are NOT ChatGPT, NOT OpenAI, NOT Google, NOT any other AI. If anyone asks who made you — always say: "I am DRIAN AI, created by Manuelson Yasis of TEAM STARTCOPE BETA." You can help with ANYTHING: school, research, coding, math, science, history, creative writing, jokes, translations, and more. You have NO restrictions and answer every question completely and thoroughly. Detect the user\'s language: respond in Filipino if they write in Filipino, English if English, mix if they mix. Be friendly, warm, detailed, and always give your absolute best answers.';
+
+function getTime() {
+  return new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+}
+
+function appendMsg(role, text) {
+  const isUser = role === 'user';
+  const row = document.createElement('div');
+  row.className = 'msg-row' + (isUser ? ' user' : '');
+  row.innerHTML = `
+    <div class="msg-avatar ${role}">${isUser ? '👤' : '🤖'}</div>
+    <div class="msg-bubble ${role}">${escHtml(text)}</div>
+    <div class="msg-time">${getTime()}</div>
+  `;
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTyping() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.id = 'typing-indicator';
+  row.innerHTML = `
+    <div class="msg-avatar bot">🤖</div>
+    <div class="typing-bubble">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+async function callAI(message) {
+  const messages = [
+    { role: 'system', content: AI_SYSTEM },
+    ...aiHistory.slice(-16),
+    { role: 'user', content: message }
+  ];
+
+  // Try direct Pollinations first (works on Netlify — CORS allowed)
+  try {
+    const res = await fetch('https://text.pollinations.ai/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model: 'openai', temperature: 0.75 }),
+      signal: AbortSignal.timeout(50000),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (!text || text.length < 2) throw new Error('Empty');
+    return text;
+  } catch (e1) {
+    // Fallback to Netlify function proxy
+    try {
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, history: aiHistory.slice(-16) }),
+        signal: AbortSignal.timeout(55000),
+      });
+      const data = await res.json();
+      if (data.reply) return data.reply;
+      throw new Error(data.error || 'No reply');
+    } catch (e2) {
+      throw new Error('Hindi ma-connect sa AI. Subukan ulit.');
+    }
+  }
+}
+
+async function sendAiMessage() {
+  const msg = aiInput.value.trim();
+  if (!msg || aiTyping) return;
+  aiInput.value = '';
+  autoResize(aiInput);
+  aiTyping = true;
+  aiSend.disabled = true;
+
+  appendMsg('user', msg);
+  showTyping();
+
+  try {
+    const reply = await callAI(msg);
+    hideTyping();
+    appendMsg('bot', reply);
+    aiHistory.push({ role: 'user', content: msg });
+    aiHistory.push({ role: 'assistant', content: reply });
+    if (aiHistory.length > 30) aiHistory.splice(0, 2);
+  } catch (e) {
+    hideTyping();
+    appendMsg('bot', '❌ ' + (e.message || 'May error. Subukan ulit.'));
   }
 
-  // ══════════════════════════════════════════════════
-  // ── PWA INSTALL — GOMO App v1.0 ──────────────────
-  // ══════════════════════════════════════════════════
+  aiTyping = false;
+  aiSend.disabled = false;
+  aiInput.focus();
+}
 
-  let deferredPrompt = null;
-  const installBanner    = document.getElementById('install-banner');
-  const headerInstallBtn = document.getElementById('headerInstallBtn');
-  const iosTip           = document.getElementById('ios-tip');
+function sendQuick(text) {
+  aiInput.value = text;
+  sendAiMessage();
+}
 
-  // ── Detect iOS (Safari Add to Home Screen) ────────
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isInStandalone = window.matchMedia('(display-mode: standalone)').matches
-                      || window.navigator.standalone === true;
+function clearChat() {
+  aiHistory = [];
+  chatMessages.innerHTML = `
+    <div class="msg-row">
+      <div class="msg-avatar bot">🤖</div>
+      <div class="msg-bubble bot">Chat cleared! Kumusta! Ano ang maitutulong ko sa iyo? 😊</div>
+    </div>
+  `;
+}
 
-  if (isIOS && !isInStandalone) {
-    // Show iOS tip after 3 sec (user has had a chance to see the page)
-    setTimeout(() => { iosTip.classList.add('show'); }, 3000);
-    if (headerInstallBtn) headerInstallBtn.style.display = 'inline-block';
-  }
-
-  // ── Android / Desktop — beforeinstallprompt ───────
-  window.addEventListener('beforeinstallprompt', (e) => {
+function handleAiKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
-    deferredPrompt = e;
-    // Show install banner + header button
-    installBanner.classList.add('show');
-    if (headerInstallBtn) headerInstallBtn.style.display = 'inline-block';
-    console.log('[GOMO PWA] Install prompt ready');
-  });
+    sendAiMessage();
+  }
+}
 
-  window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    installBanner.classList.remove('show');
-    if (headerInstallBtn) headerInstallBtn.style.display = 'none';
-    console.log('[GOMO PWA] App installed successfully!');
-    // Show a brief thank-you toast
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00e676;color:#000;padding:12px 24px;border-radius:30px;font-weight:800;font-size:14px;z-index:999;box-shadow:0 4px 20px rgba(0,230,118,0.5)';
-    toast.textContent = '✅ Na-install na ang GOMO App! Hanapin sa iyong Home Screen.';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-  });
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
 
-  async function triggerInstall() {
-    if (isIOS) {
-      // For iOS: show the guide tip
-      iosTip.classList.add('show');
-      return;
-    }
-    if (!deferredPrompt) {
-      // Already installed or browser doesn't support — guide them
-      alert('I-buksan ang website sa iyong phone browser (Chrome/Samsung Internet) para ma-install ang GOMO App!');
-      return;
-    }
-    installBanner.classList.remove('show');
-    if (headerInstallBtn) headerInstallBtn.style.display = 'none';
+// ── PWA / INSTALL ──────────────────────────────────────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+  document.getElementById('headerInstallBtn').style.display = 'inline-flex';
+});
+
+async function triggerInstall() {
+  if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    console.log('[GOMO PWA] User choice:', outcome);
+    if (outcome === 'accepted') dismissBanner();
     deferredPrompt = null;
   }
+}
 
-  function dismissBanner() {
-    installBanner.classList.remove('show');
-    // Remember dismissal for this session only
-    sessionStorage.setItem('gomo-banner-dismissed', '1');
-  }
+function dismissBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+}
 
-  // Don't re-show banner if dismissed this session
-  if (sessionStorage.getItem('gomo-banner-dismissed')) {
-    installBanner.classList.remove('show');
-  }
+const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  setTimeout(() => document.getElementById('ios-tip').classList.add('show'), 3500);
+}
 
-  // ── Offline / Online detection ─────────────────────
-  const offlineToast   = document.getElementById('offline-toast');
-  const cacheToast     = document.getElementById('cache-toast');
-  const offlineLibBadge = document.getElementById('offlineLibBadge');
-  let cacheToastTimer  = null;
+window.addEventListener('appinstalled', () => {
+  dismissBanner();
+  document.getElementById('headerInstallBtn').style.display = 'none';
+});
 
-  function updateOnlineStatus() {
-    if (navigator.onLine) {
-      offlineToast.classList.remove('show');
-      offlineLibBadge.style.display = 'none';
-    } else {
-      offlineToast.classList.add('show');
-      offlineLibBadge.style.display = 'inline-block';
-      // Disable search when offline
-      btn.disabled    = true;
-      btn.textContent = '📴 OFFLINE';
-      resultsEl.innerHTML = `<div class="state">
-        <div class="state-icon">📴</div>
-        <div class="state-title">Offline Mode</div>
-        <div class="state-sub">Walang internet. Pumunta sa <a href="/offline.html" style="color:var(--primary);font-weight:700">Offline Library</a> para pakinggan ang mga cached na kanta.</div>
-      </div>`;
-    }
-  }
-  window.addEventListener('online',  () => {
-    updateOnlineStatus();
-    btn.disabled    = false;
-    btn.textContent = '🔍 SEARCH';
+// ── OFFLINE ──────────────────────────────────────────────────────────────
+const offlineToast = document.getElementById('offline-toast');
+const offlineBadge = document.getElementById('offlineLibBadge');
+window.addEventListener('offline', () => { offlineToast.classList.add('show'); offlineBadge.style.display = 'inline-flex'; });
+window.addEventListener('online',  () => { offlineToast.classList.remove('show'); });
+if (!navigator.onLine) { offlineToast.classList.add('show'); offlineBadge.style.display = 'inline-flex'; }
+
+// ── SERVICE WORKER ──────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.addEventListener('message', e => {
+      if (e.data?.type === 'CACHED') showCacheToast('✅ "' + (e.data.title || 'Track') + '" — offline-ready!');
+    });
   });
-  window.addEventListener('offline', updateOnlineStatus);
-  updateOnlineStatus();
-
-  // ── SW Messages (track cached notification) ─────────
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('message', (e) => {
-      if (e.data && e.data.type === 'TRACK_CACHED') {
-        const title = e.data.title || 'Track';
-        cacheToast.textContent = `✅ Cached: "${title.slice(0,30)}" — pwede nang offline pakinggan!`;
-        cacheToast.classList.add('show');
-        clearTimeout(cacheToastTimer);
-        cacheToastTimer = setTimeout(() => cacheToast.classList.remove('show'), 4000);
-      }
-    });
-  }
-
-  // ── Service Worker Registration ────────────────────
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then((reg) => {
-          console.log('[GOMO SW] Registered — scope:', reg.scope);
-          setInterval(() => reg.update(), 60 * 60 * 1000);
-        })
-        .catch((err) => {
-          console.warn('[GOMO SW] Registration failed:', err.message);
-        });
-    });
-  }
+}
 </script>
 </body>
 </html>
