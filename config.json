@@ -23,11 +23,11 @@
     "FACEBOOK_ADMIN": "https://www.facebook.com/manuelson.yasis",
     "BOTNAME": "Mirai-V6",
     "FB_PAGE_TOKEN": "EAAVjvjcV04YBRfBUz8xIohERiOmQCm5ERLnIINGjreS3Bq6HBPjIVmENi87CiS1l2MYPt2aNmtJeY3pguzVrodPm2lCvkw0zuTRwaXgW5OD9ZClabMY1buMXyk8K5mAb3CKzvVWrjt1JKJfinUw0ZCx3LxhbnnWsXI00N6vNZCBR0jLKQVZCRFUHYwXCbKzq0rZAv6QZDZD",
-    "PREFIX": "!",
-    "BOXADMIN": "61588479630286",
+    "PREFIX": "/",
+    "BOXADMIN": "61569871602877",
     "ADMINBOT": [
-        "61588479630286",
-        "61576920532388"
+        "61569871602877",
+        ""
     ],
     "NDH": [
         "61576920532388",
