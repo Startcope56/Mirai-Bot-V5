@@ -14,7 +14,7 @@
     "dependencies": {
         "@distube/ytdl-core": "^4.16.12",
         "@dongdev/fca-unofficial": "^1.0.20",
-        "axios": "^1.16.0",
+        "axios": "^1.16.1",
         "bluebird": "^2.11.0",
         "body-parser": "^1.20.5",
         "caesar-salad": "^2.1.0",
