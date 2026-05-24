@@ -193,6 +193,387 @@ async function handleRequest(req, res) {
     return;
   }
 
+  // ── GET /news/:id → HOME OF NEWS page ────────────────────────────────────
+  const newsMatch = pathname.match(/^\/news\/([a-z0-9]{6,20})$/i);
+  if (newsMatch) {
+    const id        = newsMatch[1];
+    const linksFile = path.join(__dirname, "utils/data/news_links.json");
+    let article     = null;
+    try {
+      const links = JSON.parse(fs.readFileSync(linksFile, "utf8"));
+      article = links[id] || null;
+    } catch {}
+
+    if (!article) {
+      res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+      return res.end(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HOME OF NEWS</title>
+        <style>body{background:#0a0a0f;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center}
+        h1{color:#e53e3e;font-size:2rem}p{color:#aaa;margin-top:1rem}</style></head>
+        <body><div><h1>🔴 HOME OF NEWS</h1><p>Ang link na ito ay hindi na available o expired na.</p><p style="margin-top:2rem;font-size:.85rem;color:#666">TEAM STARTCOPE BETA</p></div></body></html>`);
+    }
+
+    const title      = (article.title       || "Breaking News").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const desc       = (article.desc        || "Pinakabagong balita mula sa Pilipinas.").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const source     = (article.source      || "HOME OF NEWS").replace(/</g, "&lt;");
+    const thumb      = article.thumb        || "";
+    const origLink   = article.originalLink || "#";
+    const pubDate    = article.pubDate      || "";
+    const shortDesc  = desc.slice(0, 160);
+    const pageUrl    = `https://${req.headers.host}/news/${id}`;
+
+    let dateStr = "";
+    try { dateStr = pubDate ? new Date(pubDate).toLocaleString("fil-PH", { timeZone: "Asia/Manila", dateStyle: "long", timeStyle: "short" }) : ""; }
+    catch {}
+
+    const html = `<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title} — HOME OF NEWS</title>
+
+  <!-- Open Graph (Facebook/Messenger link preview) -->
+  <meta property="og:type"        content="article" />
+  <meta property="og:title"       content="${title}" />
+  <meta property="og:description" content="${shortDesc}" />
+  <meta property="og:url"         content="${pageUrl}" />
+  <meta property="og:site_name"   content="HOME OF NEWS" />
+  ${thumb ? `<meta property="og:image" content="${thumb}" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />` : ""}
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="${title}" />
+  <meta name="twitter:description" content="${shortDesc}" />
+  ${thumb ? `<meta name="twitter:image" content="${thumb}" />` : ""}
+  <meta name="description" content="${shortDesc}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --red: #e53e3e;
+      --red2: #c53030;
+      --red3: #fc4a4a;
+      --dark: #0a0a0f;
+      --dark2: #111118;
+      --dark3: #1a1a24;
+      --dark4: #22222e;
+      --gold: #f6c90e;
+      --text: #f0f0f8;
+      --sub: #9090b0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── animated bg particles ── */
+    .bg-particles {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .particle {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(229,62,62,.18), transparent);
+      animation: floatUp linear infinite;
+    }
+    .p1{width:300px;height:300px;left:5%;top:80%;animation-duration:20s;}
+    .p2{width:500px;height:500px;left:60%;top:100%;animation-duration:28s;animation-delay:-8s;background:radial-gradient(circle,rgba(246,201,14,.08),transparent)}
+    .p3{width:200px;height:200px;left:30%;top:90%;animation-duration:15s;animation-delay:-5s;}
+    .p4{width:400px;height:400px;left:80%;top:70%;animation-duration:24s;animation-delay:-12s;background:radial-gradient(circle,rgba(229,62,62,.1),transparent)}
+    @keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:translateY(-120vh) scale(1.4);opacity:0}}
+
+    /* ── top breaking bar ── */
+    .breaking-bar {
+      position: relative; z-index: 10;
+      background: linear-gradient(90deg, #b91c1c, var(--red), #b91c1c);
+      padding: 8px 20px;
+      display: flex; align-items: center; gap: 12px;
+      animation: pulseBar 2s ease-in-out infinite;
+    }
+    @keyframes pulseBar{0%,100%{background:linear-gradient(90deg,#b91c1c,var(--red),#b91c1c)}50%{background:linear-gradient(90deg,var(--red),#b91c1c,var(--red))}}
+    .breaking-label {
+      background: #fff; color: #b91c1c;
+      font-weight: 900; font-size: .72rem; letter-spacing: .08em;
+      padding: 2px 8px; border-radius: 3px; white-space: nowrap; flex-shrink: 0;
+    }
+    .breaking-ticker {
+      font-size: .8rem; font-weight: 600; color: #fff; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #fff; flex-shrink: 0;
+      animation: blink 1s ease-in-out infinite;
+    }
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+    /* ── header / logo ── */
+    .site-header {
+      position: relative; z-index: 10;
+      background: linear-gradient(180deg, #14141e 0%, #0d0d16 100%);
+      border-bottom: 2px solid rgba(229,62,62,.25);
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { font-size: 1.6rem; }
+    .logo-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 900; font-size: 1.3rem; color: #fff; line-height: 1;
+      letter-spacing: .02em;
+    }
+    .logo-sub { font-size: .65rem; color: var(--red3); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-top: 2px; }
+    .header-badge {
+      background: var(--red); color: #fff;
+      font-size: .7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: .05em;
+    }
+
+    /* ── main wrapper ── */
+    .container { position: relative; z-index: 5; max-width: 780px; margin: 0 auto; padding: 32px 16px 60px; }
+
+    /* ── category pill ── */
+    .category-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(229,62,62,.15); border: 1px solid rgba(229,62,62,.35);
+      color: var(--red3); font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase;
+    }
+    .category-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red3); animation: blink 1s infinite; }
+
+    /* ── headline ── */
+    .headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
+      font-weight: 900; line-height: 1.25; color: #fff;
+      margin-bottom: 16px; letter-spacing: -.01em;
+    }
+
+    /* ── meta row ── */
+    .meta-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .meta-source {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--dark3); border: 1px solid rgba(255,255,255,.1);
+      padding: 4px 10px; border-radius: 6px; font-size: .78rem; font-weight: 600; color: var(--text);
+    }
+    .meta-date { font-size: .78rem; color: var(--sub); }
+
+    /* ── hero image ── */
+    .hero-img-wrap {
+      position: relative; border-radius: 14px; overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 40px rgba(229,62,62,.18), 0 2px 12px rgba(0,0,0,.5);
+      border: 1px solid rgba(229,62,62,.2);
+    }
+    .hero-img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+    .hero-img-placeholder {
+      width: 100%; aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    }
+    .hero-img-placeholder .ph-icon { font-size: 4rem; }
+    .hero-img-placeholder span { font-size: .9rem; color: rgba(255,255,255,.5); font-weight: 600; }
+    .img-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.7));
+      padding: 40px 16px 14px;
+    }
+    .img-source-tag {
+      font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.8);
+      background: rgba(229,62,62,.8); padding: 2px 8px; border-radius: 4px;
+    }
+
+    /* ── article body ── */
+    .article-body {
+      background: var(--dark2); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; padding: 24px; margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    }
+    .article-body p {
+      font-size: 1.05rem; line-height: 1.8; color: rgba(240,240,248,.88);
+      margin-bottom: 16px;
+    }
+    .article-body p:last-child { margin-bottom: 0; }
+
+    /* ── divider ── */
+    .divider {
+      display: flex; align-items: center; gap: 12px; margin: 24px 0;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(229,62,62,.2); }
+    .divider-icon { font-size: 1rem; color: var(--red); }
+
+    /* ── read more button ── */
+    .read-more-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      color: #fff; font-weight: 700; font-size: .95rem;
+      padding: 13px 28px; border-radius: 50px; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(229,62,62,.4);
+      transition: transform .15s, box-shadow .15s;
+      margin-bottom: 32px;
+    }
+    .read-more-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(229,62,62,.55); }
+    .read-more-btn .arrow { font-size: 1.1rem; transition: transform .15s; }
+    .read-more-btn:hover .arrow { transform: translateX(3px); }
+
+    /* ── share section ── */
+    .share-section {
+      background: var(--dark3); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; padding: 20px 24px; margin-bottom: 24px;
+    }
+    .share-title { font-size: .85rem; font-weight: 700; color: var(--sub); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .share-url-box {
+      background: var(--dark); border: 1px solid rgba(229,62,62,.3);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: .82rem; color: var(--red3); word-break: break-all;
+      font-family: monospace; margin-bottom: 12px;
+    }
+    .copy-btn {
+      background: var(--dark4); border: 1px solid rgba(255,255,255,.12);
+      color: var(--text); font-size: .82rem; font-weight: 600; padding: 7px 16px;
+      border-radius: 8px; cursor: pointer; transition: background .15s;
+    }
+    .copy-btn:hover { background: rgba(229,62,62,.2); border-color: var(--red); }
+
+    /* ── footer ── */
+    .site-footer {
+      position: relative; z-index: 5;
+      border-top: 1px solid rgba(255,255,255,.06);
+      background: #07070f; padding: 28px 20px;
+      text-align: center;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; color: var(--red); margin-bottom: 6px; }
+    .footer-sub { font-size: .75rem; color: rgba(255,255,255,.3); }
+
+    @media (max-width: 600px) {
+      .site-header { padding: 10px 16px; }
+      .logo-text { font-size: 1.1rem; }
+      .container { padding: 20px 12px 48px; }
+      .article-body { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- animated bg -->
+  <div class="bg-particles">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+  </div>
+
+  <!-- breaking bar -->
+  <div class="breaking-bar">
+    <div class="live-dot"></div>
+    <span class="breaking-label">BREAKING</span>
+    <span class="breaking-ticker">${title}</span>
+  </div>
+
+  <!-- header -->
+  <header class="site-header">
+    <div class="logo-wrap">
+      <span class="logo-icon">📰</span>
+      <div>
+        <div class="logo-text">HOME OF NEWS</div>
+        <div class="logo-sub">🇵🇭 Balita ng Pilipinas</div>
+      </div>
+    </div>
+    <span class="header-badge">🔴 LIVE</span>
+  </header>
+
+  <!-- main -->
+  <div class="container">
+    <div class="category-pill">
+      <span class="dot"></span>
+      BREAKING NEWS · ${source}
+    </div>
+
+    <h1 class="headline">${title}</h1>
+
+    <div class="meta-row">
+      <span class="meta-source">📡 ${source}</span>
+      ${dateStr ? `<span class="meta-date">🕐 ${dateStr} (PH Time)</span>` : ""}
+    </div>
+
+    <!-- hero image -->
+    <div class="hero-img-wrap">
+      ${thumb
+        ? `<img class="hero-img" src="${thumb}" alt="${title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'hero-img-placeholder\\'><span class=\\'ph-icon\\'>🇵🇭</span><span>HOME OF NEWS</span></div>';" />
+           <div class="img-overlay"><span class="img-source-tag">📸 ${source}</span></div>`
+        : `<div class="hero-img-placeholder">
+             <span class="ph-icon">📰</span>
+             <span>HOME OF NEWS · ${source}</span>
+           </div>`
+      }
+    </div>
+
+    <!-- article body -->
+    <div class="article-body">
+      ${desc.split(/\n+/).filter(Boolean).map(p => `<p>${p}</p>`).join("") || `<p>${desc}</p>`}
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-icon">🔴</span>
+      <div class="divider-line"></div>
+    </div>
+
+    ${origLink && origLink !== "#"
+      ? `<a href="${origLink}" target="_blank" rel="noopener noreferrer" class="read-more-btn">
+           Basahin ang buong balita <span class="arrow">→</span>
+         </a>`
+      : ""
+    }
+
+    <!-- share section -->
+    <div class="share-section">
+      <div class="share-title">🔗 I-share ang balita na ito</div>
+      <div class="share-url-box" id="shareUrl">${pageUrl}</div>
+      <button class="copy-btn" onclick="copyLink()">📋 Kopyahin ang link</button>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <footer class="site-footer">
+    <div class="footer-logo">🔴 HOME OF NEWS</div>
+    <div class="footer-sub">TEAM STARTCOPE BETA · Mirai Bot V3 · Balita ng Pilipinas 🇵🇭</div>
+  </footer>
+
+  <script>
+    function copyLink() {
+      const url = document.getElementById('shareUrl').textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          const btn = document.querySelector('.copy-btn');
+          btn.textContent = '✅ Nakopya na!';
+          setTimeout(() => { btn.textContent = '📋 Kopyahin ang link'; }, 2000);
+        });
+      } else {
+        const el = document.createElement('textarea');
+        el.value = url; document.body.appendChild(el);
+        el.select(); document.execCommand('copy');
+        document.body.removeChild(el);
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ Nakopya na!';
+        setTimeout(() => { btn.textContent = '📋 Kopyahin ang link'; }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>`;
+
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
+    return res.end(html);
+  }
+
   // ── GET /health → status JSON ──────────────────────────────────────────────
   if (pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
