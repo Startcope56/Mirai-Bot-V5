@@ -1,79 +1,32 @@
 {
-  "id": "/gomo-app-v1",
-  "name": "GOMO Song Download Free",
-  "short_name": "GOMO",
-  "description": "GOMO App v1.0 — Libreng music search, play, at download. Walang Chrome UI. Works offline. By TEAM STARTCOPE BETA.",
+  "id": "/homedeepai-v1",
+  "name": "HOME DEEP AI",
+  "short_name": "HOME AI",
+  "description": "HOME DEEP AI — AI Assistant para sa mga estudante. Ginawa ng STARTCOPE BETA INC.",
   "version": "1.0.0",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#0a0a0a",
-  "theme_color": "#00e676",
+  "background_color": "#05050f",
+  "theme_color": "#ff2d95",
   "lang": "fil",
   "dir": "ltr",
-  "categories": ["music", "entertainment"],
-  "iarc_rating_id": "",
+  "categories": ["education", "productivity"],
   "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "shortcuts": [
-    {
-      "name": "Maghanap ng Kanta",
-      "short_name": "Search",
-      "description": "Libreng music search",
-      "url": "/?action=search&source=shortcut",
-      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Offline Library",
-      "short_name": "Offline",
-      "description": "Pakinggan ang cached na mga kanta",
-      "url": "/offline.html?source=shortcut",
-      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
-    }
+    { "name": "Mag-chat kay HOME AI", "short_name": "Chat", "url": "/?source=shortcut", "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }] },
+    { "name": "Video Call", "short_name": "Video", "url": "/?action=videocall&source=shortcut", "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }] }
   ],
   "screenshots": [],
-  "related_applications": [],
-  "handle_links": "preferred",
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  }
+  "related_applications": []
 }

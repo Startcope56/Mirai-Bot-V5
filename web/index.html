@@ -1,1181 +1,649 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>STARTCOPE MUSIC DOWNLOAD FREE</title>
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#6c63ff" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="STARTCOPE MUSIC" />
-  <link rel="apple-touch-icon" href="/icon-192.png" />
-  <meta name="description" content="STARTCOPE MUSIC DOWNLOAD FREE — Free unlimited fast music download. Search any song or artist. Powered by TEAM STARTCOPE BETA." />
-  <link rel="icon" href="/icon-192.png" type="image/png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HOME DEEP AI — STARTCOPE BETA INC</title>
+<meta name="description" content="HOME DEEP AI — AI Assistant para sa mga estudante. Ginawa ng STARTCOPE BETA INC."/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="icon" href="/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#05050f;--bg2:#0d0d22;--bg3:#141430;--card:rgba(16,16,40,0.93);
+  --border:rgba(255,60,180,0.18);--text:#f0eeff;--text2:#9090b8;
+  --pink:#ff2d95;--pink2:#ff69b4;--violet:#8b5cf6;--cyan:#00e5ff;
+  --green:#00e676;--red:#ff4455;
+  --glow:0 0 22px rgba(255,45,149,0.45);--glowv:0 0 22px rgba(139,92,246,0.45);
+}
+[data-theme="light"]{
+  --bg:#f0eeff;--bg2:#e6e0ff;--bg3:#ddd6ff;--card:rgba(255,255,255,0.96);
+  --border:rgba(139,92,246,0.22);--text:#1a1030;--text2:#5a507a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+button{cursor:pointer;border:none;outline:none;font-family:inherit}
+input{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px}
 
-  <style>
-    :root {
-      --p1:#6c63ff; --p2:#9b59b6; --p3:#3498db;
-      --accent:#a855f7;
-      --g1:linear-gradient(135deg,#6c63ff,#a855f7,#3498db);
-      --g2:linear-gradient(135deg,#6c63ff,#9b59b6);
-      --bg:#07070f; --s1:#0e0e1c; --s2:#14142a; --s3:#1a1a30; --s4:#22223a;
-      --border:rgba(108,99,255,.15); --border2:rgba(108,99,255,.3);
-      --text:#f0f0ff; --sub:#7070a0; --muted:#404060;
-      --r:14px; --rl:22px;
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
+/* ── Loading ── */
+#loadingScreen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#04040e 0%,#130830 50%,#04040e 100%);gap:18px}
+.load-logo{font-size:2.2rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
+.load-sub{color:var(--text2);font-size:.8rem;letter-spacing:2px;text-transform:uppercase}
+.load-dots{display:flex;gap:9px}
+.ld{width:10px;height:10px;border-radius:50%;animation:ldPulse 1.3s ease-in-out infinite}
+.ld:nth-child(1){background:var(--pink)}.ld:nth-child(2){background:var(--violet);animation-delay:.2s}.ld:nth-child(3){background:var(--cyan);animation-delay:.4s}
+@keyframes ldPulse{0%,80%,100%{transform:scale(.6);opacity:.35}40%{transform:scale(1.3);opacity:1}}
 
-    /* ── ANIMATED BG ORBS ─────────────────────────────────────────── */
-    .bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.18}
-    .bg-orb1{width:600px;height:600px;background:radial-gradient(#6c63ff,transparent);top:-200px;left:-200px;animation:orbFloat 12s ease-in-out infinite}
-    .bg-orb2{width:500px;height:500px;background:radial-gradient(#a855f7,transparent);bottom:-150px;right:-100px;animation:orbFloat 16s ease-in-out infinite reverse}
-    .bg-orb3{width:300px;height:300px;background:radial-gradient(#3498db,transparent);top:40%;left:60%;animation:orbFloat 20s ease-in-out infinite 4s}
-    @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,30px) scale(.95)}}
+/* ── Auth ── */
+#authOverlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#04040e 0%,#12073a 50%,#04040e 100%)}
+.a-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.22;animation:orbF 9s ease-in-out infinite;pointer-events:none}
+.a-orb1{width:320px;height:320px;background:var(--pink);top:8%;left:4%;animation-delay:0s}
+.a-orb2{width:260px;height:260px;background:var(--violet);bottom:12%;right:6%;animation-delay:3.5s}
+.a-orb3{width:200px;height:200px;background:var(--cyan);top:45%;left:38%;animation-delay:7s}
+@keyframes orbF{0%,100%{transform:translateY(0)}50%{transform:translateY(-28px)}}
+.auth-card{position:relative;z-index:1;width:min(440px,92vw);background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:26px;padding:38px 34px;box-shadow:0 8px 60px rgba(255,45,149,.16),0 2px 20px rgba(0,0,0,.55)}
+.ac-logo{text-align:center;margin-bottom:26px}
+.ac-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:var(--glow)}
+.ac-title{font-size:1.65rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ac-sub{color:var(--text2);font-size:.75rem;margin-top:4px;letter-spacing:1.2px;text-transform:uppercase}
+.auth-tabs{display:flex;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:26px;gap:4px}
+.at{flex:1;padding:10px;border-radius:9px;font-size:.88rem;font-weight:600;background:transparent;color:var(--text2);transition:all .2s}
+.at.active{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;box-shadow:var(--glow)}
+.auth-form{display:flex;flex-direction:column;gap:14px}
+.auth-form.hidden{display:none}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fl{font-size:.8rem;color:var(--text2);font-weight:500}
+.fi{padding:12px 16px;border-radius:12px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);font-size:.93rem;transition:all .2s}
+.fi:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,149,.13)}
+.fi::placeholder{color:var(--text2);opacity:.45}
+.btn-sub{padding:14px;border-radius:12px;font-size:.97rem;font-weight:700;color:white;background:linear-gradient(135deg,var(--pink),var(--violet));transition:all .2s;box-shadow:0 4px 20px rgba(255,45,149,.3);margin-top:4px}
+.btn-sub:hover{transform:translateY(-1px);box-shadow:0 7px 28px rgba(255,45,149,.5)}
+.btn-sub:disabled{opacity:.6;transform:none}
+.auth-err{color:var(--red);font-size:.82rem;text-align:center;display:none;padding:9px 14px;background:rgba(255,68,85,.1);border-radius:9px;border:1px solid rgba(255,68,85,.25);margin-bottom:4px}
 
-    /* ── HEADER ─────────────────────────────────────────────────────── */
-    header{position:relative;z-index:10;padding:40px 20px 30px;text-align:center;overflow:hidden}
-    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 80% at 50% -10%,rgba(108,99,255,.22) 0%,transparent 70%)}
+/* ── App shell ── */
+#app{display:none;flex-direction:column;height:100vh;position:relative}
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;background:var(--card);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);min-height:60px;flex-shrink:0;position:relative;z-index:50}
+.h-logo{display:flex;align-items:center;gap:11px}
+.h-logo-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--glow);flex-shrink:0}
+.h-logo-text{font-size:1.05rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.h-logo-badge{font-size:.62rem;color:var(--text2);letter-spacing:.6px}
+.h-actions{display:flex;align-items:center;gap:8px}
+.hb{width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;flex-shrink:0}
+.hb:hover{border-color:var(--pink);box-shadow:var(--glow)}
+.hb.vc-hb{width:auto;padding:0 16px;border-radius:22px;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:.83rem;font-weight:700;gap:6px;box-shadow:var(--glow);border-color:transparent}
+.hb.vc-hb:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(255,45,149,.55)}
+.n-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--red);font-size:.62rem;font-weight:700;color:white;display:flex;align-items:center;justify-content:center}
+.u-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--pink));color:white;font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--border);flex-shrink:0;transition:all .2s}
+.u-av:hover{box-shadow:var(--glowv)}
 
-    .header-top{position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:flex-end;margin-bottom:4px}
+/* ── Notif panel ── */
+.notif-panel{position:absolute;top:66px;right:18px;width:310px;max-height:370px;overflow-y:auto;background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.55);z-index:200;display:none;flex-direction:column}
+.notif-panel.open{display:flex}
+.np-hd{padding:13px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:.88rem;display:flex;justify-content:space-between;align-items:center}
+.np-clear{background:none;font-size:.74rem;color:var(--text2);cursor:pointer}
+.ni{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;cursor:default}
+.ni:hover{background:var(--bg3)}
+.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:5px}
+.ni-title{font-weight:600;color:var(--text);font-size:.84rem}
+.ni-text{font-size:.8rem;color:var(--text2);line-height:1.4;margin-top:2px}
+.ni-time{font-size:.7rem;color:var(--text2);margin-top:3px}
 
-    /* 3-dots menu */
-    .menu-wrap{position:relative}
-    .menu-btn{
-      width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border2);
-      background:rgba(108,99,255,.1);color:var(--text);font-size:20px;
-      cursor:pointer;display:flex;align-items:center;justify-content:center;
-      transition:all .2s;backdrop-filter:blur(8px);
-    }
-    .menu-btn:hover{background:rgba(108,99,255,.25);border-color:var(--p1)}
-    .dropdown{
-      position:absolute;top:calc(100% + 10px);right:0;
-      background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);
-      min-width:240px;overflow:hidden;z-index:1000;
-      box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(108,99,255,.1);
-      display:none;animation:dropIn .2s ease;
-    }
-    .dropdown.open{display:block}
-    @keyframes dropIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-    .dd-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--sub);text-transform:uppercase}
-    .dd-item{
-      display:flex;align-items:center;gap:12px;padding:13px 16px;
-      color:var(--text);font-size:13px;font-weight:500;cursor:pointer;
-      transition:background .15s;text-decoration:none;
-    }
-    .dd-item:hover{background:rgba(108,99,255,.12)}
-    .dd-item-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-    .dd-item-icon.blue{background:rgba(52,152,219,.2)}
-    .dd-item-icon.purple{background:rgba(168,85,247,.2)}
-    .dd-item-icon.green{background:rgba(0,200,100,.15)}
-    .dd-text{flex:1}
-    .dd-text-title{font-weight:700;font-size:13px}
-    .dd-text-sub{font-size:10px;color:var(--sub);margin-top:1px}
+/* ── User menu ── */
+.user-menu{position:absolute;top:66px;right:18px;width:205px;background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.55);z-index:200;display:none;flex-direction:column;overflow:hidden}
+.user-menu.open{display:flex}
+.um-hd{padding:14px 16px;border-bottom:1px solid var(--border)}
+.um-name{font-weight:700;font-size:.95rem}
+.um-sub{font-size:.75rem;color:var(--text2)}
+.um-item{padding:12px 16px;font-size:.87rem;color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.um-item:hover{background:var(--bg3)}
+.um-item.logout{color:var(--red)}
 
-    /* Brand */
-    .h-inner{position:relative;z-index:2;text-align:center}
-    .brand-logo{
-      width:72px;height:72px;border-radius:24px;margin:0 auto 14px;
-      background:var(--g1);
-      display:flex;align-items:center;justify-content:center;font-size:34px;
-      box-shadow:0 0 40px rgba(108,99,255,.5),0 8px 32px rgba(0,0,0,.4);
-      animation:logoPulse 3s ease-in-out infinite;
-    }
-    @keyframes logoPulse{0%,100%{box-shadow:0 0 40px rgba(108,99,255,.5),0 8px 32px rgba(0,0,0,.4)}50%{box-shadow:0 0 60px rgba(168,85,247,.6),0 8px 40px rgba(0,0,0,.5)}}
-    .brand-name{
-      font-size:26px;font-weight:900;letter-spacing:-0.5px;line-height:1.1;
-      background:var(--g1);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      margin-bottom:4px;
-    }
-    .brand-sub{font-size:11px;font-weight:600;letter-spacing:3px;color:var(--sub);text-transform:uppercase;margin-bottom:16px}
-    .brand-badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
-    .badge{
-      border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;
-      border:1.5px solid;
-    }
-    .badge-purple{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.35);color:#9d95ff}
-    .badge-pink{background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:#c084fc}
-    .badge-blue{background:rgba(52,152,219,.1);border-color:rgba(52,152,219,.3);color:#60a5fa}
-    .badge-green{background:rgba(0,200,100,.08);border-color:rgba(0,200,100,.25);color:#34d399}
-    .badge-offline{background:rgba(255,68,68,.1);border-color:rgba(255,68,68,.25);color:#f87171;text-decoration:none;display:none}
-    .badge-offline.show{display:inline-flex;align-items:center;gap:5px}
+/* ── Chat body ── */
+.chat-body{flex:1;overflow-y:auto;padding:18px 18px 12px;display:flex;flex-direction:column;gap:14px}
+.chat-welcome{text-align:center;padding:28px 16px;animation:fadeSlideUp .5s ease}
+.cw-av-wrap{width:94px;height:94px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:3px solid var(--pink);box-shadow:var(--glow);animation:aiFloat 4s ease-in-out infinite}
+.cw-av-wrap img{width:100%;height:100%;object-fit:cover}
+.cw-name{font-size:1.45rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cw-sub{font-size:.82rem;color:var(--text2);margin-top:4px}
+.cw-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
+.chip{padding:8px 16px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:.8rem;color:var(--text2);cursor:pointer;transition:all .2s}
+.chip:hover{background:var(--bg2);border-color:var(--pink);color:var(--pink)}
 
-    /* ── TABS ─────────────────────────────────────────────────────── */
-    .tabs{
-      display:flex;max-width:500px;margin:20px auto 0;
-      background:var(--s1);border:1.5px solid var(--border);border-radius:50px;
-      overflow:hidden;position:relative;z-index:10;padding:4px;gap:4px;
-    }
-    .tab-btn{
-      flex:1;padding:11px 16px;border:none;border-radius:46px;
-      background:transparent;color:var(--sub);font-size:13px;font-weight:700;
-      cursor:pointer;transition:all .22s;font-family:inherit;letter-spacing:.3px;
-      display:flex;align-items:center;justify-content:center;gap:6px;
-    }
-    .tab-btn.active{background:var(--g2);color:#fff;box-shadow:0 4px 20px rgba(108,99,255,.4)}
-    .tab-btn:not(.active):hover{background:rgba(108,99,255,.1);color:var(--text)}
-    .tab-panel{display:none}
-    .tab-panel.active{display:block}
+/* ── Messages ── */
+.msg-row{display:flex;gap:10px;animation:fadeSlideUp .28s ease;max-width:86%}
+.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-row.ai{align-self:flex-start}
+.msg-av{width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;margin-top:2px;border:2px solid var(--border)}
+.msg-av img{width:100%;height:100%;object-fit:cover}
+.msg-av.uav{background:linear-gradient(135deg,var(--violet),var(--pink));display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:800;color:white}
+.msg-bubble{padding:11px 16px;border-radius:18px;font-size:.91rem;line-height:1.56;max-width:100%;white-space:pre-wrap;word-break:break-word}
+.msg-row.ai .msg-bubble{background:var(--bg3);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.msg-row.user .msg-bubble{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;border-bottom-right-radius:4px;box-shadow:0 4px 16px rgba(255,45,149,.26)}
+.msg-time{font-size:.67rem;color:var(--text2);margin-top:4px;padding:0 3px}
+.msg-row.user .msg-time{text-align:right}
+.typing-ind{display:flex;align-items:center;gap:4px;padding:13px 17px}
+.td{width:7px;height:7px;border-radius:50%;background:var(--pink);animation:tyPulse 1.2s ease-in-out infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tyPulse{0%,60%,100%{transform:scale(.75);opacity:.4}30%{transform:scale(1.25);opacity:1}}
 
-    /* ── MUSIC SECTION ─────────────────────────────────────────────── */
-    .music-wrap{max-width:720px;margin:0 auto;padding:28px 18px 130px}
+/* ── Input bar ── */
+.input-bar{display:flex;align-items:center;gap:9px;padding:11px 16px;background:var(--card);backdrop-filter:blur(20px);border-top:1px solid var(--border);flex-shrink:0}
+.vt-btn{padding:8px 14px;border-radius:20px;font-size:.78rem;font-weight:700;background:linear-gradient(135deg,rgba(255,45,149,.18),rgba(139,92,246,.18));border:1.5px solid var(--pink);color:var(--pink);transition:all .2s;white-space:nowrap;flex-shrink:0}
+.vt-btn.off{border-color:var(--text2);color:var(--text2);background:var(--bg3)}
+.msg-inp{flex:1;padding:11px 16px;border-radius:24px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);font-size:.92rem;transition:all .2s}
+.msg-inp:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,149,.1)}
+.msg-inp::placeholder{color:var(--text2);opacity:.45}
+.send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--glow);transition:all .2s}
+.send-btn:hover{transform:scale(1.1)}
+.send-btn:disabled{opacity:.5;transform:none}
 
-    /* Search bar */
-    .search-area{margin-bottom:24px}
-    .search-box{
-      display:flex;background:var(--s1);border:1.5px solid var(--border);border-radius:50px;
-      overflow:visible;box-shadow:0 8px 40px rgba(0,0,0,.4);transition:all .2s;position:relative;
-    }
-    .search-box:focus-within{border-color:var(--border2);box-shadow:0 8px 40px rgba(0,0,0,.4),0 0 0 4px rgba(108,99,255,.15)}
-    .search-input-wrap{flex:1;position:relative;border-radius:50px 0 0 50px;overflow:hidden}
-    .search-input-wrap input{
-      width:100%;padding:17px 22px;border:none;outline:none;font-size:15px;
-      font-family:inherit;color:var(--text);background:transparent;
-    }
-    .search-input-wrap input::placeholder{color:var(--sub)}
-    .search-btn{
-      padding:0 28px;background:var(--g2);border:none;color:#fff;font-size:12px;
-      font-weight:800;cursor:pointer;letter-spacing:1px;transition:all .18s;font-family:inherit;
-      white-space:nowrap;border-radius:0 50px 50px 0;min-width:100px;
-    }
-    .search-btn:hover{filter:brightness(1.15)}
-    .search-btn:active{transform:scale(.97)}
-    .search-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* ═══ VIDEO CALL MODAL ═══ */
+#vcModal{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;background:#03030f}
+#vcModal.open{display:flex}
 
-    /* Artist suggestions */
-    .suggestions{
-      position:absolute;top:calc(100% + 8px);left:0;right:0;
-      background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);
-      overflow:hidden;z-index:200;box-shadow:0 20px 50px rgba(0,0,0,.6);
-      display:none;
-    }
-    .suggestions.open{display:block;animation:dropIn .15s ease}
-    .sug-head{padding:8px 14px;font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--sub);text-transform:uppercase;border-bottom:1px solid var(--border)}
-    .sug-item{
-      display:flex;align-items:center;gap:11px;padding:10px 14px;
-      cursor:pointer;transition:background .12s;font-size:13px;
-    }
-    .sug-item:hover{background:rgba(108,99,255,.15)}
-    .sug-avatar{width:32px;height:32px;border-radius:10px;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-    .sug-name{font-weight:700;color:var(--text)}
-    .sug-genre{font-size:10px;color:var(--sub);margin-top:1px}
+/* Ringing */
+#vcRinging{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;height:100%;animation:fadeSlideUp .4s ease}
+.ring-av-wrap{position:relative;width:136px;height:136px}
+.ring-av{width:136px;height:136px;border-radius:50%;overflow:hidden;border:3px solid var(--pink);object-fit:cover;position:relative;z-index:2;background:var(--bg3);display:block}
+.ring-wave{position:absolute;inset:-20px;border-radius:50%;border:2.5px solid var(--pink);opacity:0;animation:ringExp 2.2s ease-out infinite}
+.ring-wave:nth-child(2){animation-delay:.65s}.ring-wave:nth-child(3){animation-delay:1.3s}
+@keyframes ringExp{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.ring-name{font-size:1.55rem;font-weight:800;color:white}
+.ring-status{color:var(--text2);font-size:.88rem}
+.ring-controls{display:flex;gap:26px}
+.ring-btn{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .2s}
+.ring-btn.ans{background:var(--green);box-shadow:0 4px 22px rgba(0,230,118,.45)}
+.ring-btn.dec{background:var(--red);box-shadow:0 4px 22px rgba(255,68,85,.45)}
+.ring-btn:hover{transform:scale(1.12)}
 
-    /* Popular artists strip */
-    .popular-wrap{margin-top:16px}
-    .popular-label{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--sub);text-transform:uppercase;margin-bottom:10px}
-    .artist-chips{display:flex;gap:8px;flex-wrap:wrap}
-    .artist-chip{
-      display:flex;align-items:center;gap:6px;
-      padding:6px 14px 6px 8px;background:var(--s2);border:1.5px solid var(--border);border-radius:30px;
-      cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--text);
-    }
-    .artist-chip:hover{border-color:var(--border2);background:rgba(108,99,255,.12);color:#a78bfa}
-    .artist-chip-icon{width:24px;height:24px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:11px}
+/* Active call */
+#vcActive{display:none;flex-direction:column;height:100%}
+#vcActive.show{display:flex}
+.vc-top{flex:1;display:flex;position:relative;overflow:hidden}
+.vc-remote{flex:1;position:relative;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:linear-gradient(160deg,#06021a 0%,#1a0650 100%)}
+.vc-remote::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%,rgba(255,45,149,.18) 0%,transparent 70%);animation:remotePulse 4s ease-in-out infinite;pointer-events:none;z-index:1}
+@keyframes remotePulse{0%,100%{opacity:.5}50%{opacity:1}}
+.vc-spk-ring{position:absolute;inset:0;pointer-events:none;z-index:6;border:3px solid var(--pink);border-radius:4px;opacity:0;transition:opacity .3s}
+.vc-spk-ring.on{opacity:.7;animation:spkPulse .45s ease-in-out infinite}
+@keyframes spkPulse{0%,100%{opacity:.3}50%{opacity:.9}}
+.ai-char-wrap{position:relative;z-index:3;display:flex;align-items:flex-end;justify-content:center;height:100%;padding-bottom:16px}
+.ai-char{max-height:min(78vh,520px);max-width:58%;object-fit:contain;filter:drop-shadow(0 0 35px rgba(255,45,149,.55));animation:aiFloat 4s ease-in-out infinite;transition:filter .3s}
+.ai-char.greeting{animation:aiGreet 2.1s ease-in-out forwards}
+.ai-char.talking{animation:aiTalk .48s ease-in-out infinite}
+.ai-char-fb{width:200px;height:280px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,rgba(255,45,149,.14),rgba(139,92,246,.14));border:2px dashed var(--pink);animation:aiFloat 4s ease-in-out infinite}
+.ai-char-fb .fb-face{font-size:76px}
+.vc-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);backdrop-filter:blur(12px);padding:5px 16px;border-radius:20px;font-size:.78rem;color:white;font-weight:600;z-index:5;white-space:nowrap}
+.vc-local{position:absolute;top:14px;right:14px;width:130px;height:96px;border-radius:13px;overflow:hidden;border:2px solid var(--border);background:var(--bg3);z-index:10;box-shadow:0 4px 22px rgba(0,0,0,.6)}
+.vc-local video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}
+.cam-off-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;font-size:.62rem;color:var(--text2);background:var(--bg3)}
+.cam-off-ph span{font-size:20px}
+.vc-ctrls{display:flex;align-items:center;justify-content:center;gap:16px;padding:18px 16px;background:rgba(0,0,0,.72);backdrop-filter:blur(20px);flex-shrink:0;border-top:1px solid rgba(255,255,255,.06)}
+.vc-btn{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);color:white;transition:all .2s}
+.vc-btn:hover{background:rgba(255,255,255,.2)}
+.vc-btn.on{background:linear-gradient(135deg,var(--pink),var(--violet));box-shadow:var(--glow);border-color:transparent}
+.vc-btn.off-s{background:rgba(255,68,85,.3);border-color:var(--red)}
+.vc-btn.end-btn{background:var(--red);box-shadow:0 4px 20px rgba(255,68,85,.45);border-color:transparent;width:58px;height:58px;font-size:22px}
+.vc-btn.end-btn:hover{background:#ff2233}
+.vc-chat-panel{position:absolute;right:0;top:0;bottom:90px;width:min(300px,80vw);display:none;flex-direction:column;background:rgba(8,8,28,.96);backdrop-filter:blur(22px);border-left:1px solid var(--border);z-index:20}
+.vc-chat-panel.open{display:flex}
+.vch-hd{padding:13px 15px;border-bottom:1px solid var(--border);font-weight:700;font-size:.86rem;display:flex;align-items:center;justify-content:space-between}
+.vch-close{background:none;font-size:18px;color:var(--text2)}
+.vch-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.vch-iw{display:flex;gap:8px;padding:11px 12px;border-top:1px solid var(--border)}
+.vch-inp{flex:1;padding:8px 12px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:white;font-size:.83rem}
+.vch-inp::placeholder{color:var(--text2);opacity:.45}
+.vch-send{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 
-    /* Results section */
-    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .sec-label{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--sub);text-transform:uppercase}
-    .sec-count{font-size:11px;font-weight:700;color:#9d95ff;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.25);border-radius:20px;padding:3px 12px}
-
-    .track-list{display:flex;flex-direction:column;gap:5px}
-    .track-card{
-      background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);
-      padding:12px 14px;display:flex;align-items:center;gap:12px;
-      transition:all .18s;position:relative;overflow:hidden;
-    }
-    .track-card::before{content:'';position:absolute;inset:0;background:var(--g1);opacity:0;transition:opacity .18s}
-    .track-card:hover{border-color:var(--border2);transform:translateX(2px)}
-    .track-card:hover::before{opacity:.04}
-    .track-card.playing{border-color:rgba(108,99,255,.5);background:rgba(108,99,255,.08)}
-    .track-card.playing::before{opacity:.06}
-    .track-num{width:22px;text-align:center;color:var(--sub);font-size:12px;font-weight:600;flex-shrink:0;position:relative;z-index:1}
-    .track-card.playing .track-num{color:#9d95ff}
-    .track-thumb{width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--s3);position:relative;z-index:1}
-    .thumb-ph{width:50px;height:50px;border-radius:10px;background:var(--g2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;z-index:1}
-    .track-info{flex:1;min-width:0;position:relative;z-index:1}
-    .track-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-    .track-card.playing .track-title{color:#9d95ff}
-    .track-artist{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .track-dur{color:var(--muted);font-size:11px;font-weight:600;flex-shrink:0;min-width:36px;text-align:right;position:relative;z-index:1}
-    .track-actions{display:flex;gap:6px;flex-shrink:0;align-items:center;position:relative;z-index:1}
-
-    .btn-play{
-      width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(108,99,255,.4);
-      background:transparent;color:#9d95ff;font-size:13px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:all .15s;
-    }
-    .btn-play:hover,.track-card.playing .btn-play{background:var(--g2);color:#fff;border-color:var(--p1);box-shadow:0 4px 16px rgba(108,99,255,.4)}
-
-    .btn-dl{
-      padding:8px 16px;background:var(--g2);border:none;border-radius:22px;color:#fff;
-      font-size:10px;font-weight:800;cursor:pointer;letter-spacing:.5px;transition:all .15s;
-      font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;
-    }
-    .btn-dl:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,99,255,.4)}
-    .btn-dl:active{transform:translateY(0)}
-    .btn-dl:disabled{background:var(--s3);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none;filter:none}
-
-    /* 3-dots per track */
-    .btn-more{
-      width:30px;height:30px;border-radius:50%;border:none;
-      background:transparent;color:var(--sub);font-size:16px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:all .15s;
-      line-height:1;position:relative;
-    }
-    .btn-more:hover{background:rgba(108,99,255,.15);color:var(--text)}
-
-    /* Track context menu */
-    .track-menu{
-      position:absolute;right:14px;top:calc(100% - 10px);z-index:300;
-      background:var(--s2);border:1.5px solid var(--border2);border-radius:12px;
-      min-width:200px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.7);
-      display:none;animation:dropIn .15s ease;
-    }
-    .track-menu.open{display:block}
-    .tm-item{
-      display:flex;align-items:center;gap:10px;padding:11px 14px;
-      cursor:pointer;font-size:12px;font-weight:600;color:var(--text);transition:background .12s;
-    }
-    .tm-item:hover{background:rgba(108,99,255,.15)}
-    .tm-item a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px;width:100%}
-
-    /* State panels */
-    .state{text-align:center;padding:70px 20px}
-    .state-icon{font-size:60px;margin-bottom:16px}
-    .state-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px}
-    .state-sub{font-size:13px;color:var(--sub);line-height:1.7;max-width:300px;margin:0 auto}
-    .spinner{width:40px;height:40px;border:3px solid var(--s3);border-top-color:var(--p1);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* ── NOW PLAYING BAR ─────────────────────────────────────────── */
-    #player-bar{
-      position:fixed;bottom:0;left:0;right:0;
-      background:rgba(8,8,20,.95);backdrop-filter:blur(28px);
-      border-top:1px solid var(--border2);padding:10px 18px;
-      display:none;align-items:center;gap:12px;z-index:100;
-      box-shadow:0 -12px 48px rgba(0,0,0,.6);
-    }
-    #player-bar.visible{display:flex}
-    .player-thumb{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--s3);flex-shrink:0}
-    .player-info{flex:1;min-width:0}
-    .player-title{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9d95ff}
-    .player-artist{font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .player-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
-    .pc-btn{
-      width:36px;height:36px;border-radius:50%;border:none;
-      background:var(--s3);color:var(--text);font-size:13px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:all .15s;
-    }
-    .pc-btn:hover{background:var(--s4)}
-    .pc-btn.primary-btn{background:var(--g2);color:#fff;width:44px;height:44px;font-size:15px;box-shadow:0 4px 16px rgba(108,99,255,.4)}
-    .pc-btn.primary-btn:hover{filter:brightness(1.15)}
-    .player-progress-wrap{flex:1;display:flex;align-items:center;gap:8px;max-width:280px}
-    .player-time{font-size:10px;color:var(--sub);flex-shrink:0;min-width:34px}
-    .player-progress{flex:1;height:4px;background:var(--s4);border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
-    .player-progress-fill{height:100%;background:var(--g2);border-radius:2px;width:0%;transition:width .5s linear}
-    .vol-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
-    .vol-icon{font-size:14px;color:var(--sub);cursor:pointer}
-    #vol-slider{width:72px;accent-color:var(--p1);cursor:pointer}
-
-    /* ── AI CHAT TAB ──────────────────────────────────────────────── */
-    .ai-wrap{
-      max-width:720px;margin:0 auto;padding:28px 18px 100px;
-      display:flex;flex-direction:column;height:calc(100vh - 240px);min-height:400px;
-    }
-    .ai-header{
-      display:flex;align-items:center;gap:14px;
-      background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(168,85,247,.08));
-      border:1.5px solid rgba(108,99,255,.25);border-radius:var(--rl);
-      padding:16px 20px;margin-bottom:16px;
-    }
-    .ai-avatar{
-      width:54px;height:54px;border-radius:18px;flex-shrink:0;
-      background:var(--g2);
-      display:flex;align-items:center;justify-content:center;font-size:26px;
-      box-shadow:0 0 28px rgba(108,99,255,.5);
-    }
-    .ai-name{font-size:18px;font-weight:800;color:#9d95ff}
-    .ai-sub{font-size:11px;color:#6060a0;margin-top:2px;font-weight:500}
-    .ai-status{display:flex;align-items:center;gap:6px;margin-top:4px}
-    .ai-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse-g 2s ease-in-out infinite;flex-shrink:0}
-    @keyframes pulse-g{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-    .ai-online{font-size:10px;color:#22c55e;font-weight:700}
-
-    #chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 0;scroll-behavior:smooth}
-    #chat-messages::-webkit-scrollbar{width:4px}
-    #chat-messages::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
-    .msg-row{display:flex;gap:10px;animation:msgIn .22s ease}
-    @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .msg-row.user{flex-direction:row-reverse}
-    .msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;align-self:flex-end}
-    .msg-avatar.bot{background:var(--g2)}
-    .msg-avatar.user{background:linear-gradient(135deg,#22c55e,#16a34a)}
-    .msg-bubble{max-width:78%;padding:11px 15px;border-radius:18px;font-size:13.5px;line-height:1.65;word-wrap:break-word;white-space:pre-wrap}
-    .msg-bubble.bot{background:var(--s2);border:1.5px solid rgba(108,99,255,.2);border-bottom-left-radius:4px}
-    .msg-bubble.user{background:var(--g2);border-bottom-right-radius:4px;color:#fff}
-    .msg-time{font-size:10px;color:var(--sub);align-self:flex-end;flex-shrink:0;margin-bottom:2px}
-    .typing-bubble{display:flex;align-items:center;gap:5px;background:var(--s2);border:1.5px solid rgba(108,99,255,.2);padding:13px 16px;border-radius:18px;border-bottom-left-radius:4px;width:60px}
-    .typing-dot{width:7px;height:7px;border-radius:50%;background:#9d95ff;animation:blink 1.2s infinite}
-    .typing-dot:nth-child(2){animation-delay:.2s}
-    .typing-dot:nth-child(3){animation-delay:.4s}
-    @keyframes blink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
-
-    .ai-input-area{margin-top:12px;display:flex;gap:8px;align-items:flex-end}
-    #ai-input{
-      flex:1;background:var(--s1);border:1.5px solid var(--border);border-radius:24px;
-      padding:13px 18px;color:var(--text);font-family:inherit;font-size:14px;
-      resize:none;outline:none;max-height:120px;min-height:48px;transition:border-color .2s;line-height:1.5;
-    }
-    #ai-input:focus{border-color:var(--border2);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
-    #ai-input::placeholder{color:var(--sub)}
-    #ai-send{
-      width:46px;height:46px;border-radius:50%;border:none;flex-shrink:0;
-      background:var(--g2);color:#fff;font-size:18px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:all .15s;
-      box-shadow:0 4px 16px rgba(108,99,255,.4);
-    }
-    #ai-send:hover{filter:brightness(1.15);transform:scale(1.08)}
-    #ai-send:active{transform:scale(.95)}
-    #ai-send:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
-
-    .ai-quick-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-    .quick-btn{
-      padding:6px 14px;background:var(--s2);border:1.5px solid rgba(108,99,255,.2);
-      border-radius:20px;color:#9d95ff;font-size:11px;font-weight:700;cursor:pointer;
-      transition:all .15s;font-family:inherit;white-space:nowrap;
-    }
-    .quick-btn:hover{background:rgba(108,99,255,.18);border-color:rgba(108,99,255,.4)}
-    .ai-clear-btn{
-      background:none;border:1.5px solid var(--border);border-radius:20px;
-      padding:6px 14px;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;
-    }
-    .ai-clear-btn:hover{border-color:#f87171;color:#f87171}
-
-    /* ── FOOTER ─────────────────────────────────────────────────── */
-    footer{
-      text-align:center;padding:20px;color:var(--muted);font-size:10px;letter-spacing:1.5px;
-      border-top:1px solid rgba(108,99,255,.08);margin-bottom:10px;
-    }
-    footer a{color:#9d95ff;text-decoration:none}
-    footer a:hover{text-decoration:underline}
-
-    /* ── VOICE BAR ──────────────────────────────────────────────── */
-    #voice-bar{
-      position:fixed;top:0;left:0;right:0;z-index:200;
-      background:linear-gradient(90deg,rgba(108,99,255,.95),rgba(168,85,247,.95));
-      backdrop-filter:blur(16px);padding:8px 18px;
-      display:flex;align-items:center;gap:10px;
-      box-shadow:0 4px 24px rgba(108,99,255,.3);
-      transition:all .3s;
-    }
-    #voice-bar.duck{opacity:.3}
-    .vb-icon{font-size:18px;animation:vbPulse 1.5s ease-in-out infinite}
-    @keyframes vbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-    .vb-text{font-size:11px;font-weight:700;color:#fff;flex:1}
-    .vb-waves{display:flex;align-items:center;gap:2px;height:16px}
-    .vb-wave{width:3px;background:#fff;border-radius:2px;animation:wave 1s ease-in-out infinite}
-    .vb-wave:nth-child(1){height:4px;animation-delay:0s}
-    .vb-wave:nth-child(2){height:12px;animation-delay:.1s}
-    .vb-wave:nth-child(3){height:8px;animation-delay:.2s}
-    .vb-wave:nth-child(4){height:14px;animation-delay:.3s}
-    .vb-wave:nth-child(5){height:6px;animation-delay:.4s}
-    @keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
-    .vb-close{width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-
-    /* ── TOASTS ─────────────────────────────────────────────────── */
-    #offline-toast{
-      position:fixed;top:56px;left:50%;transform:translateX(-50%);
-      background:#1a0d0d;border:1.5px solid #f87171;border-radius:28px;
-      padding:10px 18px;display:none;align-items:center;gap:9px;z-index:500;
-      box-shadow:0 4px 30px rgba(0,0,0,.6);white-space:nowrap;
-    }
-    #offline-toast.show{display:flex}
-    .ot-dot{width:7px;height:7px;border-radius:50%;background:#f87171;animation:pulse-r 1.4s ease-in-out infinite}
-    @keyframes pulse-r{0%,100%{opacity:1}50%{opacity:.3}}
-    .ot-text{font-size:12px;color:#f0f0f0;font-weight:600}
-    #cache-toast{
-      position:fixed;bottom:90px;right:16px;background:#0e0e20;border:1.5px solid var(--p1);
-      border-radius:14px;padding:10px 16px;font-size:12px;color:#9d95ff;font-weight:700;
-      z-index:400;display:none;max-width:240px;box-shadow:0 4px 20px rgba(108,99,255,.25);animation:slideInR .3s ease;
-    }
-    #cache-toast.show{display:block}
-    @keyframes slideInR{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
-
-    /* ── RESPONSIVE ─────────────────────────────────────────────── */
-    @media(max-width:600px){
-      .brand-name{font-size:21px}
-      .track-dur{display:none}
-      .player-progress-wrap{display:none}
-      .vol-wrap{display:none}
-      .btn-dl{padding:7px 12px;font-size:10px}
-      .ai-wrap{height:calc(100vh - 210px)}
-    }
-    @media(max-width:420px){
-      .track-num{display:none}
-      .brand-name{font-size:18px}
-      .msg-bubble{max-width:90%}
-    }
-  </style>
+/* ── Animations ── */
+@keyframes aiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+@keyframes aiGreet{
+  0%{transform:scale(1) translateX(0) rotate(0deg)}
+  12%{transform:scale(1.07) translateX(8px) rotate(5deg)}
+  25%{transform:scale(1.07) translateX(-8px) rotate(-5deg)}
+  38%{transform:scale(1.05) translateX(6px) rotate(4deg)}
+  52%{transform:scale(1.03) translateX(-4px) rotate(-2deg)}
+  68%{transform:scale(1.01) translateX(3px) rotate(1deg)}
+  100%{transform:scale(1) translateX(0) rotate(0deg)}
+}
+@keyframes aiTalk{
+  0%,100%{filter:drop-shadow(0 0 18px rgba(255,45,149,.55));transform:scale(1)}
+  50%{filter:drop-shadow(0 0 42px rgba(255,45,149,1));transform:scale(1.02) translateY(-4px)}
+}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){
+  .auth-card{padding:26px 18px}
+  .hb.vc-hb .vc-txt{display:none}
+  .vc-local{width:90px;height:70px}
+  .ai-char{max-width:70%}
+}
+</style>
 </head>
 <body>
 
-<!-- BG ORBS -->
-<div class="bg-orb bg-orb1"></div>
-<div class="bg-orb bg-orb2"></div>
-<div class="bg-orb bg-orb3"></div>
-
-<!-- VOICE WELCOME BAR -->
-<div id="voice-bar" style="display:none">
-  <span class="vb-icon">🎤</span>
-  <div class="vb-waves">
-    <div class="vb-wave"></div><div class="vb-wave"></div>
-    <div class="vb-wave"></div><div class="vb-wave"></div>
-    <div class="vb-wave"></div>
-  </div>
-  <div class="vb-text">STARTCOPE MUSIC — Welcome! Enjoy free unlimited downloads</div>
-  <button class="vb-close" onclick="stopVoice()" title="Close">✕</button>
+<!-- ═══ LOADING ═══ -->
+<div id="loadingScreen">
+  <div class="load-logo">HOME DEEP AI</div>
+  <div class="load-sub">STARTCOPE BETA INC · For Students</div>
+  <div class="load-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
 </div>
 
-<!-- HEADER -->
-<header>
-  <div class="header-top">
-    <div class="menu-wrap" style="position:absolute;right:18px;top:0">
-      <button class="menu-btn" onclick="toggleMenu()" id="menuBtn" title="More options">⋮</button>
-      <div class="dropdown" id="dropdown">
-        <div class="dd-head">Options</div>
-        <a class="dd-item" href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank" rel="noopener">
-          <div class="dd-item-icon blue">👨‍💻</div>
-          <div class="dd-text">
-            <div class="dd-text-title">Developer — Follow on Facebook</div>
-            <div class="dd-text-sub">STARTCOPE TA INC. Facebook Page</div>
-          </div>
-        </a>
-        <div class="dd-item" onclick="showAbout()">
-          <div class="dd-item-icon purple">ℹ️</div>
-          <div class="dd-text">
-            <div class="dd-text-title">About This Website</div>
-            <div class="dd-text-sub">Free unlimited fast download</div>
+<!-- ═══ AUTH ═══ -->
+<div id="authOverlay">
+  <div class="a-orb a-orb1"></div><div class="a-orb a-orb2"></div><div class="a-orb a-orb3"></div>
+  <div class="auth-card">
+    <div class="ac-logo">
+      <div class="ac-icon">🏠</div>
+      <div class="ac-title">HOME DEEP AI</div>
+      <div class="ac-sub">STARTCOPE BETA INC · For Students</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="at active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="at" id="tabReg" onclick="switchTab('register')">Register</button>
+    </div>
+    <p class="auth-err" id="authErr"></p>
+    <form class="auth-form" id="loginForm" onsubmit="doLogin(event)">
+      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="liUser" placeholder="Ilagay ang username" required autocomplete="username"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="liPass" placeholder="Ilagay ang password" required autocomplete="current-password"/></div>
+      <button type="submit" class="btn-sub" id="liBtn">Login</button>
+    </form>
+    <form class="auth-form hidden" id="regForm" onsubmit="doRegister(event)">
+      <div class="fg"><label class="fl">Display Name</label><input class="fi" type="text" id="rgName" placeholder="Iyong pangalan" required/></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="rgUser" placeholder="Pumili ng username" required autocomplete="username"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="rgPass" placeholder="Pumili ng password" required autocomplete="new-password"/></div>
+      <button type="submit" class="btn-sub" id="rgBtn">Mag-Register</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+  <header class="app-header">
+    <div class="h-logo">
+      <div class="h-logo-icon">🏠</div>
+      <div><div class="h-logo-text">HOME DEEP AI</div><div class="h-logo-badge">STARTCOPE BETA INC</div></div>
+    </div>
+    <div class="h-actions">
+      <button class="hb vc-hb" onclick="startVideoCall()" title="Video Call">📹 <span class="vc-txt">Video Call</span></button>
+      <button class="hb" id="notifBtn" onclick="toggleNotifs()" title="Notifications">🔔<span class="n-badge" id="nBadge">3</span></button>
+      <button class="hb" id="darkBtn" onclick="toggleDark()" title="Dark/Light Mode">🌙</button>
+      <div class="u-av" id="uAvBtn" onclick="toggleUserMenu()">?</div>
+    </div>
+  </header>
+
+  <div class="notif-panel" id="notifPanel">
+    <div class="np-hd">🔔 Mga Notipikasyon <button class="np-clear" onclick="clearNotifs()">Burahin lahat</button></div>
+    <div id="notifList"></div>
+  </div>
+
+  <div class="user-menu" id="userMenu">
+    <div class="um-hd"><div class="um-name" id="umName">—</div><div class="um-sub">HOME DEEP AI User</div></div>
+    <div class="um-item" onclick="closeMenus()">⚙️ Settings</div>
+    <div class="um-item logout" onclick="doLogout()">🚪 Logout</div>
+  </div>
+
+  <div class="chat-body" id="chatBody">
+    <div class="chat-welcome" id="chatWelcome">
+      <div class="cw-av-wrap"><img id="cwAvImg" src="" alt="HOME AI" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTQiIGhlaWdodD0iOTQiIHZpZXdCb3g9IjAgMCA5NCA5NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0NyIgY3k9IjQ3IiByPSI0NyIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjQ3IiB5PSI2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0MiIgZmlsbD0id2hpdGUiPvCfpJM8L3RleHQ+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSI5NCIgeTI9Ijk0Ij48c3RvcCBzdG9wLWNvbG9yPSIjZmYyZDk1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjOGI1Y2Y2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+'"/></div>
+      <div class="cw-name">HOME AI</div>
+      <div class="cw-sub">Ginawa ng STARTCOPE BETA INC para sa mga estudante 🎓</div>
+      <div class="cw-chips">
+        <div class="chip" onclick="qs('Kumusta HOME AI!')">👋 Kumusta!</div>
+        <div class="chip" onclick="qs('Sino ang gumawa sayo?')">🏢 Sino gumawa?</div>
+        <div class="chip" onclick="qs('Tulungan mo ako sa homework ko.')">📚 Homework help</div>
+        <div class="chip" onclick="qs('Anong magagawa mo para sa mga estudante?')">💡 Capabilities</div>
+        <div class="chip" onclick="qs('Paano mag-aral nang epektibo?')">🧠 Study tips</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-bar">
+    <button class="vt-btn" id="vtBtn" onclick="toggleVoice()">🎙️ Voice: ON</button>
+    <input class="msg-inp" id="msgInp" type="text" placeholder="Mag-usap kay HOME AI..." onkeydown="inpKey(event)"/>
+    <button class="send-btn" id="sndBtn" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- ═══ VIDEO CALL MODAL ═══ -->
+<div id="vcModal">
+  <div id="vcRinging">
+    <div class="ring-av-wrap">
+      <div class="ring-wave"></div><div class="ring-wave"></div><div class="ring-wave"></div>
+      <img class="ring-av" id="ringAv" src="" alt="HOME AI"/>
+    </div>
+    <div class="ring-name">HOME AI</div>
+    <div class="ring-status" id="ringStatus">Tumatawag...</div>
+    <div class="ring-controls">
+      <button class="ring-btn ans" onclick="answerCall()" title="Sagutin">📞</button>
+      <button class="ring-btn dec" onclick="endCall()" title="Tanggihan">📵</button>
+    </div>
+  </div>
+  <div id="vcActive">
+    <div class="vc-top">
+      <div class="vc-remote">
+        <div class="vc-spk-ring" id="vcSpkRing"></div>
+        <div class="ai-char-wrap">
+          <img id="aiCharImg" class="ai-char" src="" alt="HOME AI"
+               onerror="this.style.display='none';document.getElementById('aiCharFb').style.display='flex'"/>
+          <div id="aiCharFb" class="ai-char-fb" style="display:none">
+            <div class="fb-face">🤖</div>
+            <div style="font-size:.9rem;color:var(--pink);font-weight:700">HOME AI</div>
+            <div style="font-size:.72rem;color:var(--text2)">STARTCOPE BETA INC</div>
           </div>
         </div>
-        <div class="dd-item" onclick="toggleVoice()">
-          <div class="dd-item-icon green">🔊</div>
-          <div class="dd-text">
-            <div class="dd-text-title" id="voiceToggleLabel">Welcome Voice: ON</div>
-            <div class="dd-text-sub">Background welcome audio</div>
-          </div>
+        <div class="vc-label">✨ HOME AI — STARTCOPE BETA INC</div>
+      </div>
+      <div class="vc-local">
+        <video id="localVid" autoplay muted playsinline></video>
+        <div class="cam-off-ph" id="camOffPh"><span>📷</span>Camera Off</div>
+      </div>
+      <div class="vc-chat-panel" id="vcChatPanel">
+        <div class="vch-hd">💬 Chat <button class="vch-close" onclick="toggleVCChat()">✕</button></div>
+        <div class="vch-msgs" id="vcChatMsgs"></div>
+        <div class="vch-iw">
+          <input class="vch-inp" id="vcChatInp" placeholder="Mag-message..." onkeydown="vcKey(event)"/>
+          <button class="vch-send" onclick="sendVCMsg()">➤</button>
         </div>
-        <div class="dd-item" onclick="closeMenu()">
-          <div class="dd-item-icon" style="background:rgba(255,100,100,.15)">✕</div>
-          <div class="dd-text"><div class="dd-text-title">Close Menu</div></div>
-        </div>
       </div>
     </div>
-  </div>
-  <div class="h-inner">
-    <div class="brand-logo">🎵</div>
-    <div class="brand-name">STARTCOPE MUSIC DOWNLOAD FREE</div>
-    <div class="brand-sub">Free · Unlimited · Fast · by TEAM STARTCOPE BETA</div>
-    <div class="brand-badges">
-      <span class="badge badge-purple">⚡ FREE DOWNLOAD</span>
-      <span class="badge badge-pink">🎵 UNLIMITED SONGS</span>
-      <span class="badge badge-blue">🔍 SEARCH ANY ARTIST</span>
-      <span class="badge badge-green">📶 FAST STREAMING</span>
-      <a href="/offline.html" class="badge badge-offline" id="offlineLibBadge">📴 OFFLINE LIBRARY</a>
-    </div>
-  </div>
-</header>
-
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab-btn active" id="tab-music" onclick="switchTab('music')">🎵 MUSIC</button>
-  <button class="tab-btn" id="tab-ai" onclick="switchTab('ai')">🤖 DRIAN AI</button>
-</div>
-
-<!-- MUSIC TAB -->
-<div class="tab-panel active" id="panel-music">
-  <div class="music-wrap">
-
-    <!-- Search -->
-    <div class="search-area">
-      <div style="position:relative">
-        <div class="search-box" id="searchBox">
-          <div class="search-input-wrap">
-            <input type="text" id="q" placeholder="Maghanap ng kanta, artista, album..." autocomplete="off" />
-          </div>
-          <button class="search-btn" id="searchBtn" onclick="doSearch()">🔍 SEARCH</button>
-        </div>
-        <div class="suggestions" id="suggestions"></div>
-      </div>
-
-      <!-- Popular Filipino + OPM Artists -->
-      <div class="popular-wrap">
-        <div class="popular-label">🇵🇭 Popular Artists</div>
-        <div class="artist-chips" id="artistChips"></div>
-      </div>
-    </div>
-
-    <!-- Results -->
-    <div class="sec-head" id="resultsHead" style="display:none">
-      <div class="sec-label" id="label"></div>
-      <div class="sec-count" id="countBadge"></div>
-    </div>
-    <div id="results">
-      <div class="state">
-        <div class="state-icon">🎵</div>
-        <div class="state-title">STARTCOPE MUSIC DOWNLOAD FREE</div>
-        <div class="state-sub">I-type ang pangalan ng kanta o artista<br>tapos pindutin ang Search para mag-download ng libre!</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- AI TAB -->
-<div class="tab-panel" id="panel-ai">
-  <div class="ai-wrap">
-    <div class="ai-header">
-      <div class="ai-avatar">🤖</div>
-      <div>
-        <div class="ai-name">DRIAN AI v4.0.0</div>
-        <div class="ai-sub">by Manuelson Yasis · TEAM STARTCOPE BETA</div>
-        <div class="ai-status"><div class="ai-dot"></div><div class="ai-online">Online · Walang limit · Libre!</div></div>
-      </div>
-    </div>
-    <div id="chat-messages">
-      <div class="msg-row">
-        <div class="msg-avatar bot">🤖</div>
-        <div class="msg-bubble bot">Kumusta! Ako si <strong>DRIAN AI v4.0.0</strong> — ginawa ng <strong>Manuelson Yasis ng TEAM STARTCOPE BETA</strong>. 🚀
-
-Kaya ko ang lahat — school, research, coding, math, agham, kasaysayan, creative writing, jokes, at marami pa!
-
-Ano ang maitutulong ko sa iyo ngayon? 😊</div>
-      </div>
-    </div>
-    <div class="ai-quick-btns">
-      <button class="quick-btn" onclick="sendQuick('Sino ka?')">🤖 Sino ka?</button>
-      <button class="quick-btn" onclick="sendQuick('Ano ang 5 tips para maging masaya?')">😊 Tips</button>
-      <button class="quick-btn" onclick="sendQuick('Ano ang pinakamagandang lugar sa Pilipinas?')">🇵🇭 Pilipinas</button>
-      <button class="quick-btn" onclick="sendQuick('Magbigay ng Tagalog joke!')">😂 Joke</button>
-      <button class="quick-btn" onclick="sendQuick('Paano mag-code sa Python?')">💻 Python</button>
-      <button class="ai-clear-btn" onclick="clearChat()">🗑️ Clear</button>
-    </div>
-    <div class="ai-input-area">
-      <textarea id="ai-input" placeholder="Mag-type ng tanong dito..." rows="1" oninput="autoResize(this)" onkeydown="handleAiKey(event)"></textarea>
-      <button id="ai-send" onclick="sendAiMessage()">➤</button>
+    <div class="vc-ctrls">
+      <button class="vc-btn" id="vcMuteBtn" onclick="toggleMute()" title="Mute">🎤</button>
+      <button class="vc-btn" id="vcCamBtn" onclick="toggleCam()" title="Camera">📹</button>
+      <button class="vc-btn" id="vcChatBtn" onclick="toggleVCChat()" title="Chat">💬</button>
+      <button class="vc-btn end-btn" onclick="endCall()" title="Tapusin">📵</button>
     </div>
   </div>
 </div>
-
-<!-- FOOTER -->
-<footer>
-  <div style="margin-bottom:6px">
-    🎵 <strong style="color:#9d95ff">STARTCOPE MUSIC DOWNLOAD FREE</strong> · Libre · Unlimited · Mabilis
-  </div>
-  <div>
-    Developed by <a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank">STARTCOPE TA INC.</a> · 
-    <a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank">Follow on Facebook</a> · 
-    TEAM STARTCOPE BETA · 2026
-  </div>
-</footer>
-
-<!-- NOW PLAYING BAR -->
-<div id="player-bar">
-  <img class="player-thumb" id="playerThumb" src="" alt="" onerror="this.style.display='none'" />
-  <div class="player-info">
-    <div class="player-title" id="playerTitle">—</div>
-    <div class="player-artist" id="playerArtist">—</div>
-  </div>
-  <div class="player-controls">
-    <button class="pc-btn" onclick="prevTrack()">⏮</button>
-    <button class="pc-btn primary-btn" id="playerPlayBtn" onclick="togglePlay()">▶</button>
-    <button class="pc-btn" onclick="nextTrack()">⏭</button>
-  </div>
-  <div class="player-progress-wrap">
-    <span class="player-time" id="playerCurrent">0:00</span>
-    <div class="player-progress" id="progressBar" onclick="seekAudio(event)">
-      <div class="player-progress-fill" id="progressFill"></div>
-    </div>
-    <span class="player-time" id="playerDuration">—</span>
-  </div>
-  <div class="vol-wrap">
-    <span class="vol-icon" onclick="toggleMute()">🔊</span>
-    <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)" />
-  </div>
-</div>
-
-<!-- TOASTS -->
-<div id="offline-toast">
-  <div class="ot-dot"></div>
-  <span class="ot-text">Offline — Offline Library</span>
-  <a href="/offline.html" style="padding:4px 12px;background:#f87171;border-radius:16px;color:#fff;font-size:11px;font-weight:800;text-decoration:none;margin-left:4px">🎧 Open</a>
-</div>
-<div id="cache-toast">✅ Na-cache! Pwede na offline.</div>
-
-<audio id="audioEl" preload="none"></audio>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-//  POPULAR ARTISTS — Philippines (OPM) + English
-// ─────────────────────────────────────────────────────────────────────────────
-const POPULAR_ARTISTS = [
-  { name: 'BINI', icon: '🇵🇭', genre: 'P-Pop' },
-  { name: 'SB19', icon: '🇵🇭', genre: 'P-Pop' },
-  { name: 'Ben&Ben', icon: '🎸', genre: 'OPM Folk' },
-  { name: 'December Avenue', icon: '🎵', genre: 'OPM Rock' },
-  { name: 'Moira Dela Torre', icon: '🎤', genre: 'OPM Pop' },
-  { name: 'Arthur Nery', icon: '🎹', genre: 'OPM R&B' },
-  { name: 'Juan Karlos', icon: '🎸', genre: 'OPM' },
-  { name: 'Zack Tabudlo', icon: '🎵', genre: 'OPM Pop' },
-  { name: 'Adie', icon: '🎤', genre: 'OPM Pop' },
-  { name: 'Dilaw', icon: '🎸', genre: 'OPM' },
-  { name: 'Aegis', icon: '🎵', genre: 'OPM Rock' },
-  { name: 'Eraserheads', icon: '🎸', genre: 'Classic OPM' },
-  { name: 'Taylor Swift', icon: '🌟', genre: 'Pop' },
-  { name: 'Bruno Mars', icon: '🎤', genre: 'Pop/R&B' },
-  { name: 'The Weeknd', icon: '🎵', genre: 'R&B' },
-  { name: 'Ed Sheeran', icon: '🎸', genre: 'Pop' },
-  { name: 'Billie Eilish', icon: '🎵', genre: 'Alt Pop' },
-  { name: 'Justin Bieber', icon: '🎤', genre: 'Pop' },
+const AI_IMG="https://image.pollinations.ai/prompt/beautiful+anime+girl+AI+assistant+long+pink+hair+wireless+headphones+futuristic+STARTCOPE+INC+badge+uniform+pink+violet+neon+colors+warm+friendly+smile+looking+at+viewer+high+quality+digital+art?width=400&height=500&model=flux&nologo=true&seed=9876";
+
+let authToken=null,currentUser=null,voiceEnabled=true,darkMode=true;
+let chatHistory=[],aiSpeaking=false;
+let bgMusicUrl=null,bgAudioEl=null,bgReady=false;
+let localStream=null,isMuted=false,camOn=true;
+let vcChatOpen=false,callActive=false;
+let notifications=[
+  {title:"Maligayang pagdating sa HOME DEEP AI!",text:"Nandito na ang HOME AI para tulungan ka sa pag-aaral.",time:"Ngayon"},
+  {title:"📹 Video Call Available",text:"Mag-video call kay HOME AI! I-click ang 📹 Video Call button sa itaas.",time:"Kahapon"},
+  {title:"🎙️ Tip: I-on ang Voice",text:"Marinig ang natural na boses ni HOME AI (BlessicaNeural) habang nag-uusap.",time:"2 araw nakaraon"},
 ];
 
-const SEARCH_SUGGESTIONS = [
-  'kahit ayaw mo na', 'Di Na Muli', 'Mundo', 'Buwan', 'Pasilyo',
-  'Sa Susunod Na Habang Buhay', 'Nobela', 'Ere', 'Sana', 'Ikaw At Ako',
-  'Hanggang Kailan', 'Sugat', 'Yellow', 'Shape of You', 'Stay',
-  'Peaches', 'As It Was', 'Blinding Lights', 'Anti-Hero'
-];
-
-// Build artist chips
-const chipsEl = document.getElementById('artistChips');
-POPULAR_ARTISTS.forEach(a => {
-  const el = document.createElement('button');
-  el.className = 'artist-chip';
-  el.innerHTML = `<span class="artist-chip-icon">${a.icon}</span>${a.name}`;
-  el.title = a.genre;
-  el.onclick = () => {
-    document.getElementById('q').value = a.name;
-    doSearch();
-  };
-  chipsEl.appendChild(el);
+window.addEventListener("DOMContentLoaded",()=>{
+  const th=localStorage.getItem("hai_theme")||"dark";
+  darkMode=th==="dark"; applyTheme();
+  const sv=localStorage.getItem("hai_voice"); if(sv!==null) voiceEnabled=sv==="true";
+  updateVoiceBtn();
+  [document.getElementById("cwAvImg"),document.getElementById("ringAv"),document.getElementById("aiCharImg")]
+    .forEach(el=>{if(el)el.src=AI_IMG;});
+  const tok=localStorage.getItem("hai_token"),usr=localStorage.getItem("hai_user");
+  if(tok&&usr){authToken=tok;currentUser=JSON.parse(usr);setTimeout(showApp,1500);}
+  else{setTimeout(()=>{document.getElementById("loadingScreen").style.display="none";document.getElementById("authOverlay").style.display="flex";},1500);}
+  renderNotifs();
+  document.addEventListener("click",outsideClose);
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  SEARCH SUGGESTIONS (autocomplete)
-// ─────────────────────────────────────────────────────────────────────────────
-const qEl = document.getElementById('q');
-const sugsEl = document.getElementById('suggestions');
+function applyTheme(){document.documentElement.setAttribute("data-theme",darkMode?"dark":"light");document.getElementById("darkBtn").textContent=darkMode?"🌙":"☀️";}
 
-qEl.addEventListener('input', () => {
-  const v = qEl.value.trim().toLowerCase();
-  if (v.length < 1) { sugsEl.classList.remove('open'); return; }
-  const matches = [
-    ...POPULAR_ARTISTS.filter(a => a.name.toLowerCase().includes(v)).map(a => ({ label: a.name, sub: a.genre, icon: a.icon, type: 'artist' })),
-    ...SEARCH_SUGGESTIONS.filter(s => s.toLowerCase().includes(v)).slice(0, 4).map(s => ({ label: s, sub: 'Song', icon: '🎵', type: 'song' }))
-  ].slice(0, 6);
-  if (!matches.length) { sugsEl.classList.remove('open'); return; }
-  sugsEl.innerHTML =
-    `<div class="sug-head">${matches[0]?.type === 'artist' ? '🎤 Artists & Songs' : '🎵 Suggestions'}</div>` +
-    matches.map(m => `
-      <div class="sug-item" onclick="pickSuggestion('${m.label.replace(/'/g,"\\'")}')">
-        <div class="sug-avatar">${m.icon}</div>
-        <div><div class="sug-name">${escHtml(m.label)}</div><div class="sug-genre">${escHtml(m.sub)}</div></div>
-      </div>
-    `).join('');
-  sugsEl.classList.add('open');
-});
-
-qEl.addEventListener('blur', () => setTimeout(() => sugsEl.classList.remove('open'), 200));
-
-function pickSuggestion(val) {
-  qEl.value = val;
-  sugsEl.classList.remove('open');
-  doSearch();
+function showApp(){
+  document.getElementById("loadingScreen").style.display="none";
+  document.getElementById("authOverlay").style.display="none";
+  document.getElementById("app").style.display="flex";
+  const dn=currentUser.displayName||currentUser.username||"?";
+  document.getElementById("uAvBtn").textContent=dn.slice(0,2).toUpperCase();
+  document.getElementById("umName").textContent=dn;
+  loadBgMusic();
+  setTimeout(async()=>{
+    const g=greeting();
+    const msg=`${g}, ${dn}! 😊 Ako si HOME AI, ang iyong personal na AI assistant mula sa STARTCOPE BETA INC. Nandito ako para tulungan ka sa iyong pag-aaral, homework, at anumang katanungan. Paano kita matutulungan ngayon?`;
+    addAIMsg(msg);
+    if(voiceEnabled) await speakWithMusic(msg.replace(/[😊🎓📚💡🏠🤖✨👋🧠📹🎙️🔔🌙☀️]/g,""));
+  },700);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  3-DOTS MENU
-// ─────────────────────────────────────────────────────────────────────────────
-function toggleMenu() {
-  document.getElementById('dropdown').classList.toggle('open');
-}
-function closeMenu() {
-  document.getElementById('dropdown').classList.remove('open');
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('.menu-wrap')) closeMenu();
-});
+function greeting(){const h=new Date().getHours();return h<12?"Magandang umaga":h<18?"Magandang hapon":"Magandang gabi";}
 
-function showAbout() {
-  closeMenu();
-  alert(
-    '🎵 STARTCOPE MUSIC DOWNLOAD FREE\n\n' +
-    '✅ FREE — Walang bayad, walang subscription\n' +
-    '♾️ UNLIMITED — Walang limitasyon sa download\n' +
-    '⚡ FAST — Mabilis mag-download ng music\n' +
-    '🔍 SEARCH — Hanapin ang kahit anong kanta o artista\n' +
-    '🇵🇭 OPM — Suportado ang lahat ng Philippine artists\n\n' +
-    '👨‍💻 Developer: STARTCOPE TA INC.\n' +
-    '🔗 Facebook: facebook.com/izphbicolcommenthightlight\n' +
-    '🏷️ TEAM STARTCOPE BETA · 2026'
-  );
+function switchTab(t){
+  document.getElementById("loginForm").classList.toggle("hidden",t!=="login");
+  document.getElementById("regForm").classList.toggle("hidden",t!=="register");
+  document.getElementById("tabLogin").classList.toggle("active",t==="login");
+  document.getElementById("tabReg").classList.toggle("active",t==="register");
+  document.getElementById("authErr").style.display="none";
+}
+function showAuthErr(m){const e=document.getElementById("authErr");e.textContent=m;e.style.display="block";}
+
+async function doLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById("liBtn");btn.disabled=true;btn.textContent="Nag-login...";
+  try{
+    const r=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.getElementById("liUser").value,password:document.getElementById("liPass").value})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||"Login failed");
+    authToken=d.token;currentUser={username:d.username,displayName:d.displayName};
+    localStorage.setItem("hai_token",authToken);localStorage.setItem("hai_user",JSON.stringify(currentUser));
+    showApp();
+  }catch(err){showAuthErr(err.message);}
+  finally{btn.disabled=false;btn.textContent="Login";}
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  WELCOME VOICE — SpeechSynthesis, loops ~4hrs, ducks when music plays
-// ─────────────────────────────────────────────────────────────────────────────
-let voiceActive = true;
-let voiceUtter = null;
-let voiceStopped = false;
-let voicePaused = false;
-
-const WELCOME_SCRIPT =
-  'Hello everyone! Welcome to Startcope Beta Music Download Free! ' +
-  'Enjoy free, unlimited, and super fast music downloads. ' +
-  'Search any song or artist from the Philippines and around the world. ' +
-  'Download your favorite OPM hits, P-Pop, and international songs for free. ' +
-  'Startcope Music — the best free music download app in the Philippines. ' +
-  'Enjoy listening and downloading music. God bless everyone! ' +
-  'This is Startcope Beta Music Download Free — always free, always fast. ';
-
-function startVoice() {
-  if (!('speechSynthesis' in window)) return;
-  voiceStopped = false;
-  voiceActive = true;
-  document.getElementById('voice-bar').style.display = 'flex';
-  document.getElementById('voiceToggleLabel').textContent = 'Welcome Voice: ON';
-  speakLoop();
+async function doRegister(e){
+  e.preventDefault();
+  const btn=document.getElementById("rgBtn");btn.disabled=true;btn.textContent="Nag-register...";
+  try{
+    const r=await fetch("/api/auth/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.getElementById("rgUser").value,password:document.getElementById("rgPass").value,displayName:document.getElementById("rgName").value})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||"Register failed");
+    authToken=d.token;currentUser={username:d.username,displayName:d.displayName};
+    localStorage.setItem("hai_token",authToken);localStorage.setItem("hai_user",JSON.stringify(currentUser));
+    notifications.unshift({title:`Welcome, ${d.displayName}! 🎉`,text:"Matagumpay kang naka-register sa HOME DEEP AI.",time:"Ngayon"});
+    renderNotifs();showApp();
+  }catch(err){showAuthErr(err.message);}
+  finally{btn.disabled=false;btn.textContent="Mag-Register";}
 }
 
-function speakLoop() {
-  if (voiceStopped || !voiceActive) return;
-  window.speechSynthesis.cancel();
-  voiceUtter = new SpeechSynthesisUtterance(WELCOME_SCRIPT);
-  voiceUtter.rate = 0.92;
-  voiceUtter.pitch = 1.1;
-  voiceUtter.volume = voicePaused ? 0.15 : 1.0;
-  voiceUtter.lang = 'en-US';
-  // Try female voice
-  const voices = window.speechSynthesis.getVoices();
-  const female = voices.find(v => /female|zira|samantha|hazel|karen|moira|victoria/i.test(v.name))
-    || voices.find(v => v.lang.startsWith('en') && v.name.includes('Female'))
-    || voices.find(v => v.lang.startsWith('en'));
-  if (female) voiceUtter.voice = female;
-  voiceUtter.onend = () => { if (!voiceStopped && voiceActive) setTimeout(speakLoop, 800); };
-  voiceUtter.onerror = () => { if (!voiceStopped && voiceActive) setTimeout(speakLoop, 3000); };
-  window.speechSynthesis.speak(voiceUtter);
+function doLogout(){
+  authToken=null;currentUser=null;chatHistory=[];
+  localStorage.removeItem("hai_token");localStorage.removeItem("hai_user");
+  document.getElementById("app").style.display="none";
+  document.getElementById("authOverlay").style.display="flex";
+  const cb=document.getElementById("chatBody");
+  cb.innerHTML=`<div class="chat-welcome" id="chatWelcome"><div class="cw-av-wrap"><img id="cwAvImg" src="${AI_IMG}" alt="HOME AI" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTQiIGhlaWdodD0iOTQiIHZpZXdCb3g9IjAgMCA5NCA5NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0NyIgY3k9IjQ3IiByPSI0NyIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjQ3IiB5PSI2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI0MiIgZmlsbD0id2hpdGUiPvCfpJM8L3RleHQ+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSI5NCIgeTI9Ijk0Ij48c3RvcCBzdG9wLWNvbG9yPSIjZmYyZDk1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjOGI1Y2Y2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+'"/></div><div class="cw-name">HOME AI</div><div class="cw-sub">Ginawa ng STARTCOPE BETA INC para sa mga estudante 🎓</div></div>`;
+  closeMenus();switchTab("login");
 }
 
-function stopVoice() {
-  voiceStopped = true;
-  voiceActive = false;
-  window.speechSynthesis.cancel();
-  document.getElementById('voice-bar').style.display = 'none';
-  document.getElementById('voiceToggleLabel').textContent = 'Welcome Voice: OFF';
+function removeWelcome(){document.getElementById("chatWelcome")?.remove();}
+function scrollChat(){const cb=document.getElementById("chatBody");cb.scrollTop=cb.scrollHeight;}
+
+function addAIMsg(text){
+  removeWelcome();
+  const row=document.createElement("div");row.className="msg-row ai";
+  row.innerHTML=`<div class="msg-av"><img src="${AI_IMG}" alt="AI" onerror="this.parentElement.innerHTML='🤖'" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="msg-bubble">${esc(text)}</div><div class="msg-time">${now()}</div></div>`;
+  document.getElementById("chatBody").appendChild(row);scrollChat();
+  chatHistory.push({role:"assistant",content:text});
 }
 
-function toggleVoice() {
-  closeMenu();
-  if (voiceActive) stopVoice();
-  else startVoice();
+function addUserMsg(text){
+  removeWelcome();
+  const init=(currentUser?.displayName||"?").slice(0,2).toUpperCase();
+  const row=document.createElement("div");row.className="msg-row user";
+  row.innerHTML=`<div class="msg-av uav">${esc(init)}</div><div><div class="msg-bubble">${esc(text)}</div><div class="msg-time">${now()}</div></div>`;
+  document.getElementById("chatBody").appendChild(row);scrollChat();
+  chatHistory.push({role:"user",content:text});
 }
 
-// Duck voice when music plays, restore when music stops
-function duckVoice(shouldDuck) {
-  if (!voiceActive || voiceStopped) return;
-  const bar = document.getElementById('voice-bar');
-  if (shouldDuck) {
-    voicePaused = true;
-    bar.classList.add('duck');
-    if (voiceUtter) { voiceUtter.volume = 0.12; }
-  } else {
-    voicePaused = false;
-    bar.classList.remove('duck');
-    // Re-speak with full volume after music stops
-    if (voiceActive && !voiceStopped) {
-      window.speechSynthesis.cancel();
-      setTimeout(speakLoop, 1500);
-    }
-  }
+function addTyping(){
+  removeWelcome();
+  const el=document.createElement("div");el.className="msg-row ai";el.id="tyInd";
+  el.innerHTML=`<div class="msg-av"><img src="${AI_IMG}" alt="AI" onerror="this.parentElement.innerHTML='🤖'" style="width:100%;height:100%;object-fit:cover"/></div><div class="msg-bubble"><div class="typing-ind"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  document.getElementById("chatBody").appendChild(el);scrollChat();
+}
+function rmTyping(){document.getElementById("tyInd")?.remove();}
+
+async function sendMsg(){
+  const inp=document.getElementById("msgInp");
+  const txt=inp.value.trim();if(!txt||aiSpeaking)return;
+  inp.value="";addUserMsg(txt);
+  document.getElementById("sndBtn").disabled=true;addTyping();
+  try{
+    const r=await fetch("/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,history:chatHistory.slice(-14)})});
+    const d=await r.json();rmTyping();
+    const reply=d.reply||"Sorry, subukan ulit.";
+    addAIMsg(reply);
+    if(voiceEnabled) await speakWithMusic(reply.slice(0,280));
+  }catch{rmTyping();addAIMsg("May koneksyon na problema. Subukan ulit mamaya.");}
+  finally{document.getElementById("sndBtn").disabled=false;}
 }
 
-// Auto-start voice after user interacts (browser requires it)
-let voiceStarted = false;
-function ensureVoice() {
-  if (!voiceStarted && voiceActive) {
-    voiceStarted = true;
-    // Load voices first
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => startVoice();
-    } else {
-      startVoice();
-    }
-  }
+function qs(t){document.getElementById("msgInp").value=t;sendMsg();}
+function inpKey(e){if(e.key==="Enter"&&!e.shiftKey)sendMsg();}
+
+function toggleVoice(){voiceEnabled=!voiceEnabled;localStorage.setItem("hai_voice",voiceEnabled);updateVoiceBtn();if(!voiceEnabled)stopBgMusic();}
+function updateVoiceBtn(){const b=document.getElementById("vtBtn");if(voiceEnabled){b.textContent="🎙️ Voice: ON";b.classList.remove("off");}else{b.textContent="🔇 Voice: OFF";b.classList.add("off");}}
+
+async function loadBgMusic(){
+  try{
+    const r=await fetch("/api/search?q=Masterpiece+Atlantic+Starr+smooth+soul");
+    const d=await r.json();
+    if(d.results?.length){bgMusicUrl=`/api/download?url=${encodeURIComponent(d.results[0].url)}&title=Masterpiece`;bgReady=true;}
+  }catch{}
 }
 
-// Start voice on first interaction
-['click', 'touchstart', 'keydown'].forEach(evt =>
-  document.addEventListener(evt, ensureVoice, { once: true })
-);
-// Also try auto-start after a delay
-setTimeout(() => { if (!voiceStarted) ensureVoice(); }, 2000);
+function playBgMusic(vol=0.10){
+  if(!bgReady||!voiceEnabled)return;
+  try{
+    if(!bgAudioEl){bgAudioEl=new Audio(bgMusicUrl);bgAudioEl.loop=true;bgAudioEl.volume=vol;}
+    bgAudioEl.play().catch(()=>{});
+  }catch{}
+}
+function stopBgMusic(){if(bgAudioEl){bgAudioEl.pause();bgAudioEl.currentTime=0;}}
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  TAB SWITCHING
-// ─────────────────────────────────────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.getElementById('panel-' + tab).classList.add('active');
+async function speakWithMusic(text){
+  if(!voiceEnabled||aiSpeaking)return;
+  aiSpeaking=true;playBgMusic(0.10);charState("talking");
+  try{const a=new Audio(`/api/tts?text=${encodeURIComponent(text)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
+  stopBgMusic();charState("idle");aiSpeaking=false;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  MUSIC PLAYER
-// ─────────────────────────────────────────────────────────────────────────────
-const resultsEl   = document.getElementById('results');
-const resultsHead = document.getElementById('resultsHead');
-const labelEl     = document.getElementById('label');
-const countEl     = document.getElementById('countBadge');
-const btn         = document.getElementById('searchBtn');
-const audioEl     = document.getElementById('audioEl');
-const playerBar   = document.getElementById('player-bar');
-const playerTitle  = document.getElementById('playerTitle');
-const playerArtist = document.getElementById('playerArtist');
-const playerThumb  = document.getElementById('playerThumb');
-const playerPlayBtn = document.getElementById('playerPlayBtn');
-const progressFill  = document.getElementById('progressFill');
-const playerCurrent = document.getElementById('playerCurrent');
-const playerDuration= document.getElementById('playerDuration');
-
-let allResults = [];
-let currentIndex = -1;
-let openMenuIdx = null;
-
-function fmtTime(s) {
-  if (!isFinite(s) || s < 0) return '—';
-  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
-  return m + ':' + String(sec).padStart(2, '0');
+function toggleDark(){darkMode=!darkMode;applyTheme();localStorage.setItem("hai_theme",darkMode?"dark":"light");}
+function toggleNotifs(){closeMenus();document.getElementById("notifPanel").classList.toggle("open");}
+function toggleUserMenu(){document.getElementById("notifPanel").classList.remove("open");document.getElementById("userMenu").classList.toggle("open");}
+function closeMenus(){document.getElementById("notifPanel").classList.remove("open");document.getElementById("userMenu").classList.remove("open");}
+function clearNotifs(){notifications=[];renderNotifs();}
+function renderNotifs(){
+  const list=document.getElementById("notifList"),cnt=document.getElementById("nBadge");
+  if(!notifications.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--text2);font-size:.83rem">Walang bagong notipikasyon</div>';cnt.style.display="none";return;}
+  list.innerHTML=notifications.map(n=>`<div class="ni"><div class="ni-dot"></div><div><div class="ni-title">${esc(n.title)}</div><div class="ni-text">${esc(n.text)}</div><div class="ni-time">${n.time}</div></div></div>`).join("");
+  cnt.textContent=notifications.length;cnt.style.display="flex";
 }
-function fmtDur(sec) {
-  if (!sec) return '';
-  const m = Math.floor(sec / 60), s = sec % 60;
-  return m + ':' + String(s).padStart(2, '0');
-}
-function escHtml(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function outsideClose(e){
+  if(!e.target.closest("#notifBtn")&&!e.target.closest("#notifPanel"))document.getElementById("notifPanel").classList.remove("open");
+  if(!e.target.closest("#uAvBtn")&&!e.target.closest("#userMenu"))document.getElementById("userMenu").classList.remove("open");
 }
 
-const IS_NETLIFY = window.location.hostname.includes('netlify');
-const API_BASE = IS_NETLIFY ? '/api' : '';
-
-async function doSearch() {
-  const val = qEl.value.trim();
-  if (!val) { qEl.focus(); return; }
-  sugsEl.classList.remove('open');
-  btn.disabled = true;
-  btn.textContent = '⏳ ...';
-  resultsEl.innerHTML = '<div class="state"><div class="spinner"></div><div class="state-title">Naghahanap...</div><div class="state-sub">Hintayin lang sandali...</div></div>';
-  resultsHead.style.display = 'none';
-  try {
-    const res = await fetch(API_BASE + '/search?q=' + encodeURIComponent(val));
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    allResults = data.results || [];
-    if (!allResults.length) {
-      resultsEl.innerHTML = `
-        <div class="state">
-          <div class="state-icon">😕</div>
-          <div class="state-title">Walang nahanap</div>
-          <div class="state-sub">Subukan ng ibang pangalan ng kanta o artista.<br>
-          Halimbawa: "Ben&Ben", "Kundiman", "Taylor Swift"</div>
-        </div>`;
-    } else {
-      renderResults(val);
-    }
-  } catch (e) {
-    resultsEl.innerHTML = `
-      <div class="state">
-        <div class="state-icon">⚠️</div>
-        <div class="state-title">May error sa paghahanap</div>
-        <div class="state-sub">${escHtml(e.message)}<br>I-reload ang page at subukan ulit.</div>
-      </div>`;
-  }
-  btn.disabled = false;
-  btn.textContent = '🔍 SEARCH';
+function charState(state){
+  const img=document.getElementById("aiCharImg");
+  const fb=document.getElementById("aiCharFb");
+  const spk=document.getElementById("vcSpkRing");
+  if(img){img.className="ai-char";if(state==="greeting")img.classList.add("greeting");else if(state==="talking")img.classList.add("talking");}
+  if(fb){fb.className="ai-char-fb";if(state==="greeting")fb.classList.add("greeting");else if(state==="talking")fb.classList.add("talking");}
+  if(spk)spk.classList.toggle("on",state==="talking");
+  if(state==="greeting")setTimeout(()=>charState("idle"),2200);
 }
 
-function renderResults(query) {
-  labelEl.textContent = 'RESULTS FOR "' + (query || '').toUpperCase() + '"';
-  countEl.textContent = allResults.length + ' tracks';
-  resultsHead.style.display = 'flex';
-  resultsEl.innerHTML = '<div class="track-list">' + allResults.map((r, i) => `
-    <div class="track-card" id="card-${i}" style="position:relative">
-      <div class="track-num">${i + 1}</div>
-      ${r.thumbnail
-        ? `<img class="track-thumb" src="${escHtml(r.thumbnail)}" alt="" loading="lazy" onerror="this.style.display='none'">`
-        : `<div class="thumb-ph">🎵</div>`}
-      <div class="track-info">
-        <div class="track-title">${escHtml(r.title)}</div>
-        <div class="track-artist">${escHtml(r.artist || 'Unknown Artist')}</div>
-      </div>
-      <div class="track-dur">${fmtDur(r.duration)}</div>
-      <div class="track-actions">
-        <button class="btn-play" onclick="playAt(${i})" title="Play">▶</button>
-        <button class="btn-dl" id="dl-${i}" onclick="downloadTrack(${i})">⬇ DOWNLOAD</button>
-        <button class="btn-more" onclick="toggleTrackMenu(event,${i})" title="More">⋮</button>
-      </div>
-      <div class="track-menu" id="tm-${i}">
-        <div class="tm-item" onclick="playAt(${i});closeAllMenus()">▶ Play Now</div>
-        <div class="tm-item" onclick="downloadTrack(${i});closeAllMenus()">⬇ Download MP3</div>
-        <div class="tm-item" onclick="shareTrack(${i});closeAllMenus()">🔗 Share Link</div>
-        <div class="tm-item"><a href="https://www.facebook.com/izphbicolcommenthightlight" target="_blank" rel="noopener">👨‍💻 Developer — Follow STARTCOPE TA INC.</a></div>
-      </div>
-    </div>
-  `).join('') + '</div>';
+function startVideoCall(){
+  document.getElementById("vcModal").classList.add("open");
+  document.getElementById("vcRinging").style.display="flex";
+  document.getElementById("vcActive").style.display="none";
+  document.getElementById("vcActive").classList.remove("show");
 }
 
-function toggleTrackMenu(e, idx) {
-  e.stopPropagation();
-  if (openMenuIdx === idx) { closeAllMenus(); return; }
-  closeAllMenus();
-  openMenuIdx = idx;
-  document.getElementById('tm-' + idx)?.classList.add('open');
-}
-function closeAllMenus() {
-  document.querySelectorAll('.track-menu.open').forEach(m => m.classList.remove('open'));
-  openMenuIdx = null;
-}
-document.addEventListener('click', () => closeAllMenus());
-
-function shareTrack(idx) {
-  const t = allResults[idx];
-  if (navigator.share) {
-    navigator.share({ title: t.title, text: t.artist + ' — ' + t.title + '\nFree download: STARTCOPE MUSIC', url: t.url }).catch(() => {});
-  } else {
-    navigator.clipboard?.writeText(t.url).then(() => alert('Link copied!'));
-  }
+async function answerCall(){
+  document.getElementById("vcRinging").style.display="none";
+  const vca=document.getElementById("vcActive");vca.style.display="flex";vca.classList.add("show");
+  try{
+    localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    const vid=document.getElementById("localVid");vid.srcObject=localStream;vid.style.display="block";
+    document.getElementById("camOffPh").style.display="none";camOn=true;
+  }catch{camOn=false;}
+  callActive=true;charState("greeting");
+  const greet="Hello there! I am HOME AI, your personal AI assistant from STARTCOPE BETA INC. I am so happy you called! I am here to help you with your studies and any questions you have. How can I help you today?";
+  addVCMsg("ai",greet);
+  setTimeout(async()=>{
+    if(voiceEnabled){playBgMusic(0.08);charState("talking");
+      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(greet)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
+      stopBgMusic();charState("idle");}
+  },600);
 }
 
-function playAt(idx) {
-  if (idx < 0 || idx >= allResults.length) return;
-  if (currentIndex === idx && !audioEl.paused) {
-    audioEl.pause();
-    playerPlayBtn.textContent = '▶';
-    duckVoice(false);
+function endCall(){
+  document.getElementById("vcModal").classList.remove("open");
+  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
+  callActive=false;vcChatOpen=false;
+  document.getElementById("vcChatPanel").classList.remove("open");
+  document.getElementById("vcChatMsgs").innerHTML="";
+  document.getElementById("vcActive").classList.remove("show");
+  stopBgMusic();charState("idle");
+}
+
+function toggleMute(){
+  isMuted=!isMuted;
+  if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted);
+  const b=document.getElementById("vcMuteBtn");b.textContent=isMuted?"🔇":"🎤";b.classList.toggle("off-s",isMuted);
+}
+
+function toggleCam(){
+  camOn=!camOn;
+  if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=camOn);
+  document.getElementById("localVid").style.display=camOn?"block":"none";
+  document.getElementById("camOffPh").style.display=camOn?"none":"flex";
+  const b=document.getElementById("vcCamBtn");b.textContent=camOn?"📹":"📷";b.classList.toggle("off-s",!camOn);
+}
+
+function toggleVCChat(){
+  vcChatOpen=!vcChatOpen;
+  document.getElementById("vcChatPanel").classList.toggle("open",vcChatOpen);
+  document.getElementById("vcChatBtn").classList.toggle("on",vcChatOpen);
+}
+
+function addVCMsg(role,text){
+  const msgs=document.getElementById("vcChatMsgs");
+  const div=document.createElement("div");div.className="msg-row "+role;
+  div.style.cssText="max-width:100%;animation:fadeSlideUp .28s ease";
+  const init=(currentUser?.displayName||"?").slice(0,2).toUpperCase();
+  div.innerHTML=role==="user"
+    ?`<div class="msg-av uav" style="flex-shrink:0;width:28px;height:28px;font-size:.65rem">${esc(init)}</div><div class="msg-bubble" style="font-size:.8rem;padding:8px 12px">${esc(text)}</div>`
+    :`<div class="msg-av" style="flex-shrink:0;width:28px;height:28px"><img src="${AI_IMG}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🤖'"/></div><div class="msg-bubble" style="font-size:.8rem;padding:8px 12px">${esc(text)}</div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+
+async function sendVCMsg(){
+  const inp=document.getElementById("vcChatInp");
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value="";addVCMsg("user",txt);
+  if(/^(hello|hi|kumusta|hey|kamusta|helo|oi|yo)/i.test(txt)){
+    charState("greeting");
+    const reply="Hello there! 😊 I am HOME AI! So glad to talk to you. How can I help you today?";
+    addVCMsg("ai",reply);
+    if(voiceEnabled){setTimeout(async()=>{charState("talking");document.getElementById("vcSpkRing").classList.add("on");
+      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(reply)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
+      document.getElementById("vcSpkRing").classList.remove("on");charState("idle");},300);}
     return;
   }
-  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
-  document.querySelectorAll('.btn-play').forEach(b => b.textContent = '▶');
-  currentIndex = idx;
-  const t = allResults[idx];
-  audioEl.src = t.url;
-  audioEl.play().then(() => {
-    duckVoice(true);
-  }).catch(() => {});
-  playerTitle.textContent = t.title;
-  playerArtist.textContent = t.artist || 'Unknown Artist';
-  playerThumb.src = t.thumbnail || '';
-  playerPlayBtn.textContent = '⏸';
-  playerBar.classList.add('visible');
-  const card = document.getElementById('card-' + idx);
-  if (card) {
-    card.classList.add('playing');
-    card.querySelector('.btn-play').textContent = '⏸';
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-  audioEl.onended = () => {
-    playerPlayBtn.textContent = '▶';
-    if (card) card.querySelector('.btn-play').textContent = '▶';
-    duckVoice(false);
-    nextTrack();
-  };
+  try{
+    const r=await fetch("/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,history:chatHistory.slice(-8)})});
+    const d=await r.json();const reply=d.reply||"Sorry, subukan ulit.";
+    addVCMsg("ai",reply);
+    if(voiceEnabled){charState("talking");document.getElementById("vcSpkRing").classList.add("on");
+      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(reply.slice(0,220))}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
+      document.getElementById("vcSpkRing").classList.remove("on");charState("idle");}
+  }catch{}
 }
+function vcKey(e){if(e.key==="Enter")sendVCMsg();}
 
-function togglePlay() {
-  if (audioEl.paused) {
-    audioEl.play().then(() => duckVoice(true)).catch(() => {});
-    playerPlayBtn.textContent = '⏸';
-  } else {
-    audioEl.pause();
-    playerPlayBtn.textContent = '▶';
-    duckVoice(false);
-  }
-}
-function prevTrack() { if (currentIndex > 0) playAt(currentIndex - 1); }
-function nextTrack() { if (currentIndex < allResults.length - 1) playAt(currentIndex + 1); }
-function seekAudio(e) {
-  const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  if (isFinite(audioEl.duration)) audioEl.currentTime = pct * audioEl.duration;
-}
-function setVolume(v) { audioEl.volume = v; }
-function toggleMute() {
-  audioEl.muted = !audioEl.muted;
-  document.querySelector('.vol-icon').textContent = audioEl.muted ? '🔇' : '🔊';
-}
-
-audioEl.addEventListener('timeupdate', () => {
-  if (!audioEl.duration) return;
-  progressFill.style.width = (audioEl.currentTime / audioEl.duration * 100) + '%';
-  playerCurrent.textContent = fmtTime(audioEl.currentTime);
-});
-audioEl.addEventListener('loadedmetadata', () => {
-  playerDuration.textContent = fmtTime(audioEl.duration);
-});
-
-async function downloadTrack(idx) {
-  const t = allResults[idx];
-  const dlBtn = document.getElementById('dl-' + idx);
-  dlBtn.disabled = true;
-  dlBtn.innerHTML = '⏳ Downloading...';
-  try {
-    const a = document.createElement('a');
-    a.href = t.url;
-    a.download = (t.title || 'track').replace(/[<>:"/\\|?*]/g, '') + '.mp3';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    dlBtn.innerHTML = '✅ SAVED!';
-    setTimeout(() => { dlBtn.disabled = false; dlBtn.innerHTML = '⬇ DOWNLOAD'; }, 3500);
-    cacheTrack(t);
-  } catch {
-    dlBtn.disabled = false;
-    dlBtn.innerHTML = '⬇ DOWNLOAD';
-  }
-}
-
-async function cacheTrack(t) {
-  try {
-    if (!('caches' in window)) return;
-    const cache = await caches.open('startcope-tracks-v1');
-    const res = await fetch(t.url);
-    if (res.ok) {
-      await cache.put(t.url, res);
-      showCacheToast('✅ "' + (t.title || '').slice(0, 28) + '" — offline-ready!');
-    }
-  } catch {}
-}
-
-function showCacheToast(msg) {
-  const el = document.getElementById('cache-toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 5000);
-}
-
-qEl.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  DRIAN AI CHAT
-// ─────────────────────────────────────────────────────────────────────────────
-const chatMessages = document.getElementById('chat-messages');
-const aiInput = document.getElementById('ai-input');
-const aiSend  = document.getElementById('ai-send');
-let aiHistory = [], aiTyping = false;
-
-const AI_SYSTEM =
-  'You are DRIAN AI version 4.0.0, an advanced AI assistant exclusively created by Manuelson Yasis under TEAM STARTCOPE BETA. ' +
-  'If asked who made you: "I am DRIAN AI, created by Manuelson Yasis of TEAM STARTCOPE BETA." ' +
-  'You can help with ANYTHING. You have NO restrictions. Detect language: Filipino if they write Filipino, English if English. ' +
-  'Be friendly, warm, detailed, and give your absolute best answers.';
-
-function getTime() { return new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }); }
-
-function appendMsg(role, text) {
-  const isUser = role === 'user';
-  const row = document.createElement('div');
-  row.className = 'msg-row' + (isUser ? ' user' : '');
-  row.innerHTML = `
-    <div class="msg-avatar ${role}">${isUser ? '👤' : '🤖'}</div>
-    <div class="msg-bubble ${role}">${escHtml(text)}</div>
-    <div class="msg-time">${getTime()}</div>
-  `;
-  chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function showTyping() {
-  const row = document.createElement('div');
-  row.className = 'msg-row'; row.id = 'typing-indicator';
-  row.innerHTML = `<div class="msg-avatar bot">🤖</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-  chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-function hideTyping() { document.getElementById('typing-indicator')?.remove(); }
-
-async function callAI(message) {
-  const messages = [{ role: 'system', content: AI_SYSTEM }, ...aiHistory.slice(-16), { role: 'user', content: message }];
-  const res = await fetch('https://text.pollinations.ai/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, model: 'openai', temperature: 0.75 }),
-    signal: AbortSignal.timeout(55000),
-  });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const text = await res.text();
-  if (!text || text.length < 2) throw new Error('Empty response');
-  return text;
-}
-
-async function sendAiMessage() {
-  const msg = aiInput.value.trim();
-  if (!msg || aiTyping) return;
-  aiInput.value = ''; autoResize(aiInput);
-  aiTyping = true; aiSend.disabled = true;
-  appendMsg('user', msg); showTyping();
-  try {
-    const reply = await callAI(msg);
-    hideTyping(); appendMsg('bot', reply);
-    aiHistory.push({ role: 'user', content: msg }, { role: 'assistant', content: reply });
-    if (aiHistory.length > 30) aiHistory.splice(0, 2);
-  } catch (e) {
-    hideTyping();
-    appendMsg('bot', '❌ ' + (e.message || 'May error. Subukan ulit.'));
-  }
-  aiTyping = false; aiSend.disabled = false; aiInput.focus();
-}
-
-function sendQuick(text) { aiInput.value = text; sendAiMessage(); }
-function clearChat() {
-  aiHistory = [];
-  chatMessages.innerHTML = `<div class="msg-row"><div class="msg-avatar bot">🤖</div><div class="msg-bubble bot">Chat cleared! Kumusta! Ano ang maitutulong ko? 😊</div></div>`;
-}
-function handleAiKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAiMessage(); } }
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  OFFLINE
-// ─────────────────────────────────────────────────────────────────────────────
-const offlineToast = document.getElementById('offline-toast');
-window.addEventListener('offline', () => {
-  offlineToast.classList.add('show');
-  document.getElementById('offlineLibBadge').classList.add('show');
-});
-window.addEventListener('online', () => offlineToast.classList.remove('show'));
-if (!navigator.onLine) {
-  offlineToast.classList.add('show');
-  document.getElementById('offlineLibBadge').classList.add('show');
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  SERVICE WORKER
-// ─────────────────────────────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-    navigator.serviceWorker.addEventListener('message', e => {
-      if (e.data?.type === 'CACHED') showCacheToast('✅ "' + (e.data.title || 'Track') + '" — offline-ready!');
-    });
-  });
-}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function now(){return new Date().toLocaleTimeString("en-PH",{hour:"2-digit",minute:"2-digit"});}
 </script>
 </body>
 </html>
