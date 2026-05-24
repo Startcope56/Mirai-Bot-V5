@@ -242,16 +242,16 @@ input{font-family:inherit;outline:none}
       <div class="ac-sub">STARTCOPE BETA INC · For Students</div>
     </div>
     <div class="auth-tabs">
-      <button class="at active" id="tabLogin" onclick="switchTab('login')">Login</button>
-      <button class="at" id="tabReg" onclick="switchTab('register')">Register</button>
+      <button class="at" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="at active" id="tabReg" onclick="switchTab('register')">Register</button>
     </div>
     <p class="auth-err" id="authErr"></p>
-    <form class="auth-form" id="loginForm" onsubmit="doLogin(event)">
+    <form class="auth-form hidden" id="loginForm" onsubmit="doLogin(event)">
       <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="liUser" placeholder="Ilagay ang username" required autocomplete="username"/></div>
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="liPass" placeholder="Ilagay ang password" required autocomplete="current-password"/></div>
       <button type="submit" class="btn-sub" id="liBtn">Login</button>
     </form>
-    <form class="auth-form hidden" id="regForm" onsubmit="doRegister(event)">
+    <form class="auth-form" id="regForm" onsubmit="doRegister(event)">
       <div class="fg"><label class="fl">Display Name</label><input class="fi" type="text" id="rgName" placeholder="Iyong pangalan" required/></div>
       <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="rgUser" placeholder="Pumili ng username" required autocomplete="username"/></div>
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="rgPass" placeholder="Pumili ng password" required autocomplete="new-password"/></div>

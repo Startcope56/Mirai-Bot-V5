@@ -169,22 +169,6 @@ function startSmsApiServer() {
       return res.end(JSON.stringify({ ok: true, message: `Deleted contact: ${name}` }));
     }
 
-    // Root info
-    if (path === '/api/sms' || path === '/') {
-      res.writeHead(200);
-      return res.end(JSON.stringify({
-        name: 'Mirai Bot SMS API',
-        version: VERSION,
-        team: TEAM,
-        endpoints: [
-          'GET  /api/sms/contacts       — list contacts',
-          'POST /api/sms/contacts       — add contact {name, number}',
-          'POST /api/sms/send           — send SMS {to, message}',
-          'DELETE /api/sms/contacts/:name — remove contact',
-        ],
-        note: 'No API key required — free to use'
-      }));
-    }
 
     res.writeHead(404);
     res.end(JSON.stringify({ ok: false, error: 'Not found' }));
