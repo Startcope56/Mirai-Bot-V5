@@ -13,6 +13,31 @@ function _saveUsers(u)       { fs.ensureDirSync(path.dirname(_USERS_FILE)); fs.w
 function _getSession(tok)    { return _sessions.get(tok) || null; }
 function _readBody(req)      { return new Promise(r => { let b = ""; req.on("data", d => b += d); req.on("end", () => r(b)); }); }
 
+// ── AI Character image — pre-fetch & cache on startup ─────────────────────────
+const AI_CHAR_URL = "https://image.pollinations.ai/prompt/beautiful+anime+AI+girl+long+pink+wavy+hair+wireless+headphones+STARTCOPE+INC+futuristic+uniform+full+body+standing+waving+hand+hello+warm+friendly+smile+looking+at+viewer+pink+violet+neon+aesthetic+high+quality+digital+art?width=480&height=640&model=flux&nologo=true&seed=9876";
+let _aiCharBuf = null;
+(async () => {
+  try {
+    const https = require("https");
+    const buf = await new Promise((res, rej) => {
+      const chunks = [];
+      const get = (u, depth = 0) => {
+        if (depth > 5) return rej(new Error("Too many redirects"));
+        https.get(u, r => {
+          if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location) {
+            return get(r.headers.location, depth + 1);
+          }
+          r.on("data", d => chunks.push(d));
+          r.on("end", () => res(Buffer.concat(chunks)));
+          r.on("error", rej);
+        }).on("error", rej);
+      };
+      get(AI_CHAR_URL);
+    });
+    if (buf.length > 5000) { _aiCharBuf = buf; console.log("[HOME AI] ✅ AI character cached:", buf.length, "bytes"); }
+  } catch (e) { console.warn("[HOME AI] AI char cache failed:", e.message?.slice(0, 80)); }
+})();
+
 const PORT = process.env.PORT || 5000;
 const WEB_DIR = path.join(__dirname, "web");
 
@@ -669,6 +694,16 @@ async function handleRequest(req, res) {
       res.writeHead(200, { "Content-Type": "application/json" });
       return res.end(JSON.stringify({ reply: "Pasensya na, may problema sa koneksyon. Subukan ulit mamaya." }));
     }
+  }
+
+  // GET /api/ai-character — serve cached AI character PNG (fast, no CORS)
+  if (pathname === "/api/ai-character") {
+    if (_aiCharBuf) {
+      res.writeHead(200, { "Content-Type": "image/png", "Cache-Control": "public,max-age=86400", "Access-Control-Allow-Origin": "*" });
+      return res.end(_aiCharBuf);
+    }
+    res.writeHead(302, { "Location": AI_CHAR_URL });
+    return res.end();
   }
 
   // GET /api/tts — HOME AI female voice (fil-PH-BlessicaNeural)

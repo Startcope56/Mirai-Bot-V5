@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
 
-const VERSION = '5.1.0';
+const VERSION = '5.2.0';
 const TEAM = 'TEAM STARTCOPE BETA';
 const STATION_NAME = '📻 95.1 HOME RADIO NAGA';
 // Primary: Home Radio Naga 95.1 live stream (hrnaga.radioca.st)
@@ -12,15 +12,17 @@ const STREAM_URLS = [
   'https://hrmanila.radioca.st/stream',
 ];
 const TEMP_DIR = path.join(process.cwd(), 'utils/data/play_temp');
-const CHUNK_SECONDS = 10800; // 3 hours per voice message chunk
+// First chunk is short so the user gets audio quickly (~65 seconds wait)
+// All subsequent chunks are 1 hour for continuous listening
+const FIRST_CHUNK_SECONDS = 60;
+const CHUNK_SECONDS = 3600;
 
 fs.ensureDirSync(TEMP_DIR);
 
 // Per-thread loop control
 const activeLoops = new Map(); // threadID → { running: true/false }
 
-async function captureChunk(outPath) {
-  // Try each stream URL in order — primary (Naga) first, then fallback (Manila)
+async function captureChunk(outPath, durationSec) {
   for (let i = 0; i < STREAM_URLS.length; i++) {
     const url = STREAM_URLS[i];
     const isLast = i === STREAM_URLS.length - 1;
@@ -29,16 +31,17 @@ async function captureChunk(outPath) {
         'ffmpeg -y',
         '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 8',
         `-i "${url}"`,
-        `-t ${CHUNK_SECONDS}`,
+        `-t ${durationSec}`,
         '-vn -ar 44100 -ac 2 -b:a 64k',
         `-f mp3 "${outPath}"`
       ].join(' ');
-      exec(cmd, { timeout: (CHUNK_SECONDS + 180) * 1000 }, (err) => res(!err));
+      exec(cmd, { timeout: (durationSec + 180) * 1000 }, (err) => res(!err));
     });
     if (ok) {
       const stat = await fs.stat(outPath).catch(() => ({ size: 0 }));
       if (stat.size > 5000) {
-        console.log(`[Play] ✅ Streaming from ${i === 0 ? '95.1 HOME RADIO NAGA' : 'HOME RADIO MANILA (fallback)'}`);
+        const src = i === 0 ? '95.1 HOME RADIO NAGA' : 'HOME RADIO MANILA (fallback)';
+        console.log(`[Play] ✅ Streaming from ${src} — ${durationSec}s chunk`);
         return;
       }
     }
@@ -53,27 +56,29 @@ async function captureChunk(outPath) {
 
 async function streamLoop(api, threadID, ctrl) {
   let chunkIndex = 0;
-  // Send a "now streaming" header card first
   api.sendMessage(
     `📻 *95.1 HOME RADIO NAGA — LIVE!*\n\n` +
     `🎵 Nagsisimula ang live stream...\n` +
     `📡 Source: hrnaga.radioca.st\n` +
-    `⏱️ 3-hour chunks — awtomatikong magpapadala\n\n` +
+    `⚡ Unang audio darating sa ~60 segundo\n` +
+    `🔄 Auto-reconnect: BUKAS\n\n` +
     `❗ I-type *!stop* para ihinto ang stream\n` +
     `🏷️ TEAM STARTCOPE BETA`,
     threadID
   );
   while (ctrl.running) {
+    const isFirst = chunkIndex === 0;
+    const dur = isFirst ? FIRST_CHUNK_SECONDS : CHUNK_SECONDS;
     const outPath = path.join(TEMP_DIR, `chunk_${threadID}_${chunkIndex++}.mp3`);
     try {
-      await captureChunk(outPath);
+      await captureChunk(outPath, dur);
       if (!ctrl.running) { fs.remove(outPath).catch(() => {}); break; }
+      const label = isFirst
+        ? `📻 *95.1 HOME RADIO NAGA* — 🔴 LIVE · ${new Date().toLocaleTimeString('en-PH',{timeZone:'Asia/Manila'})} PH\n⚡ Unang chunk (60s) — susunod na chunks: 1 oras`
+        : `📻 *95.1 HOME RADIO NAGA* — Chunk #${chunkIndex} · 🔴 LIVE · ${new Date().toLocaleTimeString('en-PH',{timeZone:'Asia/Manila'})} PH`;
       await new Promise((res, rej) => {
         api.sendMessage(
-          {
-            body: `📻 *95.1 HOME RADIO NAGA* — Chunk #${chunkIndex}\n🔴 LIVE · ${new Date().toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila' })} PH`,
-            attachment: fs.createReadStream(outPath)
-          },
+          { body: label, attachment: fs.createReadStream(outPath) },
           threadID,
           (err) => { fs.remove(outPath).catch(() => {}); err ? rej(err) : res(); }
         );
@@ -95,7 +100,7 @@ module.exports.config = {
   version: VERSION,
   hasPermssion: 0,
   credits: TEAM,
-  description: '📻 95.1 HOME RADIO NAGA — live stream bilang voice message, walang putol (3-hour chunks)',
+  description: '📻 95.1 HOME RADIO NAGA — live stream bilang voice message. Unang audio ~60 segundo, tapos 1-hour chunks.',
   commandCategory: 'Media',
   usages: '',
   cooldowns: 10
@@ -120,9 +125,10 @@ module.exports.run = async function ({ api, event }) {
     `║  🔴 CONNECTING LIVE...    ║\n` +
     `╚════════════════════════════╝\n\n` +
     `🎙️ Source: hrnaga.radioca.st:9349\n` +
-    `⏱️ Chunks: 3 hours bawat voice message\n` +
+    `⚡ Unang voice message: ~60 segundo\n` +
+    `🔁 Susunod na chunks: 1 oras bawat isa\n` +
     `🔄 Auto-reconnect: ON\n\n` +
-    `📩 Audio darating sa ilang segundo...\n` +
+    `📩 Audio darating sa humigit-kumulang 1 minuto...\n` +
     `❗ I-type *!play* ulit para *IHINTO*\n` +
     `🏷️ ${TEAM}`,
     threadID
