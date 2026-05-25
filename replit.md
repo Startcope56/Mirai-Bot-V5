@@ -60,9 +60,11 @@ A Facebook Messenger chatbot built with Node.js that listens for messages and re
 | `!news latest` | Latest Philippine news video |
 | `!autofriend on/off/pending` | Admin: auto-accept all Facebook friend requests |
 | `!autopost on/off` | Admin: auto-post every 51 min to GC, 24/7 |
-| `!automor on/off` | Admin: dual-cycle — news+image every 10min, video every 4min → **Facebook WALL** |
+| `!automor on/off` | Admin: auto-post PH news + AI image every **59 minutes** → **Facebook WALL** |
 | `!autoweather on/off/status` | Admin: auto-post **59s weather video** every 3 min to **ALL GCs** — 100+ PH cities |
-| `!autovideo on/off/status` | Admin: auto-post **2-HOUR full news broadcast VIDEO** every 5 min to **Facebook WALL** — animated anchor, scrolling ticker, Tagalog voice |
+| `!autovideo on/off/status` | Admin: auto-post **PH News broadcast** (text + image) every 5 min to **Facebook WALL** — GMA · PhilStar · Inquirer · CNN PH · Rappler |
+| `!autoyoutube on/off/status` | Admin: auto-search YouTube music (Mariah Carey, Taylor Swift, OPM, etc.), download MP4, post to **Facebook WALL** every 10 min. Auto-comments "FOLLOW AND SHARE KA TROPA" |
+| `!autolinknews on/off/status` | Admin: auto-post PH news article LINKS every 15 min to **Facebook WALL** — Facebook auto-generates thumbnail preview card (like GMA News posts) |
 | `!broadcast` | Event: auto Jesus messages to all GCs every ~1 hour |
 | `!prefix` | Show bot prefix with **beautiful AI robot image** (Pollinations AI) |
 | `!radio [station/freq]` | Search PH radio stations → streams live 30-sec clip |

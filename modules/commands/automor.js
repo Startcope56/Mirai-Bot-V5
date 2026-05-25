@@ -1,20 +1,18 @@
 /**
- * !automor — Auto-posts live Philippines news to Facebook TIMELINE/WALL
- * Every 4 minutes · 24/7 walang tigil · FREE, no API key
- * Sources: PhilStar, Rappler, USGS Earthquakes + yt-dlp video (every 4th post)
+ * !automor v4.0.0 — Auto-posts live Philippines news to Facebook TIMELINE/WALL
+ * Single cycle every 59 minutes · 24/7 walang tigil · FREE, no API key
+ * Sources: PhilStar, Rappler, Inquirer, CNN PH, GMA News, USGS Earthquakes
  * Uses api.createPost() — posts to bot's own Facebook wall, NOT group chat
  */
 
 const fs       = require('fs-extra');
 const path     = require('path');
 const axios    = require('axios');
-const { exec } = require('child_process');
 const bold     = require('../../utils/bold');
 
-const VERSION        = '3.0.0';
-const TEAM           = 'TEAM STARTCOPE BETA';
-const NEWS_INTERVAL  = 10 * 60 * 1000; // 10 minutes — text/image news
-const VIDEO_INTERVAL =  4 * 60 * 1000; // 4 minutes  — video news
+const VERSION  = '4.0.0';
+const TEAM     = 'TEAM STARTCOPE BETA';
+const INTERVAL = 59 * 60 * 1000; // 59 minutes per post
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 const DATA_DIR   = path.join(process.cwd(), 'utils/data');
@@ -24,84 +22,67 @@ const TEMP_DIR   = path.join(DATA_DIR, 'automor_temp');
 fs.ensureDirSync(DATA_DIR);
 fs.ensureDirSync(TEMP_DIR);
 
-// ── State helpers ─────────────────────────────────────────────────────────────
-function loadStateFile()   { try { return fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')) : {}; } catch { return {}; } }
-function saveStateFile(d)  { try { fs.writeFileSync(STATE_FILE, JSON.stringify(d, null, 2)); } catch {} }
-function loadSeen()        { try { return fs.existsSync(SEEN_FILE)  ? JSON.parse(fs.readFileSync(SEEN_FILE, 'utf8'))  : []; } catch { return []; } }
-function saveSeen(arr)     { try { fs.writeFileSync(SEEN_FILE, JSON.stringify(arr)); } catch {} }
+// ── State ─────────────────────────────────────────────────────────────────────
+function loadStateFile()  { try { return fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')) : {}; } catch { return {}; } }
+function saveStateFile(d) { try { fs.writeFileSync(STATE_FILE, JSON.stringify(d, null, 2)); } catch {} }
+function loadSeen()       { try { return fs.existsSync(SEEN_FILE)  ? JSON.parse(fs.readFileSync(SEEN_FILE,  'utf8')) : []; } catch { return []; } }
+function saveSeen(arr)    { try { fs.writeFileSync(SEEN_FILE, JSON.stringify(arr)); } catch {} }
 
-// Global state — posts to Facebook WALL (not per-thread)
-let state = {
-  enabled:      false,
-  count:        0,
-  lastPostedAt: null,
-};
+let state = { enabled: false, count: 0, lastPostedAt: null, errorCount: 0 };
 
 function loadPersistedState() {
   const s = loadStateFile();
   if (s.enabled      !== undefined) state.enabled      = s.enabled;
   if (s.count        !== undefined) state.count        = s.count;
   if (s.lastPostedAt !== undefined) state.lastPostedAt = s.lastPostedAt;
+  if (s.errorCount   !== undefined) state.errorCount   = s.errorCount;
 }
 function persist() { saveStateFile(state); }
 
 let seenNews = new Set(loadSeen());
 function markSeen(id) {
   seenNews.add(String(id));
-  if (seenNews.size > 800) {
-    const arr = [...seenNews];
-    seenNews = new Set(arr.slice(arr.length - 500));
-  }
+  if (seenNews.size > 800) { const a = [...seenNews]; seenNews = new Set(a.slice(a.length - 500)); }
   saveSeen([...seenNews]);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const pick  = (a) => a[Math.floor(Math.random() * a.length)];
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const UA    = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36';
-
-async function httpGet(url) {
-  return axios.get(url, { timeout: 10000, headers: { 'User-Agent': UA } });
-}
+async function httpGet(url) { return axios.get(url, { timeout: 10000, headers: { 'User-Agent': UA } }); }
 
 // ── RSS parser ────────────────────────────────────────────────────────────────
 function parseRSS(xml) {
-  const items  = [];
-  const blocks = xml.split('<item');
+  const items = [];
+  const blocks = xml.split(/<item|<entry/);
   for (let i = 1; i < blocks.length; i++) {
-    const block = blocks[i];
-    const get   = (tag) => {
-      const cdata = block.match(new RegExp(`<${tag}><\\!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`));
-      if (cdata) return cdata[1].trim();
-      const plain = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
-      return plain ? plain[1].replace(/<[^>]+>/g, '').trim() : '';
+    const b   = blocks[i];
+    const get = (tag) => {
+      const cd = b.match(new RegExp(`<${tag}><\\!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`));
+      if (cd) return cd[1].trim();
+      const pl = b.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`));
+      return pl ? pl[1].replace(/<[^>]+>/g, '').trim() : '';
     };
     const title   = get('title');
-    const link    = get('link') || block.match(/<link[^>]*>([^<]+)/)?.[1]?.trim() || '';
-    const desc    = get('description') || get('summary') || '';
-    const pubDate = get('pubDate') || '';
-    const thumb   = block.match(/url="([^"]+\.(jpg|jpeg|png|webp))"/i)?.[1] ||
-                    block.match(/<media:thumbnail[^>]+url="([^"]+)"/i)?.[1] || '';
-    if (title && title.length > 3) {
-      items.push({
-        title,
-        link,
-        desc:    desc.replace(/<[^>]+>/g, '').trim().slice(0, 250),
-        pubDate,
-        thumb,
-      });
-    }
+    const link    = get('link') || b.match(/<link[^>]+href="([^"]+)"/)?.[1] || '';
+    const desc    = (get('description') || get('summary') || '').replace(/<[^>]+>/g, '').trim().slice(0, 250);
+    const pubDate = get('pubDate') || get('published') || '';
+    const thumb   = b.match(/url="([^"]+\.(jpg|jpeg|png|webp))"/i)?.[1] ||
+                    b.match(/<media:thumbnail[^>]+url="([^"]+)"/i)?.[1] ||
+                    b.match(/<enclosure[^>]+url="([^"]+\.(jpg|jpeg|png))"/i)?.[1] || '';
+    if (title && title.length > 3) items.push({ title, link, desc, pubDate, thumb });
   }
   return items;
 }
 
-// ── News sources (FREE, no API key) ──────────────────────────────────────────
 const RSS_FEEDS = [
-  { name: 'PhilStar',          emoji: '🚨', cat: 'Breaking',  url: 'https://www.philstar.com/rss/headlines' },
-  { name: 'PhilStar Nation',   emoji: '🏛️', cat: 'Nation',    url: 'https://www.philstar.com/rss/nation' },
-  { name: 'PhilStar Sports',   emoji: '⚽', cat: 'Sports',    url: 'https://www.philstar.com/rss/sports' },
-  { name: 'PhilStar Business', emoji: '💼', cat: 'Business',  url: 'https://www.philstar.com/rss/business' },
-  { name: 'Rappler',           emoji: '📡', cat: 'News',      url: 'https://www.rappler.com/rss/' },
+  { name: 'GMA News',          emoji: '📺', cat: 'GMA',      url: 'https://www.gmanetwork.com/news/rss/news.xml' },
+  { name: 'PhilStar',          emoji: '🚨', cat: 'Breaking', url: 'https://www.philstar.com/rss/headlines' },
+  { name: 'Inquirer',          emoji: '📰', cat: 'Inquirer', url: 'https://newsinfo.inquirer.net/feed' },
+  { name: 'CNN Philippines',   emoji: '📺', cat: 'CNN',      url: 'https://cnnphilippines.com/rss/rss.html' },
+  { name: 'Rappler',           emoji: '📡', cat: 'News',     url: 'https://www.rappler.com/rss/' },
+  { name: 'PhilStar Nation',   emoji: '🏛️', cat: 'Nation',   url: 'https://www.philstar.com/rss/nation' },
+  { name: 'PhilStar Business', emoji: '💼', cat: 'Business', url: 'https://www.philstar.com/rss/business' },
 ];
 
 async function fetchAllRSS() {
@@ -120,37 +101,28 @@ async function fetchAllRSS() {
 async function fetchEarthquakes() {
   try {
     const { data } = await httpGet('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
-    const parsed   = typeof data === 'string' ? JSON.parse(data) : data;
-    const PH       = /Philippines|Mindanao|Luzon|Visayas|Davao|Cebu|Manila|Leyte|Samar|Palawan|Batangas|Bicol|Iloilo|Zamboanga|Cotabato/i;
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    const PH = /Philippines|Mindanao|Luzon|Visayas|Davao|Cebu|Manila|Leyte|Samar|Palawan|Batangas|Bicol/i;
     return (parsed.features || [])
       .filter(e => PH.test(e.properties.place || ''))
       .map(e => ({
-        title:  `M${e.properties.mag} Earthquake — ${e.properties.place}`,
-        link:   e.properties.url || 'https://earthquake.usgs.gov',
-        desc:   `Magnitude ${e.properties.mag} earthquake recorded. Place: ${e.properties.place}. Depth: ${Math.round(e.geometry?.coordinates?.[2] || 0)} km.`,
+        title:   `M${e.properties.mag} Earthquake — ${e.properties.place}`,
+        link:    e.properties.url || 'https://earthquake.usgs.gov',
+        desc:    `Magnitude ${e.properties.mag}. Depth: ${Math.round(e.geometry?.coordinates?.[2] || 0)} km.`,
         pubDate: new Date(e.properties.time).toISOString(),
-        thumb:  '',
-        source: 'USGS',
-        emoji:  '🌋',
-        cat:    'Earthquake',
-        id:     e.id,
+        thumb:   '', source: 'USGS', emoji: '🌋', cat: 'Earthquake', id: e.id,
       }));
   } catch { return []; }
 }
 
 async function getNextNews() {
   const [rss, quakes] = await Promise.all([fetchAllRSS(), fetchEarthquakes()]);
-  const all   = [...quakes, ...rss]; // Quakes first (priority)
+  const all   = [...quakes, ...rss];
   const fresh = all.filter(n => {
     const id = n.id || n.link;
     return id && !seenNews.has(String(id));
   });
-  if (!fresh.length) {
-    // All seen — clear old cache and restart
-    seenNews.clear();
-    saveSeen([]);
-    return all[0] || null;
-  }
+  if (!fresh.length) { seenNews.clear(); saveSeen([]); return all[0] || null; }
   return fresh[0];
 }
 
@@ -160,56 +132,39 @@ const DIVIDERS = [
   '═══════════════════════',
   '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬',
   '•───────────────────•',
-  '◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆',
 ];
 
-function composeNewsPost(news, isVideo = false) {
-  // Plain text only — Facebook Wall does NOT render unicode bold/markdown
-  // All bold() and box-drawing chars removed deliberately
+function composeNewsPost(news) {
   const now = new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
-
+  const div = pick(DIVIDERS);
   const layouts = [
     () =>
-      `${news.emoji} [${news.cat.toUpperCase()}] ${news.source} 🇵🇭\n` +
-      `${'─'.repeat(30)}\n\n` +
+      `${news.emoji} [${news.cat.toUpperCase()}] ${news.source} 🇵🇭\n${div}\n\n` +
       `${news.title}\n\n` +
       (news.desc ? `${news.desc}\n\n` : '') +
-      `📅 ${now} PH\n` +
-      (isVideo ? `🎬 May kasamang VIDEO NEWS!\n` : '') +
-      `${'─'.repeat(30)}\n` +
-      `${TEAM} | MOR Naga News 🇵🇭`,
-
+      `📅 ${now} PH\n${div}\n${TEAM} | Philippines News 🇵🇭`,
     () =>
-      `📡 PHILIPPINE NEWS\n\n` +
-      `${news.emoji} ${news.cat.toUpperCase()} — ${news.source}\n\n` +
+      `📡 PHILIPPINE NEWS UPDATE\n\n${news.emoji} ${news.cat.toUpperCase()} — ${news.source}\n\n` +
       `${news.title}\n\n` +
       (news.desc ? `${news.desc}\n\n` : '') +
-      `📅 ${now} PH\n` +
-      `${TEAM} #PhilippinesNews`,
-
+      `📅 ${now} PH\n${TEAM} #PhilippinesNews`,
     () =>
-      `🔴 LIVE NEWS UPDATE — PHILIPPINES\n` +
-      `${'─'.repeat(30)}\n\n` +
-      `${news.emoji} ${news.title}\n\n` +
+      `🔴 LIVE NEWS — PHILIPPINES\n${div}\n\n${news.emoji} ${news.title}\n\n` +
       (news.desc ? `${news.desc}\n\n` : '') +
-      `Source: ${news.source}\n` +
-      `Time: ${now} PH\n` +
-      `🇵🇭 ${TEAM}`,
+      `Source: ${news.source}\nTime: ${now} PH\n🇵🇭 ${TEAM}`,
   ];
-
   return pick(layouts)().trim().slice(0, 1900);
 }
 
-// ── Generate news image via Pollinations (fallback when no thumbnail) ─────────
+// ── Generate AI news image via Pollinations ───────────────────────────────────
 async function generateNewsImage(title) {
   try {
     const prompt = encodeURIComponent(
-      `Philippine news broadcast graphic, bold headline text: "${title.slice(0, 60)}", ` +
-      `dark navy blue background, red breaking news banner at bottom, ` +
-      `professional TV news style, Philippines flag accent, ` +
-      `sharp crisp legible white text, high contrast, ultra HD, no blur`
+      `Philippine news broadcast graphic, headline: "${title.slice(0, 55)}", ` +
+      `dark navy blue background, red breaking news banner, professional TV news style, ` +
+      `Philippines flag accent, crisp white text, high contrast, HD`
     );
-    const url = `https://image.pollinations.ai/prompt/${prompt}?width=1080&height=600&nologo=true&model=flux&seed=${Math.floor(Math.random() * 99999)}`;
+    const url  = `https://image.pollinations.ai/prompt/${prompt}?width=1080&height=600&nologo=true&model=flux&seed=${Math.floor(Math.random() * 99999)}`;
     const res  = await axios.get(url, { responseType: 'arraybuffer', timeout: 60000 });
     if (!res.data || res.data.byteLength < 2000) return null;
     const fp = path.join(TEMP_DIR, `news_img_${Date.now()}.jpg`);
@@ -218,235 +173,121 @@ async function generateNewsImage(title) {
   } catch { return null; }
 }
 
+// ── Download article thumbnail ────────────────────────────────────────────────
+async function downloadThumb(url) {
+  try {
+    const fp  = path.join(TEMP_DIR, `thumb_${Date.now()}.jpg`);
+    const res = await axios.get(url, { responseType: 'arraybuffer', timeout: 12000, headers: { 'User-Agent': UA } });
+    if (!res.data || res.data.byteLength < 5000) return null;
+    fs.writeFileSync(fp, Buffer.from(res.data));
+    return fp;
+  } catch { return null; }
+}
+
 // ── createPost wrapper ────────────────────────────────────────────────────────
 function doCreatePost(api, body, attachment) {
   return new Promise((res, rej) => {
-    if (typeof api.createPost !== 'function') {
-      return rej(new Error('api.createPost not available'));
-    }
+    if (typeof api.createPost !== 'function') return rej(new Error('api.createPost not available'));
     const msg = attachment ? { body, attachment } : { body };
     api.createPost(msg, (err, url) => err ? rej(err) : res(url));
   });
 }
 
-// ── Video download via yt-dlp ─────────────────────────────────────────────────
-const VIDEO_QUERIES = [
-  'GMA News today Philippines',
-  'ABS-CBN News Philippines latest',
-  'CNN Philippines news today',
-  'UNTV News Philippines today',
-  'GMA Integrated News breaking Philippines',
-];
-let vidQueryIdx = 0;
-
-function runCmd(cmd) {
-  return new Promise((res, rej) =>
-    exec(cmd, { maxBuffer: 1024 * 1024 * 300, timeout: 90000 }, (e, out, se) =>
-      e ? rej(new Error(se?.slice(0, 200) || e.message)) : res(out.trim())
-    )
-  );
-}
-
-async function downloadNewsVideo(headline) {
-  const q       = headline ? `${headline} Philippines news` : VIDEO_QUERIES[vidQueryIdx++ % VIDEO_QUERIES.length];
-  const outPath = path.join(TEMP_DIR, `vid_${Date.now()}.mp4`);
-  try {
-    const info  = await runCmd(`yt-dlp "ytsearch1:${q.replace(/"/g, '')}" --get-id --get-title --no-playlist 2>&1`);
-    const lines = info.split('\n').filter(l => l.trim() && !l.startsWith('WARNING'));
-    if (!lines.length) throw new Error('No video found');
-    const title = lines[0];
-    const vidId = lines[1] || lines[0];
-    if (!vidId || vidId.length < 5) throw new Error('Invalid video ID');
-
-    await runCmd(
-      `yt-dlp "https://www.youtube.com/watch?v=${vidId}" ` +
-      `-f "best[height<=480][ext=mp4]/best[height<=480]/best" ` +
-      `--max-filesize 40m --no-playlist -o "${outPath}" 2>&1`
-    );
-    if (!fs.existsSync(outPath) || fs.statSync(outPath).size < 50000) throw new Error('Download failed');
-    return { path: outPath, title };
-  } catch (e) {
-    console.error('[AutoMOR Video]', e.message?.slice(0, 80));
-    try { fs.removeSync(outPath); } catch {}
-    return null;
-  }
-}
-
-// ── Shared state ──────────────────────────────────────────────────────────────
-let newsTimer  = null;
-let videoTimer = null;
-let globalApi  = null;
-
-// ── Shared helpers ─────────────────────────────────────────────────────────────
 function saveAppstate(api) {
   try {
-    const appState = api.getAppState();
-    if (appState && Array.isArray(appState)) {
-      fs.writeFileSync('./appstate.json', JSON.stringify(appState, null, 2));
-      fs.writeFileSync('./utils/data/fbstate.json', JSON.stringify(appState, null, 2));
+    const s = api.getAppState();
+    if (s && Array.isArray(s)) {
+      fs.writeFileSync('./appstate.json', JSON.stringify(s, null, 2));
+      fs.writeFileSync('./utils/data/fbstate.json', JSON.stringify(s, null, 2));
     }
   } catch {}
 }
 
-function handlePostError(e, timerRef, cycleFn) {
-  const errStr = typeof e === 'string' ? e
-    : (e?.message || (e ? JSON.stringify(e).slice(0, 200) : 'unknown'));
-  const msg = errStr.toLowerCase();
-  if (msg.includes('checkpoint') || msg.includes('restricted') || msg.includes('suspended') || msg.includes('disabled')) {
-    console.error(`[AutoMOR] 🔒 RESTRICTION DETECTED — backing off 30 min:`, errStr.slice(0, 80));
-    if (global.protection?.clearCheckpoint) global.protection.clearCheckpoint(globalApi);
-    return setTimeout(cycleFn, 30 * 60 * 1000 + Math.random() * 5 * 60 * 1000);
-  }
-  console.error(`[AutoMOR] ❌ error:`, errStr.slice(0, 200));
-  state.errorCount = (state.errorCount || 0) + 1;
-  const backoff = Math.min(state.errorCount * 3 * 60 * 1000, 20 * 60 * 1000);
-  console.log(`[AutoMOR] ⏳ backoff: ${Math.round(backoff / 60000)} min`);
-  return setTimeout(cycleFn, backoff);
-}
+// ── Shared state ──────────────────────────────────────────────────────────────
+let morTimer  = null;
+let globalApi = null;
 
-// ── NEWS CYCLE — every 10 minutes ─────────────────────────────────────────────
-async function runNewsCycle() {
+// ── Main 59-minute cycle ──────────────────────────────────────────────────────
+async function runMorCycle() {
   if (!state.enabled || !globalApi) return;
   try {
     const news = await getNextNews();
     if (!news) {
-      console.log('[AutoMOR:News] No fresh news — skipping');
+      console.log('[AutoMOR] No fresh news — skipping this cycle');
     } else {
       const newsId = news.id || news.link;
       markSeen(newsId);
       const text = composeNewsPost(news);
 
-      // Always generate an AI image — run in parallel with optional thumb download
-      console.log('[AutoMOR:News] Generating image for post...');
-      const [aiImg, thumbImg] = await Promise.allSettled([
+      // Try article thumbnail first (real photo), then AI-generated image
+      console.log(`[AutoMOR] 🖼️ Fetching image for: ${news.title?.slice(0, 50)}`);
+      const [thumbResult, aiResult] = await Promise.allSettled([
+        news.thumb?.startsWith('http') ? downloadThumb(news.thumb) : Promise.resolve(null),
         generateNewsImage(news.title),
-        news.thumb?.startsWith('http')
-          ? (async () => {
-              const fp = path.join(TEMP_DIR, `thumb_${Date.now()}.jpg`);
-              const res = await axios.get(news.thumb, {
-                responseType: 'arraybuffer', timeout: 12000, headers: { 'User-Agent': UA },
-              });
-              if (res.data && res.data.byteLength > 5000) {
-                fs.writeFileSync(fp, Buffer.from(res.data));
-                return fp;
-              }
-              return null;
-            })()
-          : Promise.resolve(null),
       ]);
 
-      // Prefer article thumbnail when available (real photo > AI art), else use AI
-      const imgPath = (thumbImg.status === 'fulfilled' && thumbImg.value)
-        ? thumbImg.value
-        : (aiImg.status === 'fulfilled' ? aiImg.value : null);
+      const imgPath = (thumbResult.status === 'fulfilled' && thumbResult.value)
+        ? thumbResult.value
+        : (aiResult.status === 'fulfilled' ? aiResult.value : null);
 
       if (imgPath) {
-        console.log(`[AutoMOR:News] 🖼️ Posting with image: ${path.basename(imgPath)}`);
         try {
           await doCreatePost(globalApi, text, fs.createReadStream(imgPath));
-        } catch (imgErr) {
-          console.log('[AutoMOR:News] Image post failed, retrying text-only:', imgErr.message?.slice(0, 60));
+        } catch {
           await doCreatePost(globalApi, text);
         }
         setTimeout(() => { try { fs.removeSync(imgPath); } catch {} }, 120000);
-        // Clean up whichever wasn't used
-        if (thumbImg.status === 'fulfilled' && thumbImg.value && thumbImg.value !== imgPath) {
-          try { fs.removeSync(thumbImg.value); } catch {}
-        }
-        if (aiImg.status === 'fulfilled' && aiImg.value && aiImg.value !== imgPath) {
-          try { fs.removeSync(aiImg.value); } catch {}
-        }
+        if (thumbResult.value && thumbResult.value !== imgPath) try { fs.removeSync(thumbResult.value); } catch {}
+        if (aiResult.value   && aiResult.value   !== imgPath) try { fs.removeSync(aiResult.value);   } catch {}
       } else {
-        console.log('[AutoMOR:News] No image available — text-only post');
         await doCreatePost(globalApi, text);
       }
 
       state.count++;
       state.lastPostedAt = new Date().toISOString();
+      state.errorCount   = 0;
       persist();
       saveAppstate(globalApi);
       if (global.protection?.clearCheckpoint) global.protection.clearCheckpoint(globalApi);
-      console.log(`[AutoMOR:News #${state.count}] ✅ ${news.title?.slice(0, 60)}`);
+      console.log(`[AutoMOR #${state.count}] ✅ Posted: ${news.title?.slice(0, 60)}`);
     }
-
-    state.errorCount = 0;
   } catch (e) {
-    newsTimer = handlePostError(e, newsTimer, runNewsCycle);
-    return;
-  }
-
-  // Schedule next news post — 10 min ± 60–90 sec jitter
-  const jitter = (Math.random() - 0.5) * 2 * (60000 + Math.random() * 30000);
-  newsTimer = setTimeout(runNewsCycle, NEWS_INTERVAL + jitter);
-}
-
-// ── VIDEO CYCLE — every 4 minutes ─────────────────────────────────────────────
-async function runVideoCycle() {
-  if (!state.enabled || !globalApi) return;
-  try {
-    const news = await getNextNews();
-    if (!news) {
-      console.log('[AutoMOR:Video] No fresh news for video — skipping');
-    } else {
-      const newsId = `video_${news.id || news.link}`;
-      markSeen(newsId);
-
-      // Post text teaser first (instant)
-      const teaser = composeNewsPost(news, true);
-      await doCreatePost(globalApi, teaser);
-      console.log(`[AutoMOR:Video] 📰 Teaser posted — downloading video...`);
-
-      // Then download and post video
-      const video = await downloadNewsVideo(news.title);
-      if (video) {
-        const vidBody =
-          `🎬 ${bold('VIDEO NEWS:')} ${bold(news.title)}\n` +
-          `📅 ${new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}\n` +
-          `🏷️ ${bold(TEAM)} 🇵🇭`;
-        await doCreatePost(globalApi, vidBody, fs.createReadStream(video.path));
-        // Keep video file alive for 5 min then clean up
-        setTimeout(() => { try { fs.removeSync(video.path); } catch {} }, 300000);
-        console.log(`[AutoMOR:Video] 🎬 Video posted: ${video.title?.slice(0, 60)}`);
-      } else {
-        console.log('[AutoMOR:Video] ⚠️ No video found — text teaser only');
-      }
-
-      saveAppstate(globalApi);
+    const errStr = typeof e === 'string' ? e : (e?.message || JSON.stringify(e).slice(0, 200));
+    const msg    = errStr.toLowerCase();
+    if (msg.includes('checkpoint') || msg.includes('restricted') || msg.includes('suspended')) {
+      console.error(`[AutoMOR] 🔒 RESTRICTION — backing off 30 min:`, errStr.slice(0, 80));
       if (global.protection?.clearCheckpoint) global.protection.clearCheckpoint(globalApi);
+      morTimer = setTimeout(runMorCycle, 30 * 60 * 1000 + Math.random() * 5 * 60 * 1000);
+      return;
     }
-
-    state.errorCount = 0;
-  } catch (e) {
-    videoTimer = handlePostError(e, videoTimer, runVideoCycle);
+    console.error(`[AutoMOR] ❌ error:`, errStr.slice(0, 200));
+    state.errorCount = (state.errorCount || 0) + 1;
+    const backoff = Math.min(state.errorCount * 3 * 60 * 1000, 20 * 60 * 1000);
+    console.log(`[AutoMOR] ⏳ backoff: ${Math.round(backoff / 60000)} min`);
+    morTimer = setTimeout(runMorCycle, backoff);
     return;
   }
 
-  // Schedule next video — 4 min ± 30–60 sec jitter
-  const jitter = (Math.random() - 0.5) * 2 * (30000 + Math.random() * 30000);
-  videoTimer = setTimeout(runVideoCycle, VIDEO_INTERVAL + jitter);
+  // Schedule next — 59 min ± 90 sec jitter
+  const jitter = (Math.random() - 0.5) * 2 * 90000;
+  morTimer = setTimeout(runMorCycle, INTERVAL + jitter);
+  console.log(`[AutoMOR] ⏱️ Next post in ~59 min`);
 }
 
 function startAutoMor(api) {
   globalApi     = api;
   state.enabled = true;
   persist();
-
-  // Stagger starts: news first (30–45 sec), video after (90–120 sec)
-  const newsDelay  = 30000 + Math.random() * 15000;
-  const videoDelay = 90000 + Math.random() * 30000;
-  newsTimer  = setTimeout(runNewsCycle,  newsDelay);
-  videoTimer = setTimeout(runVideoCycle, videoDelay);
-
-  console.log(`[AutoMOR] ✅ Started — 📰 news every 10min | 🎬 video every 4min`);
-  console.log(`[AutoMOR] ⏱️ First news in ${Math.round(newsDelay / 1000)}s, first video in ${Math.round(videoDelay / 1000)}s`);
+  const firstDelay = 30000 + Math.random() * 20000;
+  morTimer = setTimeout(runMorCycle, firstDelay);
+  console.log(`[AutoMOR] ✅ Started — every 59 minutes | First post in ${Math.round(firstDelay / 1000)}s`);
 }
 
 function stopAutoMor() {
-  if (newsTimer)  { clearTimeout(newsTimer);  newsTimer  = null; }
-  if (videoTimer) { clearTimeout(videoTimer); videoTimer = null; }
+  if (morTimer) { clearTimeout(morTimer); morTimer = null; }
   state.enabled = false;
   persist();
-  console.log(`[AutoMOR] 🛑 Stopped (news + video timers cleared)`);
+  console.log(`[AutoMOR] 🛑 Stopped`);
 }
 
 // ── Command exports ───────────────────────────────────────────────────────────
@@ -455,7 +296,7 @@ module.exports.config = {
   version:         VERSION,
   hasPermssion:    2,
   credits:         TEAM,
-  description:     'Auto-posts PH news (text every 10min + video every 4min) to Facebook WALL 24/7',
+  description:     'Auto-posts PH news with image to Facebook WALL every 59 minutes, 24/7',
   commandCategory: 'Admin',
   usages:          '[on | off | status]',
   cooldowns:       5
@@ -465,7 +306,7 @@ module.exports.onLoad = function ({ api }) {
   loadPersistedState();
   if (state.enabled) {
     globalApi = api;
-    console.log(`[AutoMOR] 🔄 Restored — resuming dual-cycle (news 10min + video 4min)...`);
+    console.log(`[AutoMOR] 🔄 Restored — resuming 59-min news cycle...`);
     setTimeout(() => startAutoMor(api), 10000);
   }
 };
@@ -483,53 +324,39 @@ module.exports.run = async function ({ api, event, args }) {
       `╚═══════════════════════════════╝\n\n` +
       `🇵🇭 ${bold('LIVE PHILIPPINE NEWS — 24/7 NON-STOP!')}\n` +
       `🖼️ ${bold('Posts to: Facebook WALL/TIMELINE')}\n` +
-      `📰 ${bold('News cycle:')} Every 10 minutes (text + thumbnail)\n` +
-      `🎬 ${bold('Video cycle:')} Every 4 minutes (teaser + video)\n\n` +
+      `⏱️ ${bold('Interval:')} Every 59 minutes (may jitter)\n\n` +
       `📡 ${bold('SOURCES (FREE, no API key):')}\n` +
-      `  📰 PhilStar — Headlines, Nation, Sports, Business\n` +
-      `  📡 Rappler — PH News\n` +
-      `  🌋 USGS — Real-time PH Earthquakes\n` +
-      `  🎬 yt-dlp — Live video news\n\n` +
+      `  📺 GMA News · 🚨 PhilStar · 📰 Inquirer\n` +
+      `  📡 Rappler · 📺 CNN PH · 🌋 USGS Earthquakes\n\n` +
       `📋 ${bold('COMMANDS:')}\n${'─'.repeat(32)}\n` +
       `${P}automor on      — I-start\n` +
       `${P}automor off     — I-stop\n` +
-      `${P}automor status  — Check status\n\n` +
+      `${P}automor status  — Status\n\n` +
       `📊 ${bold('STATUS:')}\n` +
-      `  • ${bold('State:')} ${state.enabled ? '🟢 ON' : '🔴 OFF'}\n` +
+      `  • ${bold('State:')}       ${state.enabled ? '🟢 ON' : '🔴 OFF'}\n` +
       `  • ${bold('Total posts:')} ${state.count}\n` +
-      (state.lastPostedAt ? `  • ${bold('Last post:')} ${new Date(state.lastPostedAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}\n` : '') +
+      (state.lastPostedAt ? `  • ${bold('Last post:')}   ${new Date(state.lastPostedAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}\n` : '') +
       `\n🔒 ${bold('Admin only')} | Posts to Facebook WALL`,
       threadID, messageID
     );
   }
 
   if (sub === 'on') {
-    if (state.enabled) {
-      return api.sendMessage(`⚠️ ${bold('Naka-ON na ang AutoMOR News.')}\nI-stop: ${P}automor off`, threadID, messageID);
-    }
+    if (state.enabled) return api.sendMessage(`⚠️ ${bold('Naka-ON na ang AutoMOR.')}\nI-stop: ${P}automor off`, threadID, messageID);
     startAutoMor(api);
     return api.sendMessage(
-      `✅ ${bold('AUTOMOR NEWS — STARTED! 🇵🇭')}\n\n` +
-      `📰 ${bold('Live Philippines News — DUAL CYCLE!')}\n` +
-      `🖼️ ${bold('Posts to: Facebook WALL/TIMELINE')}\n\n` +
-      `📰 ${bold('News Cycle:')} Every 10 min — text + thumbnail\n` +
-      `🎬 ${bold('Video Cycle:')} Every 4 min — teaser + video\n\n` +
-      `📡 ${bold('Sources:')}\n` +
-      `  • PhilStar (Headlines, Nation, Sports, Business)\n` +
-      `  • Rappler PH News\n` +
-      `  • USGS Real-time Earthquakes 🌋\n` +
-      `  • yt-dlp Video News 🎬\n\n` +
-      `📌 ${bold('Hindi paulit-ulit!')} Nag-ta-track ng seen news.\n` +
-      `🕒 ${bold('News in ~35sec | Video in ~105sec...')}\n\n` +
+      `✅ ${bold('AUTOMOR NEWS v' + VERSION + ' — STARTED! 🇵🇭')}\n\n` +
+      `📰 ${bold('Live Philippines News — 59 MINUTES INTERVAL!')}\n` +
+      `🖼️ ${bold('Posts to: Facebook WALL/TIMELINE')}\n` +
+      `📡 ${bold('Sources:')} GMA · PhilStar · Inquirer · Rappler · CNN PH · USGS\n\n` +
+      `🕒 ${bold('First post in ~30–50 seconds...')}\n` +
       `💡 I-stop: ${P}automor off\n🏷️ ${bold(TEAM)}`,
       threadID, messageID
     );
   }
 
   if (sub === 'off') {
-    if (!state.enabled) {
-      return api.sendMessage(`⚠️ ${bold('Hindi naman naka-ON ang AutoMOR.')}\nI-start: ${P}automor on`, threadID, messageID);
-    }
+    if (!state.enabled) return api.sendMessage(`⚠️ ${bold('Hindi naman naka-ON ang AutoMOR.')}\nI-start: ${P}automor on`, threadID, messageID);
     stopAutoMor();
     return api.sendMessage(
       `🛑 ${bold('AUTOMOR NEWS — STOPPED!')}\n\n` +
@@ -542,12 +369,12 @@ module.exports.run = async function ({ api, event, args }) {
 
   if (sub === 'status') {
     return api.sendMessage(
-      `📊 ${bold('AUTOMOR NEWS STATUS')} 🇵🇭\n${'─'.repeat(32)}\n` +
+      `📊 ${bold('AUTOMOR STATUS')} 🇵🇭\n${'─'.repeat(32)}\n` +
       `  • ${bold('State:')}       ${state.enabled ? '🟢 ON' : '🔴 OFF'}\n` +
       `  • ${bold('Posts to:')}    Facebook Wall/Timeline\n` +
-      `  • ${bold('Frequency:')}   Every 4 minutes, 24/7\n` +
-      `  • ${bold('Cycle count:')} ${cycleCount}\n` +
+      `  • ${bold('Frequency:')}   Every 59 minutes\n` +
       `  • ${bold('Total posts:')} ${state.count}\n` +
+      `  • ${bold('Errors:')}      ${state.errorCount || 0}\n` +
       `  • ${bold('Seen cache:')}  ${seenNews.size} articles\n` +
       `  • ${bold('Last post:')}   ${state.lastPostedAt ? new Date(state.lastPostedAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) : 'N/A'}\n` +
       `\n🏷️ ${bold(TEAM)}`,
