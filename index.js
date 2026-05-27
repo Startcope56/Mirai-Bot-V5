@@ -733,6 +733,169 @@ async function handleRequest(req, res) {
     return;
   }
 
+  // ── DRIAN AI GENERATOR — TTS helpers ─────────────────────────────────────
+
+  async function drianTTS(text, voiceName, rate, pitch) {
+    const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata(voiceName, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+    const { audioStream } = tts.toStream(text, { rate: rate || "0%", pitch: pitch || "0Hz" });
+    const chunks = [];
+    await new Promise((resolve, reject) => {
+      audioStream.on("data", d => chunks.push(d));
+      audioStream.on("end", resolve);
+      audioStream.on("error", reject);
+      setTimeout(resolve, 40000);
+    });
+    return Buffer.concat(chunks);
+  }
+
+  async function mixWithBgMusic(ttsBuffer) {
+    const os = require("os");
+    const tmpIn  = path.join(os.tmpdir(), `drian_tts_${Date.now()}.mp3`);
+    const tmpOut = path.join(os.tmpdir(), `drian_mix_${Date.now()}.mp3`);
+    fs.writeFileSync(tmpIn, ttsBuffer);
+    await new Promise((resolve, reject) => {
+      const { spawn: sp } = require("child_process");
+      const ff = sp("ffmpeg", [
+        "-f", "lavfi",
+        "-i", "sine=frequency=174.6:beep_factor=0",
+        "-f", "lavfi",
+        "-i", "sine=frequency=220.0:beep_factor=0",
+        "-f", "lavfi",
+        "-i", "sine=frequency=261.6:beep_factor=0",
+        "-f", "lavfi",
+        "-i", "sine=frequency=329.6:beep_factor=0",
+        "-i", tmpIn,
+        "-filter_complex",
+        "[0:a]volume=0.08[a0];[1:a]volume=0.06[a1];[2:a]volume=0.05[a2];[3:a]volume=0.04[a3];[a0][a1][a2][a3]amix=inputs=4:duration=longest[bg];[bg][4:a]amix=inputs=2:duration=shortest:weights=1 3[out]",
+        "-map", "[out]",
+        "-codec:a", "libmp3lame",
+        "-b:a", "128k",
+        "-y", tmpOut
+      ]);
+      ff.stderr.on("data", () => {});
+      ff.on("close", code => {
+        try { fs.unlinkSync(tmpIn); } catch {}
+        code === 0 ? resolve() : reject(new Error("ffmpeg bg mix failed (code " + code + ")"));
+      });
+      ff.on("error", reject);
+    });
+    const buf = fs.readFileSync(tmpOut);
+    try { fs.unlinkSync(tmpOut); } catch {}
+    return buf;
+  }
+
+  async function concatAudios(bufA, bufB) {
+    const os = require("os");
+    const tmpA   = path.join(os.tmpdir(), `drian_a_${Date.now()}.mp3`);
+    const tmpB   = path.join(os.tmpdir(), `drian_b_${Date.now()}.mp3`);
+    const tmpOut = path.join(os.tmpdir(), `drian_cat_${Date.now()}.mp3`);
+    fs.writeFileSync(tmpA, bufA);
+    fs.writeFileSync(tmpB, bufB);
+    await new Promise((resolve, reject) => {
+      const { spawn: sp } = require("child_process");
+      const ff = sp("ffmpeg", [
+        "-i", tmpA,
+        "-i", tmpB,
+        "-filter_complex", "[0:a][1:a]concat=n=2:v=0:a=1[out]",
+        "-map", "[out]",
+        "-codec:a", "libmp3lame",
+        "-b:a", "128k",
+        "-y", tmpOut
+      ]);
+      ff.stderr.on("data", () => {});
+      ff.on("close", code => {
+        try { fs.unlinkSync(tmpA); fs.unlinkSync(tmpB); } catch {}
+        code === 0 ? resolve() : reject(new Error("ffmpeg concat failed (code " + code + ")"));
+      });
+      ff.on("error", reject);
+    });
+    const buf = fs.readFileSync(tmpOut);
+    try { fs.unlinkSync(tmpOut); } catch {}
+    return buf;
+  }
+
+  // POST /api/drian/female — Radio Jingle Voice (babae, Tagalog, + optional bg music)
+  if (pathname === "/api/drian/female" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { text, withMusic } = JSON.parse(body);
+      if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
+      const cleanText = text.trim().slice(0, 350);
+      let buf = await drianTTS(cleanText, "fil-PH-BlessicaNeural", "-2%", "+4Hz");
+      if (withMusic) {
+        try { buf = await mixWithBgMusic(buf); } catch (e) { console.warn("[DRIAN] bg mix failed:", e.message); }
+      }
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": buf.length,
+        "Content-Disposition": "inline; filename=\"jingle-voice.mp3\"",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*"
+      });
+      return res.end(buf);
+    } catch (e) {
+      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
+    }
+    return;
+  }
+
+  // POST /api/drian/male — Weather Voice (lalake, Tagalog)
+  if (pathname === "/api/drian/male" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { text } = JSON.parse(body);
+      if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
+      const cleanText = text.trim().slice(0, 350);
+      const buf = await drianTTS(cleanText, "fil-PH-AngeloNeural", "-4%", "-2Hz");
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": buf.length,
+        "Content-Disposition": "inline; filename=\"weather-voice.mp3\"",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*"
+      });
+      return res.end(buf);
+    } catch (e) {
+      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
+    }
+    return;
+  }
+
+  // POST /api/drian/duet — Duet: combine female jingle + male weather, optional bg music
+  if (pathname === "/api/drian/duet" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { femaleText, maleText, withMusic } = JSON.parse(body);
+      if (!femaleText?.trim() && !maleText?.trim()) { res.writeHead(400); return res.end("Missing texts"); }
+
+      let bufF = null, bufM = null;
+      if (femaleText?.trim()) bufF = await drianTTS(femaleText.trim().slice(0, 350), "fil-PH-BlessicaNeural", "-2%", "+4Hz");
+      if (maleText?.trim())   bufM = await drianTTS(maleText.trim().slice(0, 350), "fil-PH-AngeloNeural", "-4%", "-2Hz");
+
+      let combined;
+      if (bufF && bufM) combined = await concatAudios(bufF, bufM);
+      else combined = bufF || bufM;
+
+      if (withMusic) {
+        try { combined = await mixWithBgMusic(combined); } catch (e) { console.warn("[DRIAN] duet bg mix failed:", e.message); }
+      }
+
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": combined.length,
+        "Content-Disposition": "inline; filename=\"drian-duet.mp3\"",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*"
+      });
+      return res.end(combined);
+    } catch (e) {
+      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
+    }
+    return;
+  }
+
   // ── 404 ───────────────────────────────────────────────────────────────────
   res.writeHead(404, { "Content-Type": "text/plain" });
   res.end("Not found");

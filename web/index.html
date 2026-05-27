@@ -1,722 +1,612 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="tl">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HOME DEEP AI — STARTCOPE BETA INC</title>
-<meta name="description" content="HOME DEEP AI — AI Assistant para sa mga estudante. Ginawa ng STARTCOPE BETA INC."/>
+<title>DRIAN AI GENERATOR — Radio Jingle Voice Studio</title>
+<meta name="description" content="DRIAN AI GENERATOR — Radio Jingle at Weather Voice Generator. Tagalog AI Voice Studio ng STARTCOPE BETA INC."/>
 <link rel="manifest" href="/manifest.json"/>
 <link rel="icon" href="/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#05050f;--bg2:#0d0d22;--bg3:#141430;--card:rgba(16,16,40,0.93);
-  --border:rgba(255,60,180,0.18);--text:#f0eeff;--text2:#9090b8;
+  --bg:#04040e;--bg2:#08081a;--bg3:#0d0d24;--card:rgba(12,12,32,0.95);
   --pink:#ff2d95;--pink2:#ff69b4;--violet:#8b5cf6;--cyan:#00e5ff;
-  --green:#00e676;--red:#ff4455;
-  --glow:0 0 22px rgba(255,45,149,0.45);--glowv:0 0 22px rgba(139,92,246,0.45);
-}
-[data-theme="light"]{
-  --bg:#f0eeff;--bg2:#e6e0ff;--bg3:#ddd6ff;--card:rgba(255,255,255,0.96);
-  --border:rgba(139,92,246,0.22);--text:#1a1030;--text2:#5a507a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--gold:#f59e0b;--gold2:#fbbf24;
+  --green:#10b981;--red:#ef4444;--orange:#f97316;
+  --text:#f0eeff;--text2:#7070a0;
+  --border-f:rgba(255,45,149,0.25);--border-m:rgba(0,229,255,0.25);--border-d:rgba(245,158,11,0.25);
+  --glow-f:0 0 30px rgba(255,45,149,0.4);--glow-m:0 0 30px rgba(0,229,255,0.4);--glow-d:0 0 30px rgba(245,158,11,0.4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+html{scroll-behavior:smooth}
+body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 button{cursor:pointer;border:none;outline:none;font-family:inherit}
-input{font-family:inherit;outline:none}
+textarea,input{font-family:inherit;outline:none}
 ::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px}
 
-/* ── Loading ── */
-#loadingScreen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#04040e 0%,#130830 50%,#04040e 100%);gap:18px}
-.load-logo{font-size:2.2rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
-.load-sub{color:var(--text2);font-size:.8rem;letter-spacing:2px;text-transform:uppercase}
-.load-dots{display:flex;gap:9px}
-.ld{width:10px;height:10px;border-radius:50%;animation:ldPulse 1.3s ease-in-out infinite}
-.ld:nth-child(1){background:var(--pink)}.ld:nth-child(2){background:var(--violet);animation-delay:.2s}.ld:nth-child(3){background:var(--cyan);animation-delay:.4s}
-@keyframes ldPulse{0%,80%,100%{transform:scale(.6);opacity:.35}40%{transform:scale(1.3);opacity:1}}
+/* ── Animated BG ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.12;animation:orbDrift ease-in-out infinite}
+.orb1{width:500px;height:500px;background:var(--pink);top:-10%;left:-5%;animation-duration:22s}
+.orb2{width:400px;height:400px;background:var(--violet);bottom:-8%;right:-4%;animation-duration:28s;animation-delay:-10s}
+.orb3{width:300px;height:300px;background:var(--cyan);top:40%;right:20%;animation-duration:18s;animation-delay:-6s}
+.orb4{width:250px;height:250px;background:var(--gold);bottom:20%;left:10%;animation-duration:25s;animation-delay:-14s}
+@keyframes orbDrift{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-40px) scale(1.08)}}
 
-/* ── Auth ── */
-#authOverlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#04040e 0%,#12073a 50%,#04040e 100%)}
-.a-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.22;animation:orbF 9s ease-in-out infinite;pointer-events:none}
-.a-orb1{width:320px;height:320px;background:var(--pink);top:8%;left:4%;animation-delay:0s}
-.a-orb2{width:260px;height:260px;background:var(--violet);bottom:12%;right:6%;animation-delay:3.5s}
-.a-orb3{width:200px;height:200px;background:var(--cyan);top:45%;left:38%;animation-delay:7s}
-@keyframes orbF{0%,100%{transform:translateY(0)}50%{transform:translateY(-28px)}}
-.auth-card{position:relative;z-index:1;width:min(440px,92vw);background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:26px;padding:38px 34px;box-shadow:0 8px 60px rgba(255,45,149,.16),0 2px 20px rgba(0,0,0,.55)}
-.ac-logo{text-align:center;margin-bottom:26px}
-.ac-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:var(--glow)}
-.ac-title{font-size:1.65rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.ac-sub{color:var(--text2);font-size:.75rem;margin-top:4px;letter-spacing:1.2px;text-transform:uppercase}
-.auth-tabs{display:flex;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:26px;gap:4px}
-.at{flex:1;padding:10px;border-radius:9px;font-size:.88rem;font-weight:600;background:transparent;color:var(--text2);transition:all .2s}
-.at.active{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;box-shadow:var(--glow)}
-.auth-form{display:flex;flex-direction:column;gap:14px}
-.auth-form.hidden{display:none}
-.fg{display:flex;flex-direction:column;gap:6px}
-.fl{font-size:.8rem;color:var(--text2);font-weight:500}
-.fi{padding:12px 16px;border-radius:12px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);font-size:.93rem;transition:all .2s}
-.fi:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,149,.13)}
-.fi::placeholder{color:var(--text2);opacity:.45}
-.btn-sub{padding:14px;border-radius:12px;font-size:.97rem;font-weight:700;color:white;background:linear-gradient(135deg,var(--pink),var(--violet));transition:all .2s;box-shadow:0 4px 20px rgba(255,45,149,.3);margin-top:4px}
-.btn-sub:hover{transform:translateY(-1px);box-shadow:0 7px 28px rgba(255,45,149,.5)}
-.btn-sub:disabled{opacity:.6;transform:none}
-.auth-err{color:var(--red);font-size:.82rem;text-align:center;display:none;padding:9px 14px;background:rgba(255,68,85,.1);border-radius:9px;border:1px solid rgba(255,68,85,.25);margin-bottom:4px}
+/* ── Header ── */
+header{position:sticky;top:0;z-index:100;background:rgba(4,4,14,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--glow-f);flex-shrink:0}
+.logo-name{font-family:"Orbitron",sans-serif;font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.logo-sub{font-size:.62rem;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+.header-badge{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:.7rem;font-weight:800;padding:5px 13px;border-radius:20px;letter-spacing:.5px;white-space:nowrap;box-shadow:var(--glow-f)}
 
-/* ── App shell ── */
-#app{display:none;flex-direction:column;height:100vh;position:relative}
-.app-header{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;background:var(--card);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);min-height:60px;flex-shrink:0;position:relative;z-index:50}
-.h-logo{display:flex;align-items:center;gap:11px}
-.h-logo-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--glow);flex-shrink:0}
-.h-logo-text{font-size:1.05rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.h-logo-badge{font-size:.62rem;color:var(--text2);letter-spacing:.6px}
-.h-actions{display:flex;align-items:center;gap:8px}
-.hb{width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;flex-shrink:0}
-.hb:hover{border-color:var(--pink);box-shadow:var(--glow)}
-.hb.vc-hb{width:auto;padding:0 16px;border-radius:22px;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:.83rem;font-weight:700;gap:6px;box-shadow:var(--glow);border-color:transparent}
-.hb.vc-hb:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(255,45,149,.55)}
-.n-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--red);font-size:.62rem;font-weight:700;color:white;display:flex;align-items:center;justify-content:center}
-.u-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--pink));color:white;font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--border);flex-shrink:0;transition:all .2s}
-.u-av:hover{box-shadow:var(--glowv)}
+/* ── Main container ── */
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 18px 60px}
 
-/* ── Notif panel ── */
-.notif-panel{position:absolute;top:66px;right:18px;width:310px;max-height:370px;overflow-y:auto;background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.55);z-index:200;display:none;flex-direction:column}
-.notif-panel.open{display:flex}
-.np-hd{padding:13px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:.88rem;display:flex;justify-content:space-between;align-items:center}
-.np-clear{background:none;font-size:.74rem;color:var(--text2);cursor:pointer}
-.ni{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;cursor:default}
-.ni:hover{background:var(--bg3)}
-.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:5px}
-.ni-title{font-weight:600;color:var(--text);font-size:.84rem}
-.ni-text{font-size:.8rem;color:var(--text2);line-height:1.4;margin-top:2px}
-.ni-time{font-size:.7rem;color:var(--text2);margin-top:3px}
+/* ── Hero ── */
+.hero{text-align:center;padding:40px 16px 48px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,45,149,.1);border:1px solid rgba(255,45,149,.3);color:var(--pink2);font-size:.75rem;font-weight:700;padding:6px 16px;border-radius:30px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+.hero-badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--pink);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-title{font-family:"Orbitron",sans-serif;font-size:clamp(1.8rem,6vw,3.2rem);font-weight:900;line-height:1.15;margin-bottom:14px}
+.hero-title span.f{background:linear-gradient(90deg,var(--pink),var(--pink2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-title span.m{background:linear-gradient(90deg,var(--cyan),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--text2);font-size:1rem;line-height:1.65;max-width:580px;margin:0 auto}
 
-/* ── User menu ── */
-.user-menu{position:absolute;top:66px;right:18px;width:205px;background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.55);z-index:200;display:none;flex-direction:column;overflow:hidden}
-.user-menu.open{display:flex}
-.um-hd{padding:14px 16px;border-bottom:1px solid var(--border)}
-.um-name{font-weight:700;font-size:.95rem}
-.um-sub{font-size:.75rem;color:var(--text2)}
-.um-item{padding:12px 16px;font-size:.87rem;color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
-.um-item:hover{background:var(--bg3)}
-.um-item.logout{color:var(--red)}
+/* ── Section cards ── */
+.section{background:var(--card);backdrop-filter:blur(20px);border-radius:22px;padding:28px;margin-bottom:22px;border:1px solid}
+.section.female{border-color:var(--border-f);box-shadow:0 4px 40px rgba(255,45,149,.08)}
+.section.male{border-color:var(--border-m);box-shadow:0 4px 40px rgba(0,229,255,.08)}
+.section.duet{border-color:var(--border-d);box-shadow:0 4px 40px rgba(245,158,11,.08)}
 
-/* ── Chat body ── */
-.chat-body{flex:1;overflow-y:auto;padding:18px 18px 12px;display:flex;flex-direction:column;gap:14px}
-.chat-welcome{text-align:center;padding:28px 16px;animation:fadeSlideUp .5s ease}
-.cw-av-wrap{width:94px;height:94px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:3px solid var(--pink);box-shadow:var(--glow);animation:aiFloat 4s ease-in-out infinite}
-.cw-av-wrap img{width:100%;height:100%;object-fit:cover}
-.cw-name{font-size:1.45rem;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cw-sub{font-size:.82rem;color:var(--text2);margin-top:4px}
-.cw-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
-.chip{padding:8px 16px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:.8rem;color:var(--text2);cursor:pointer;transition:all .2s}
-.chip:hover{background:var(--bg2);border-color:var(--pink);color:var(--pink)}
+.sec-header{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.sec-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sec-icon.f{background:linear-gradient(135deg,rgba(255,45,149,.2),rgba(139,92,246,.2));border:1px solid var(--border-f);box-shadow:var(--glow-f)}
+.sec-icon.m{background:linear-gradient(135deg,rgba(0,229,255,.2),rgba(14,165,233,.2));border:1px solid var(--border-m);box-shadow:var(--glow-m)}
+.sec-icon.d{background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(249,115,22,.2));border:1px solid var(--border-d);box-shadow:var(--glow-d)}
+.sec-title{font-size:1.1rem;font-weight:800;letter-spacing:.5px}
+.sec-title.f{background:linear-gradient(90deg,var(--pink),var(--pink2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sec-title.m{background:linear-gradient(90deg,var(--cyan),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sec-title.d{background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sec-label{font-size:.72rem;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
 
-/* ── Messages ── */
-.msg-row{display:flex;gap:10px;animation:fadeSlideUp .28s ease;max-width:86%}
-.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
-.msg-row.ai{align-self:flex-start}
-.msg-av{width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;margin-top:2px;border:2px solid var(--border)}
-.msg-av img{width:100%;height:100%;object-fit:cover}
-.msg-av.uav{background:linear-gradient(135deg,var(--violet),var(--pink));display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:800;color:white}
-.msg-bubble{padding:11px 16px;border-radius:18px;font-size:.91rem;line-height:1.56;max-width:100%;white-space:pre-wrap;word-break:break-word}
-.msg-row.ai .msg-bubble{background:var(--bg3);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
-.msg-row.user .msg-bubble{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;border-bottom-right-radius:4px;box-shadow:0 4px 16px rgba(255,45,149,.26)}
-.msg-time{font-size:.67rem;color:var(--text2);margin-top:4px;padding:0 3px}
-.msg-row.user .msg-time{text-align:right}
-.typing-ind{display:flex;align-items:center;gap:4px;padding:13px 17px}
-.td{width:7px;height:7px;border-radius:50%;background:var(--pink);animation:tyPulse 1.2s ease-in-out infinite}
-.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
-@keyframes tyPulse{0%,60%,100%{transform:scale(.75);opacity:.4}30%{transform:scale(1.25);opacity:1}}
+/* ── Textarea ── */
+.voice-input{width:100%;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1.5px solid;color:var(--text);font-size:.93rem;line-height:1.55;resize:vertical;min-height:90px;transition:all .2s}
+.voice-input.f{border-color:rgba(255,45,149,.2)}
+.voice-input.f:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,149,.1);background:rgba(255,45,149,.04)}
+.voice-input.m{border-color:rgba(0,229,255,.2)}
+.voice-input.m:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,.1);background:rgba(0,229,255,.04)}
+.voice-input::placeholder{color:var(--text2);opacity:.55}
 
-/* ── Input bar ── */
-.input-bar{display:flex;align-items:center;gap:9px;padding:11px 16px;background:var(--card);backdrop-filter:blur(20px);border-top:1px solid var(--border);flex-shrink:0}
-.vt-btn{padding:8px 14px;border-radius:20px;font-size:.78rem;font-weight:700;background:linear-gradient(135deg,rgba(255,45,149,.18),rgba(139,92,246,.18));border:1.5px solid var(--pink);color:var(--pink);transition:all .2s;white-space:nowrap;flex-shrink:0}
-.vt-btn.off{border-color:var(--text2);color:var(--text2);background:var(--bg3)}
-.msg-inp{flex:1;padding:11px 16px;border-radius:24px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);font-size:.92rem;transition:all .2s}
-.msg-inp:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,45,149,.1)}
-.msg-inp::placeholder{color:var(--text2);opacity:.45}
-.send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--glow);transition:all .2s}
-.send-btn:hover{transform:scale(1.1)}
-.send-btn:disabled{opacity:.5;transform:none}
+.char-count{font-size:.72rem;color:var(--text2);text-align:right;margin-top:5px;margin-bottom:12px}
 
-/* ── Floating Chat Button (FAB) ── */
-.chat-fab{position:fixed;bottom:86px;right:20px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;font-size:24px;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 0 rgba(255,45,149,.7),0 4px 22px rgba(0,0,0,.45);z-index:98;border:2px solid rgba(255,255,255,.2);animation:fabPing 2.8s ease-in-out infinite;transition:transform .18s}
-.chat-fab.visible{display:flex}
-.chat-fab:hover{transform:scale(1.14)}
-@keyframes fabPing{0%,100%{box-shadow:0 0 0 0 rgba(255,45,149,.7),0 4px 22px rgba(0,0,0,.45)}50%{box-shadow:0 0 0 14px rgba(255,45,149,.0),0 4px 22px rgba(0,0,0,.45)}}
-.chat-fab-tip{position:fixed;bottom:152px;right:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 13px;font-size:.76rem;font-weight:600;color:var(--pink);white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(6px);transition:all .28s;z-index:99;box-shadow:var(--glow)}
-.chat-fab:hover~.chat-fab-tip,.chat-fab-tip:hover{opacity:1;transform:translateY(0)}
+/* ── Hint chips ── */
+.hints{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.hint{padding:6px 13px;border-radius:20px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .18s;white-space:nowrap}
+.hint.f{background:rgba(255,45,149,.08);border-color:rgba(255,45,149,.25);color:var(--pink2)}
+.hint.f:hover{background:rgba(255,45,149,.18);border-color:var(--pink)}
+.hint.m{background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.25);color:var(--cyan)}
+.hint.m:hover{background:rgba(0,229,255,.18);border-color:var(--cyan)}
 
-/* ═══ VIDEO CALL MODAL ═══ */
-#vcModal{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;background:#03030f}
-#vcModal.open{display:flex}
+/* ── Music toggle ── */
+.music-toggle{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:11px 14px;background:rgba(255,45,149,.06);border:1px solid rgba(255,45,149,.18);border-radius:11px;cursor:pointer;transition:all .2s;user-select:none}
+.music-toggle:hover{background:rgba(255,45,149,.12);border-color:var(--pink)}
+.mt-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:12px}
+.mt-check.on{background:var(--pink);border-color:var(--pink)}
+.mt-label{font-size:.82rem;font-weight:600;color:var(--text)}
+.mt-sub{font-size:.72rem;color:var(--text2);margin-left:auto}
 
-/* Ringing */
-#vcRinging{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;height:100%;animation:fadeSlideUp .4s ease}
-.ring-av-wrap{position:relative;width:136px;height:136px}
-.ring-av{width:136px;height:136px;border-radius:50%;overflow:hidden;border:3px solid var(--pink);object-fit:cover;position:relative;z-index:2;background:var(--bg3);display:block}
-.ring-wave{position:absolute;inset:-20px;border-radius:50%;border:2.5px solid var(--pink);opacity:0;animation:ringExp 2.2s ease-out infinite}
-.ring-wave:nth-child(2){animation-delay:.65s}.ring-wave:nth-child(3){animation-delay:1.3s}
-@keyframes ringExp{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.9);opacity:0}}
-.ring-name{font-size:1.55rem;font-weight:800;color:white}
-.ring-status{color:var(--text2);font-size:.88rem}
-.ring-controls{display:flex;gap:26px}
-.ring-btn{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .2s}
-.ring-btn.ans{background:var(--green);box-shadow:0 4px 22px rgba(0,230,118,.45)}
-.ring-btn.dec{background:var(--red);box-shadow:0 4px 22px rgba(255,68,85,.45)}
-.ring-btn:hover{transform:scale(1.12)}
+/* ── Buttons row ── */
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:700;transition:all .18s;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn.gen-f{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;box-shadow:0 4px 20px rgba(255,45,149,.35)}
+.btn.gen-f:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 28px rgba(255,45,149,.55)}
+.btn.gen-m{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04040e;box-shadow:0 4px 20px rgba(0,229,255,.35)}
+.btn.gen-m:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 28px rgba(0,229,255,.55)}
+.btn.gen-d{background:linear-gradient(135deg,var(--gold),var(--orange));color:white;box-shadow:0 4px 20px rgba(245,158,11,.35)}
+.btn.gen-d:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 28px rgba(245,158,11,.55)}
+.btn.play-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:var(--text)}
+.btn.play-btn:not(:disabled):hover{background:rgba(255,255,255,.14);transform:scale(1.04)}
+.btn.dl-btn{background:rgba(16,185,129,.12);border:1.5px solid rgba(16,185,129,.3);color:var(--green)}
+.btn.dl-btn:not(:disabled):hover{background:rgba(16,185,129,.22);border-color:var(--green);transform:scale(1.04)}
 
-/* Active call */
-#vcActive{display:none;flex-direction:column;height:100%}
-#vcActive.show{display:flex}
-.vc-top{flex:1;display:flex;position:relative;overflow:hidden}
-.vc-remote{flex:1;position:relative;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:linear-gradient(160deg,#06021a 0%,#1a0650 100%)}
-.vc-remote::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%,rgba(255,45,149,.18) 0%,transparent 70%);animation:remotePulse 4s ease-in-out infinite;pointer-events:none;z-index:1}
-@keyframes remotePulse{0%,100%{opacity:.5}50%{opacity:1}}
-.vc-spk-ring{position:absolute;inset:0;pointer-events:none;z-index:6;border:3px solid var(--pink);border-radius:4px;opacity:0;transition:opacity .3s}
-.vc-spk-ring.on{opacity:.7;animation:spkPulse .45s ease-in-out infinite}
-@keyframes spkPulse{0%,100%{opacity:.3}50%{opacity:.9}}
+/* ── Player bar ── */
+.player-bar{margin-top:16px;padding:14px 16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);display:none;flex-direction:column;gap:10px;animation:fadeUp .3s ease}
+.player-bar.show{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.player-info{display:flex;align-items:center;gap:10px}
+.player-icon{font-size:1.4rem}
+.player-name{font-size:.85rem;font-weight:700;color:var(--text)}
+.player-sub{font-size:.72rem;color:var(--text2)}
+.wave-bars{display:flex;align-items:center;gap:3px;margin-left:auto}
+.wb{width:3px;border-radius:2px;background:var(--pink);animation:wbAnim 1.1s ease-in-out infinite}
+.wb:nth-child(1){height:8px;animation-delay:0s}
+.wb:nth-child(2){height:14px;animation-delay:.15s}
+.wb:nth-child(3){height:10px;animation-delay:.3s}
+.wb:nth-child(4){height:18px;animation-delay:.45s}
+.wb:nth-child(5){height:12px;animation-delay:.6s}
+.wb.cyan{background:var(--cyan)}
+.wb.gold{background:var(--gold)}
+.wave-bars.paused .wb{animation:none;height:4px}
+audio-player{width:100%}
+audio.hidden-audio{display:none}
 
-/* AI Character + Waving Arm */
-.ai-char-wrap{position:relative;z-index:3;display:flex;align-items:flex-end;justify-content:center;height:100%;padding-bottom:16px}
-.ai-body-wrap{position:relative;display:inline-flex;align-items:flex-end;justify-content:center}
-.ai-char{max-height:min(78vh,520px);max-width:58%;object-fit:contain;filter:drop-shadow(0 0 35px rgba(255,45,149,.55));animation:aiFloat 4s ease-in-out infinite;transition:filter .3s}
-.ai-char.greeting{animation:aiGreet 2.5s ease-in-out forwards}
-.ai-char.talking{animation:aiTalk .48s ease-in-out infinite}
-.ai-wave-arm{position:absolute;top:24%;right:-18px;font-size:54px;transform-origin:80% 90%;transform:rotate(-25deg);opacity:0;pointer-events:none;z-index:10;filter:drop-shadow(0 0 12px rgba(255,45,149,.9));transition:opacity .25s}
-.ai-wave-arm.waving{opacity:1;animation:waveHand .38s ease-in-out 6 forwards}
-@keyframes waveHand{0%,100%{transform:rotate(-25deg)}30%{transform:rotate(25deg)}65%{transform:rotate(-35deg)}}
+/* ── Status message ── */
+.status-msg{font-size:.82rem;padding:9px 14px;border-radius:10px;margin-top:12px;display:none}
+.status-msg.show{display:block}
+.status-msg.loading{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:var(--violet)}
+.status-msg.success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.status-msg.error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red)}
 
-/* AI fallback face (CSS-drawn) */
-.ai-char-fb{width:200px;height:320px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;background:linear-gradient(160deg,rgba(255,45,149,.1),rgba(139,92,246,.18));border:2px solid var(--pink);animation:aiFloat 4s ease-in-out infinite;padding-bottom:20px;overflow:hidden;position:relative}
-.ai-face-svg{width:160px;height:220px;position:absolute;top:10px}
-.ai-char-fb .fb-name{font-size:.9rem;color:var(--pink);font-weight:800;letter-spacing:1px;z-index:2}
-.ai-char-fb .fb-sub{font-size:.68rem;color:var(--text2);z-index:2}
+/* ── Duet section extras ── */
+.duet-voices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:560px){.duet-voices{grid-template-columns:1fr}}
+.duet-voice-card{padding:14px;border-radius:13px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03)}
+.dvc-label{font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px}
+.dvc-label.f{color:var(--pink)}
+.dvc-label.m{color:var(--cyan)}
+.dvc-status{font-size:.8rem;color:var(--text2)}
+.dvc-status.ready{color:var(--green)}
 
-.vc-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);backdrop-filter:blur(12px);padding:5px 16px;border-radius:20px;font-size:.78rem;color:white;font-weight:600;z-index:5;white-space:nowrap}
-.vc-local{position:absolute;top:14px;right:14px;width:130px;height:96px;border-radius:13px;overflow:hidden;border:2px solid var(--border);background:var(--bg3);z-index:10;box-shadow:0 4px 22px rgba(0,0,0,.6)}
-.vc-local video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:none}
-.cam-off-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;font-size:.62rem;color:var(--text2);background:var(--bg3)}
-.cam-off-ph span{font-size:20px}
-.vc-ctrls{display:flex;align-items:center;justify-content:center;gap:16px;padding:18px 16px;background:rgba(0,0,0,.72);backdrop-filter:blur(20px);flex-shrink:0;border-top:1px solid rgba(255,255,255,.06)}
-.vc-btn{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);color:white;transition:all .2s}
-.vc-btn:hover{background:rgba(255,255,255,.2)}
-.vc-btn.on{background:linear-gradient(135deg,var(--pink),var(--violet));box-shadow:var(--glow);border-color:transparent}
-.vc-btn.off-s{background:rgba(255,68,85,.3);border-color:var(--red)}
-.vc-btn.end-btn{background:var(--red);box-shadow:0 4px 20px rgba(255,68,85,.45);border-color:transparent;width:58px;height:58px;font-size:22px}
-.vc-btn.end-btn:hover{background:#ff2233}
-.vc-chat-panel{position:absolute;right:0;top:0;bottom:90px;width:min(300px,80vw);display:none;flex-direction:column;background:rgba(8,8,28,.96);backdrop-filter:blur(22px);border-left:1px solid var(--border);z-index:20}
-.vc-chat-panel.open{display:flex}
-.vch-hd{padding:13px 15px;border-bottom:1px solid var(--border);font-weight:700;font-size:.86rem;display:flex;align-items:center;justify-content:space-between}
-.vch-close{background:none;font-size:18px;color:var(--text2)}
-.vch-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
-.vch-iw{display:flex;gap:8px;padding:11px 12px;border-top:1px solid var(--border)}
-.vch-inp{flex:1;padding:8px 12px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:white;font-size:.83rem}
-.vch-inp::placeholder{color:var(--text2);opacity:.45}
-.vch-send{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));color:white;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+/* ── Divider ── */
+.divider{display:flex;align-items:center;gap:12px;margin:10px 0 24px}
+.div-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.div-text{font-size:.72rem;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
 
-/* ── Animations ── */
-@keyframes aiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
-@keyframes aiGreet{
-  0%{transform:scale(1) translateX(0)}
-  15%{transform:scale(1.04) translateX(6px)}
-  35%{transform:scale(1.04) translateX(-6px)}
-  55%{transform:scale(1.02) translateX(4px)}
-  75%{transform:scale(1.01) translateX(-2px)}
-  100%{transform:scale(1) translateX(0)}
-}
-@keyframes aiTalk{
-  0%,100%{filter:drop-shadow(0 0 18px rgba(255,45,149,.55));transform:scale(1)}
-  50%{filter:drop-shadow(0 0 42px rgba(255,45,149,1));transform:scale(1.02) translateY(-4px)}
-}
-@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* ── Spinner ── */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Footer ── */
+footer{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.05);background:rgba(4,4,14,.8);padding:24px 20px;text-align:center}
+.footer-logo{font-family:"Orbitron",sans-serif;font-size:.9rem;font-weight:900;background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:5px}
+.footer-sub{font-size:.72rem;color:var(--text2)}
+
 @media(max-width:500px){
-  .auth-card{padding:26px 18px}
-  .hb.vc-hb .vc-txt{display:none}
-  .vc-local{width:90px;height:70px}
-  .ai-char{max-width:70%}
-  .chat-fab{bottom:80px;right:14px;width:52px;height:52px;font-size:22px}
+  .container{padding:20px 12px 48px}
+  .section{padding:20px 16px}
+  .hero{padding:28px 8px 36px}
+  header{padding:10px 16px}
+  .btn{padding:10px 14px;font-size:.82rem}
+  .logo-name{font-size:.9rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ LOADING ═══ -->
-<div id="loadingScreen">
-  <div class="load-logo">HOME DEEP AI</div>
-  <div class="load-sub">STARTCOPE BETA INC · For Students</div>
-  <div class="load-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
 </div>
 
-<!-- ═══ AUTH ═══ -->
-<div id="authOverlay">
-  <div class="a-orb a-orb1"></div><div class="a-orb a-orb2"></div><div class="a-orb a-orb3"></div>
-  <div class="auth-card">
-    <div class="ac-logo">
-      <div class="ac-icon">🏠</div>
-      <div class="ac-title">HOME DEEP AI</div>
-      <div class="ac-sub">STARTCOPE BETA INC · For Students</div>
+<header>
+  <div class="logo">
+    <div class="logo-icon">🎙️</div>
+    <div>
+      <div class="logo-name">DRIAN AI GENERATOR</div>
+      <div class="logo-sub">Radio Jingle Voice Studio · STARTCOPE BETA INC</div>
     </div>
-    <div class="auth-tabs">
-      <button class="at" id="tabLogin" onclick="switchTab('login')">Login</button>
-      <button class="at active" id="tabReg" onclick="switchTab('register')">Register</button>
-    </div>
-    <p class="auth-err" id="authErr"></p>
-    <form class="auth-form hidden" id="loginForm" onsubmit="doLogin(event)">
-      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="liUser" placeholder="Ilagay ang username" required autocomplete="username"/></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="liPass" placeholder="Ilagay ang password" required autocomplete="current-password"/></div>
-      <button type="submit" class="btn-sub" id="liBtn">Login</button>
-    </form>
-    <form class="auth-form" id="regForm" onsubmit="doRegister(event)">
-      <div class="fg"><label class="fl">Display Name</label><input class="fi" type="text" id="rgName" placeholder="Iyong pangalan" required/></div>
-      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="rgUser" placeholder="Pumili ng username" required autocomplete="username"/></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="rgPass" placeholder="Pumili ng password" required autocomplete="new-password"/></div>
-      <button type="submit" class="btn-sub" id="rgBtn">Mag-Register</button>
-    </form>
   </div>
-</div>
+  <div class="header-badge">🔴 LIVE STUDIO</div>
+</header>
 
-<!-- ═══ MAIN APP ═══ -->
-<div id="app">
-  <header class="app-header">
-    <div class="h-logo">
-      <div class="h-logo-icon">🏠</div>
-      <div><div class="h-logo-text">HOME DEEP AI</div><div class="h-logo-badge">STARTCOPE BETA INC</div></div>
-    </div>
-    <div class="h-actions">
-      <button class="hb vc-hb" onclick="startVideoCall()" title="Video Call">📹 <span class="vc-txt">Video Call</span></button>
-      <button class="hb" id="notifBtn" onclick="toggleNotifs()" title="Notifications">🔔<span class="n-badge" id="nBadge">3</span></button>
-      <button class="hb" id="darkBtn" onclick="toggleDark()" title="Dark/Light Mode">🌙</button>
-      <div class="u-av" id="uAvBtn" onclick="toggleUserMenu()">?</div>
-    </div>
-  </header>
+<div class="container">
 
-  <div class="notif-panel" id="notifPanel">
-    <div class="np-hd">🔔 Mga Notipikasyon <button class="np-clear" onclick="clearNotifs()">Burahin lahat</button></div>
-    <div id="notifList"></div>
+  <!-- ═══ HERO ═══ -->
+  <div class="hero">
+    <div class="hero-badge"><div class="pulse"></div>AI Voice Generator · Tagalog</div>
+    <h1 class="hero-title">
+      <span class="f">DRIAN AI</span><br/>
+      Voice Studio
+    </h1>
+    <p class="hero-sub">I-type ang iyong script at awtomatikong gagawa ng boses — may kasamang relaxing background music para sa radio jingle, at weather voice para sa mga balita.</p>
   </div>
 
-  <div class="user-menu" id="userMenu">
-    <div class="um-hd"><div class="um-name" id="umName">—</div><div class="um-sub">HOME DEEP AI User</div></div>
-    <div class="um-item" onclick="closeMenus()">⚙️ Settings</div>
-    <div class="um-item logout" onclick="doLogout()">🚪 Logout</div>
-  </div>
-
-  <div class="chat-body" id="chatBody">
-    <div class="chat-welcome" id="chatWelcome">
-      <div class="cw-av-wrap"><img id="cwAvImg" src="/api/ai-character" alt="HOME AI" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 94 94%22%3E%3Ccircle cx=%2247%22 cy=%2247%22 r=%2247%22 fill=%22url(%23g)%22/%3E%3Ctext x=%2247%22 y=%2262%22 text-anchor=%22middle%22 font-size=%2244%22%3E🤖%3C/text%3E%3Cdefs%3E%3ClinearGradient id=%22g%22%3E%3Cstop stop-color=%22%23ff2d95%22/%3E%3Cstop offset=%221%22 stop-color=%22%238b5cf6%22/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E'"/></div>
-      <div class="cw-name">HOME AI</div>
-      <div class="cw-sub">Ginawa ng STARTCOPE BETA INC para sa mga estudante 🎓</div>
-      <div class="cw-chips">
-        <div class="chip" onclick="qs('Kumusta HOME AI!')">👋 Kumusta!</div>
-        <div class="chip" onclick="qs('Sino ang gumawa sayo?')">🏢 Sino gumawa?</div>
-        <div class="chip" onclick="qs('Tulungan mo ako sa homework ko.')">📚 Homework help</div>
-        <div class="chip" onclick="qs('Anong magagawa mo para sa mga estudante?')">💡 Capabilities</div>
-        <div class="chip" onclick="qs('Paano mag-aral nang epektibo?')">🧠 Study tips</div>
+  <!-- ═══ FEMALE JINGLE VOICE ═══ -->
+  <div class="section female">
+    <div class="sec-header">
+      <div class="sec-icon f">🎵</div>
+      <div>
+        <div class="sec-title f">RADIO JINGLE VOICE</div>
+        <div class="sec-label">Babae · Tagalog · + Relaxing Background Music</div>
       </div>
     </div>
-  </div>
 
-  <div class="input-bar">
-    <button class="vt-btn" id="vtBtn" onclick="toggleVoice()">🎙️ Voice: ON</button>
-    <input class="msg-inp" id="msgInp" type="text" placeholder="Mag-usap kay HOME AI..." onkeydown="inpKey(event)"/>
-    <button class="send-btn" id="sndBtn" onclick="sendMsg()">➤</button>
-  </div>
-
-  <!-- Floating Chat Button -->
-  <button class="chat-fab" id="chatFab" onclick="focusChat()" title="Mag-chat kay HOME AI">💬</button>
-  <div class="chat-fab-tip">💬 Mag-chat dito!</div>
-</div>
-
-<!-- ═══ VIDEO CALL MODAL ═══ -->
-<div id="vcModal">
-  <div id="vcRinging">
-    <div class="ring-av-wrap">
-      <div class="ring-wave"></div><div class="ring-wave"></div><div class="ring-wave"></div>
-      <img class="ring-av" id="ringAv" src="/api/ai-character" alt="HOME AI"
-           onerror="this.style.background='linear-gradient(135deg,#ff2d95,#8b5cf6)'"/>
+    <div class="hints">
+      <div class="hint f" onclick="fillFemale('Ito ang Power FM, ang bagong relaxing music station!')">📻 Power FM Intro</div>
+      <div class="hint f" onclick="fillFemale('Magandang umaga! Nandito na kayo sa aming programa. Makinig kayo at mag-enjoy ng magandang musika.')">🌅 Morning Jingle</div>
+      <div class="hint f" onclick="fillFemale('You are listening to the best hits of today and yesterday, only here on DRIAN Radio!')">🎶 Station ID</div>
+      <div class="hint f" onclick="fillFemale('Salamat sa pakikinig! Patuloy na makisamahan sa amin habang nagbibigay kami ng pinakamahusay na musika para sa inyo.')">💫 Sign Off</div>
     </div>
-    <div class="ring-name">HOME AI</div>
-    <div class="ring-status" id="ringStatus">Tumatawag...</div>
-    <div class="ring-controls">
-      <button class="ring-btn ans" onclick="answerCall()" title="Sagutin">📞</button>
-      <button class="ring-btn dec" onclick="endCall()" title="Tanggihan">📵</button>
+
+    <textarea class="voice-input f" id="femaleText" placeholder="Halimbawa: Ito ang Power FM, ang bagong relaxing music station! Makinig kayo at mag-enjoy..." rows="3" oninput="updateCount('femaleText','fCount',300)" maxlength="300"></textarea>
+    <div class="char-count"><span id="fCount">0</span>/300</div>
+
+    <div class="music-toggle" id="musicToggle" onclick="toggleMusic()">
+      <div class="mt-check on" id="mtCheck">✓</div>
+      <div>
+        <div class="mt-label">🎵 Kasama ang Relaxing Background Music</div>
+        <div style="font-size:.71rem;color:var(--text2);margin-top:1px">Malambot na ambient tones ang ihahalo sa iyong boses</div>
+      </div>
+      <div class="mt-sub" id="mtSub">ON</div>
     </div>
-  </div>
-  <div id="vcActive">
-    <div class="vc-top">
-      <div class="vc-remote">
-        <div class="vc-spk-ring" id="vcSpkRing"></div>
-        <div class="ai-char-wrap">
-          <div class="ai-body-wrap">
-            <img id="aiCharImg" class="ai-char" src="/api/ai-character" alt="HOME AI"
-                 onerror="this.style.display='none';document.getElementById('aiCharFb').style.display='flex'"/>
-            <!-- Waving arm overlay — appears only on "hello" greeting -->
-            <div id="aiWaveArm" class="ai-wave-arm">👋</div>
-            <div id="aiCharFb" class="ai-char-fb" style="display:none">
-              <!-- SVG AI face fallback -->
-              <svg class="ai-face-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
-                <!-- Hair -->
-                <ellipse cx="80" cy="68" rx="58" ry="62" fill="#ff2d95" opacity=".9"/>
-                <ellipse cx="80" cy="72" rx="46" ry="52" fill="#1a0840"/>
-                <!-- Side hair -->
-                <ellipse cx="34" cy="110" rx="16" ry="40" fill="#ff2d95" opacity=".85"/>
-                <ellipse cx="126" cy="110" rx="16" ry="40" fill="#ff2d95" opacity=".85"/>
-                <!-- Face -->
-                <ellipse cx="80" cy="108" rx="45" ry="50" fill="#fde8f5"/>
-                <!-- Eyes -->
-                <ellipse cx="62" cy="100" rx="9" ry="10" fill="#1a0840"/>
-                <ellipse cx="98" cy="100" rx="9" ry="10" fill="#1a0840"/>
-                <ellipse cx="62" cy="100" rx="6" ry="7" fill="#8b5cf6"/>
-                <ellipse cx="98" cy="100" rx="6" ry="7" fill="#8b5cf6"/>
-                <circle cx="65" cy="98" r="2.5" fill="white"/>
-                <circle cx="101" cy="98" r="2.5" fill="white"/>
-                <!-- Blush -->
-                <ellipse cx="50" cy="118" rx="9" ry="5" fill="#ff69b4" opacity=".45"/>
-                <ellipse cx="110" cy="118" rx="9" ry="5" fill="#ff69b4" opacity=".45"/>
-                <!-- Smile -->
-                <path d="M65 128 Q80 140 95 128" stroke="#ff2d95" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <!-- Headphones -->
-                <path d="M35 88 Q35 55 80 55 Q125 55 125 88" stroke="#8b5cf6" stroke-width="7" fill="none"/>
-                <rect x="27" y="86" width="16" height="22" rx="8" fill="#8b5cf6"/>
-                <rect x="117" y="86" width="16" height="22" rx="8" fill="#8b5cf6"/>
-                <!-- Uniform collar -->
-                <path d="M50 155 Q80 165 110 155 L115 200 Q80 210 45 200Z" fill="#8b5cf6" opacity=".8"/>
-                <path d="M70 155 L80 178 L90 155" fill="#ff2d95"/>
-              </svg>
-              <div class="fb-name">HOME AI</div>
-              <div class="fb-sub">STARTCOPE BETA INC</div>
-            </div>
-          </div>
+
+    <div class="btn-row">
+      <button class="btn gen-f" id="genFBtn" onclick="generateFemale()">
+        <span id="genFIco">🎙️</span>
+        <span id="genFTxt">I-Generate ang Jingle Voice</span>
+      </button>
+      <button class="btn play-btn" id="playFBtn" onclick="playFemale()" disabled>▶ I-Play</button>
+      <button class="btn dl-btn" id="dlFBtn" onclick="downloadFemale()" disabled>⬇ I-Download</button>
+    </div>
+
+    <div class="status-msg" id="fStatus"></div>
+
+    <div class="player-bar" id="fPlayer">
+      <div class="player-info">
+        <div class="player-icon">🎵</div>
+        <div>
+          <div class="player-name">Radio Jingle Voice</div>
+          <div class="player-sub" id="fPlayerSub">Ready</div>
         </div>
-        <div class="vc-label">✨ HOME AI — STARTCOPE BETA INC</div>
-      </div>
-      <div class="vc-local">
-        <video id="localVid" autoplay muted playsinline></video>
-        <div class="cam-off-ph" id="camOffPh"><span>📷</span>Camera Off</div>
-      </div>
-      <div class="vc-chat-panel" id="vcChatPanel">
-        <div class="vch-hd">💬 Chat <button class="vch-close" onclick="toggleVCChat()">✕</button></div>
-        <div class="vch-msgs" id="vcChatMsgs"></div>
-        <div class="vch-iw">
-          <input class="vch-inp" id="vcChatInp" placeholder="Mag-message..." onkeydown="vcKey(event)"/>
-          <button class="vch-send" onclick="sendVCMsg()">➤</button>
+        <div class="wave-bars" id="fWaves">
+          <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
         </div>
       </div>
-    </div>
-    <div class="vc-ctrls">
-      <button class="vc-btn" id="vcMuteBtn" onclick="toggleMute()" title="Mute">🎤</button>
-      <button class="vc-btn" id="vcCamBtn" onclick="toggleCam()" title="Camera">📹</button>
-      <button class="vc-btn" id="vcChatBtn" onclick="toggleVCChat()" title="Chat">💬</button>
-      <button class="vc-btn end-btn" onclick="endCall()" title="Tapusin">📵</button>
+      <audio id="femaleAudio" controls style="width:100%;border-radius:8px;margin-top:4px;filter:hue-rotate(300deg)"></audio>
     </div>
   </div>
+
+  <!-- ═══ MALE WEATHER VOICE ═══ -->
+  <div class="section male">
+    <div class="sec-header">
+      <div class="sec-icon m">🌤️</div>
+      <div>
+        <div class="sec-title m">WEATHER VOICE</div>
+        <div class="sec-label">Lalake · Tagalog · Weather Broadcast Style</div>
+      </div>
+    </div>
+
+    <div class="hints">
+      <div class="hint m" onclick="fillMale('Magandang umaga! Ayon sa PAGASA, mainit at maulap ang panahon ngayon sa Kamaynilaan. Inaasahang maabot ang 34 degrees Celsius.')">⛅ Weather Update</div>
+      <div class="hint m" onclick="fillMale('Babala para sa lahat! Malakas na ulan at hangin ang inaasahan bukas sa buong bansa. Mangyaring mag-ingat at manatili sa loob ng tahanan.')">⚠️ Storm Warning</div>
+      <div class="hint m" onclick="fillMale('Ito ang inyong weather forecast para sa araw na ito. Maliwanag na langit at mahangin. Temperatura: 28 hanggang 33 degrees.')">📊 Daily Forecast</div>
+      <div class="hint m" onclick="fillMale('Magandang gabi po! Sa ngayon, ang temperatura sa Metro Manila ay 26 degrees Celsius. Inaasahan ang katahimikan ng panahon bukas.')">🌙 Evening Report</div>
+    </div>
+
+    <textarea class="voice-input m" id="maleText" placeholder="Halimbawa: Magandang umaga! Ayon sa PAGASA, mainit at maulap ang panahon ngayon..." rows="3" oninput="updateCount('maleText','mCount',300)" maxlength="300"></textarea>
+    <div class="char-count"><span id="mCount">0</span>/300</div>
+
+    <div class="btn-row">
+      <button class="btn gen-m" id="genMBtn" onclick="generateMale()">
+        <span id="genMIco">🎤</span>
+        <span id="genMTxt">I-Generate ang Weather Voice</span>
+      </button>
+      <button class="btn play-btn" id="playMBtn" onclick="playMale()" disabled>▶ I-Play</button>
+      <button class="btn dl-btn" id="dlMBtn" onclick="downloadMale()" disabled>⬇ I-Download</button>
+    </div>
+
+    <div class="status-msg" id="mStatus"></div>
+
+    <div class="player-bar" id="mPlayer">
+      <div class="player-info">
+        <div class="player-icon">🌤️</div>
+        <div>
+          <div class="player-name">Weather Voice</div>
+          <div class="player-sub" id="mPlayerSub">Ready</div>
+        </div>
+        <div class="wave-bars" id="mWaves">
+          <div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div>
+        </div>
+      </div>
+      <audio id="maleAudio" controls style="width:100%;border-radius:8px;margin-top:4px;filter:hue-rotate(160deg)"></audio>
+    </div>
+  </div>
+
+  <!-- ═══ DUET MODE ═══ -->
+  <div class="section duet">
+    <div class="sec-header">
+      <div class="sec-icon d">🎭</div>
+      <div>
+        <div class="sec-title d">DUET MODE</div>
+        <div class="sec-label">Pagsamahin ang Jingle + Weather Voice · I-Download bilang Isa</div>
+      </div>
+    </div>
+
+    <div class="duet-voices">
+      <div class="duet-voice-card">
+        <div class="dvc-label f">🎵 Jingle Voice (Babae)</div>
+        <div class="dvc-status" id="dFStatus">Wala pang na-generate</div>
+      </div>
+      <div class="duet-voice-card">
+        <div class="dvc-label m">🌤️ Weather Voice (Lalake)</div>
+        <div class="dvc-status" id="dMStatus">Wala pang na-generate</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn gen-d" id="genDBtn" onclick="generateDuet()">
+        <span id="genDIco">🎭</span>
+        <span id="genDTxt">I-Combine ang Dalawang Boses</span>
+      </button>
+      <button class="btn play-btn" id="playDBtn" onclick="playDuet()" disabled>▶ I-Play ang Duet</button>
+      <button class="btn dl-btn" id="dlDBtn" onclick="downloadDuet()" disabled>⬇ I-Download ang Duet</button>
+    </div>
+
+    <div class="status-msg" id="dStatus"></div>
+
+    <div class="player-bar" id="dPlayer">
+      <div class="player-info">
+        <div class="player-icon">🎭</div>
+        <div>
+          <div class="player-name">Duet — Jingle + Weather</div>
+          <div class="player-sub" id="dPlayerSub">Combined Voice</div>
+        </div>
+        <div class="wave-bars" id="dWaves">
+          <div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div>
+        </div>
+      </div>
+      <audio id="duetAudio" controls style="width:100%;border-radius:8px;margin-top:4px;filter:hue-rotate(30deg)"></audio>
+    </div>
+  </div>
+
 </div>
+
+<footer>
+  <div class="footer-logo">DRIAN AI GENERATOR</div>
+  <div class="footer-sub">Ginawa ng STARTCOPE BETA INC · Radio Jingle Voice Studio · Tagalog AI</div>
+</footer>
 
 <script>
-const AI_IMG="/api/ai-character";
+let fBlob = null, mBlob = null, dBlob = null;
+let withMusic = true;
+let fGenerating = false, mGenerating = false, dGenerating = false;
 
-let authToken=null,currentUser=null,voiceEnabled=true,darkMode=true;
-let chatHistory=[],aiSpeaking=false;
-let bgMusicUrl=null,bgAudioEl=null,bgReady=false;
-let localStream=null,isMuted=false,camOn=true;
-let vcChatOpen=false,callActive=false;
-let notifications=[
-  {title:"Maligayang pagdating sa HOME DEEP AI!",text:"Nandito na ang HOME AI para tulungan ka sa pag-aaral.",time:"Ngayon"},
-  {title:"📹 Video Call Available",text:"Mag-video call kay HOME AI! I-click ang 📹 Video Call button sa itaas.",time:"Kahapon"},
-  {title:"🎙️ Tip: I-on ang Voice",text:"Marinig ang natural na boses ni HOME AI (BlessicaNeural) habang nag-uusap.",time:"2 araw nakaraon"},
-];
-
-window.addEventListener("DOMContentLoaded",()=>{
-  const th=localStorage.getItem("hai_theme")||"dark";
-  darkMode=th==="dark"; applyTheme();
-  const sv=localStorage.getItem("hai_voice"); if(sv!==null) voiceEnabled=sv==="true";
-  updateVoiceBtn();
-  const tok=localStorage.getItem("hai_token"),usr=localStorage.getItem("hai_user");
-  if(tok&&usr){authToken=tok;currentUser=JSON.parse(usr);setTimeout(showApp,1500);}
-  else{setTimeout(()=>{document.getElementById("loadingScreen").style.display="none";document.getElementById("authOverlay").style.display="flex";},1500);}
-  renderNotifs();
-  document.addEventListener("click",outsideClose);
-});
-
-function applyTheme(){document.documentElement.setAttribute("data-theme",darkMode?"dark":"light");document.getElementById("darkBtn").textContent=darkMode?"🌙":"☀️";}
-
-function showApp(){
-  document.getElementById("loadingScreen").style.display="none";
-  document.getElementById("authOverlay").style.display="none";
-  document.getElementById("app").style.display="flex";
-  document.getElementById("chatFab").classList.add("visible");
-  const dn=currentUser.displayName||currentUser.username||"?";
-  document.getElementById("uAvBtn").textContent=dn.slice(0,2).toUpperCase();
-  document.getElementById("umName").textContent=dn;
-  loadBgMusic();
-  setTimeout(async()=>{
-    const g=greeting();
-    const msg=`${g}, ${dn}! 😊 Ako si HOME AI, ang iyong personal na AI assistant mula sa STARTCOPE BETA INC. Nandito ako para tulungan ka sa iyong pag-aaral, homework, at anumang katanungan. Paano kita matutulungan ngayon?`;
-    addAIMsg(msg);
-    if(voiceEnabled) await speakWithMusic(msg.replace(/[😊🎓📚💡🏠🤖✨👋🧠📹🎙️🔔🌙☀️]/g,""));
-  },700);
+// ── Counter ──────────────────────────────────────────────────────────────────
+function updateCount(id, countId, max) {
+  const val = document.getElementById(id).value.length;
+  document.getElementById(countId).textContent = val;
 }
 
-function greeting(){const h=new Date().getHours();return h<12?"Magandang umaga":h<18?"Magandang hapon":"Magandang gabi";}
-
-function focusChat(){
-  document.getElementById("msgInp").focus();
-  const cb=document.getElementById("chatBody");cb.scrollTop=cb.scrollHeight;
+// ── Fill hints ────────────────────────────────────────────────────────────────
+function fillFemale(txt) {
+  document.getElementById('femaleText').value = txt;
+  updateCount('femaleText','fCount',300);
+}
+function fillMale(txt) {
+  document.getElementById('maleText').value = txt;
+  updateCount('maleText','mCount',300);
 }
 
-function switchTab(t){
-  document.getElementById("loginForm").classList.toggle("hidden",t!=="login");
-  document.getElementById("regForm").classList.toggle("hidden",t!=="register");
-  document.getElementById("tabLogin").classList.toggle("active",t==="login");
-  document.getElementById("tabReg").classList.toggle("active",t==="register");
-  document.getElementById("authErr").style.display="none";
-}
-function showAuthErr(m){const e=document.getElementById("authErr");e.textContent=m;e.style.display="block";}
-
-async function doLogin(e){
-  e.preventDefault();
-  const btn=document.getElementById("liBtn");btn.disabled=true;btn.textContent="Nag-login...";
-  try{
-    const r=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.getElementById("liUser").value,password:document.getElementById("liPass").value})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||"Login failed");
-    authToken=d.token;currentUser={username:d.username,displayName:d.displayName};
-    localStorage.setItem("hai_token",authToken);localStorage.setItem("hai_user",JSON.stringify(currentUser));
-    showApp();
-  }catch(err){showAuthErr(err.message);}
-  finally{btn.disabled=false;btn.textContent="Login";}
+// ── Music toggle ──────────────────────────────────────────────────────────────
+function toggleMusic() {
+  withMusic = !withMusic;
+  const ch = document.getElementById('mtCheck');
+  const sub = document.getElementById('mtSub');
+  if (withMusic) { ch.textContent = '✓'; ch.classList.add('on'); sub.textContent = 'ON'; }
+  else { ch.textContent = ''; ch.classList.remove('on'); sub.textContent = 'OFF'; }
 }
 
-async function doRegister(e){
-  e.preventDefault();
-  const btn=document.getElementById("rgBtn");btn.disabled=true;btn.textContent="Nag-register...";
-  try{
-    const r=await fetch("/api/auth/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.getElementById("rgUser").value,password:document.getElementById("rgPass").value,displayName:document.getElementById("rgName").value})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||"Register failed");
-    authToken=d.token;currentUser={username:d.username,displayName:d.displayName};
-    localStorage.setItem("hai_token",authToken);localStorage.setItem("hai_user",JSON.stringify(currentUser));
-    notifications.unshift({title:`Welcome, ${d.displayName}! 🎉`,text:"Matagumpay kang naka-register sa HOME DEEP AI.",time:"Ngayon"});
-    renderNotifs();showApp();
-  }catch(err){showAuthErr(err.message);}
-  finally{btn.disabled=false;btn.textContent="Mag-Register";}
+// ── Status helpers ────────────────────────────────────────────────────────────
+function setStatus(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'status-msg show ' + type;
+}
+function clearStatus(id) {
+  const el = document.getElementById(id);
+  el.className = 'status-msg';
 }
 
-function doLogout(){
-  authToken=null;currentUser=null;chatHistory=[];
-  localStorage.removeItem("hai_token");localStorage.removeItem("hai_user");
-  document.getElementById("app").style.display="none";
-  document.getElementById("chatFab").classList.remove("visible");
-  document.getElementById("authOverlay").style.display="flex";
-  const cb=document.getElementById("chatBody");
-  cb.innerHTML=`<div class="chat-welcome" id="chatWelcome"><div class="cw-av-wrap"><img id="cwAvImg" src="${AI_IMG}" alt="HOME AI"/></div><div class="cw-name">HOME AI</div><div class="cw-sub">Ginawa ng STARTCOPE BETA INC para sa mga estudante 🎓</div></div>`;
-  closeMenus();switchTab("login");
+// ── Update duet readiness ─────────────────────────────────────────────────────
+function updateDuetStatus() {
+  document.getElementById('dFStatus').textContent = fBlob ? '✅ Handa na' : 'Wala pang na-generate';
+  document.getElementById('dFStatus').className = 'dvc-status' + (fBlob ? ' ready' : '');
+  document.getElementById('dMStatus').textContent = mBlob ? '✅ Handa na' : 'Wala pang na-generate';
+  document.getElementById('dMStatus').className = 'dvc-status' + (mBlob ? ' ready' : '');
 }
 
-function removeWelcome(){document.getElementById("chatWelcome")?.remove();}
-function scrollChat(){const cb=document.getElementById("chatBody");cb.scrollTop=cb.scrollHeight;}
+// ── Wave animation ────────────────────────────────────────────────────────────
+function startWaves(id) { document.getElementById(id).classList.remove('paused'); }
+function stopWaves(id) { document.getElementById(id).classList.add('paused'); }
 
-function addAIMsg(text){
-  removeWelcome();
-  const row=document.createElement("div");row.className="msg-row ai";
-  row.innerHTML=`<div class="msg-av"><img src="${AI_IMG}" alt="AI" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="msg-bubble">${esc(text)}</div><div class="msg-time">${now()}</div></div>`;
-  document.getElementById("chatBody").appendChild(row);scrollChat();
-  chatHistory.push({role:"assistant",content:text});
-}
+// ── FEMALE JINGLE VOICE ───────────────────────────────────────────────────────
+async function generateFemale() {
+  if (fGenerating) return;
+  const text = document.getElementById('femaleText').value.trim();
+  if (!text) { setStatus('fStatus','Mangyaring mag-type muna ng script!','error'); return; }
 
-function addUserMsg(text){
-  removeWelcome();
-  const init=(currentUser?.displayName||"?").slice(0,2).toUpperCase();
-  const row=document.createElement("div");row.className="msg-row user";
-  row.innerHTML=`<div class="msg-av uav">${esc(init)}</div><div><div class="msg-bubble">${esc(text)}</div><div class="msg-time">${now()}</div></div>`;
-  document.getElementById("chatBody").appendChild(row);scrollChat();
-  chatHistory.push({role:"user",content:text});
-}
+  fGenerating = true;
+  fBlob = null;
+  const btn = document.getElementById('genFBtn');
+  document.getElementById('genFIco').className = 'spin';
+  document.getElementById('genFTxt').textContent = 'Ginagawa ang boses...';
+  btn.disabled = true;
+  document.getElementById('playFBtn').disabled = true;
+  document.getElementById('dlFBtn').disabled = true;
+  document.getElementById('fPlayer').classList.remove('show');
+  setStatus('fStatus','⏳ Ginagawa ang iyong Radio Jingle Voice' + (withMusic ? ' na may background music' : '') + '...','loading');
+  clearStatus('fStatus');
+  setStatus('fStatus','⏳ Ginagawa ang iyong Radio Jingle Voice' + (withMusic ? ' na may background music' : '') + '...','loading');
 
-function addTyping(){
-  removeWelcome();
-  const el=document.createElement("div");el.className="msg-row ai";el.id="tyInd";
-  el.innerHTML=`<div class="msg-av"><img src="${AI_IMG}" alt="AI" style="width:100%;height:100%;object-fit:cover"/></div><div class="msg-bubble"><div class="typing-ind"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
-  document.getElementById("chatBody").appendChild(el);scrollChat();
-}
-function rmTyping(){document.getElementById("tyInd")?.remove();}
-
-async function sendMsg(){
-  const inp=document.getElementById("msgInp");
-  const txt=inp.value.trim();if(!txt||aiSpeaking)return;
-  inp.value="";addUserMsg(txt);
-  document.getElementById("sndBtn").disabled=true;addTyping();
-  try{
-    const r=await fetch("/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,history:chatHistory.slice(-14)})});
-    const d=await r.json();rmTyping();
-    const reply=d.reply||"Sorry, subukan ulit.";
-    addAIMsg(reply);
-    if(voiceEnabled) await speakWithMusic(reply.slice(0,280));
-  }catch{rmTyping();addAIMsg("May koneksyon na problema. Subukan ulit mamaya.");}
-  finally{document.getElementById("sndBtn").disabled=false;}
-}
-
-function qs(t){document.getElementById("msgInp").value=t;sendMsg();}
-function inpKey(e){if(e.key==="Enter"&&!e.shiftKey)sendMsg();}
-
-function toggleVoice(){voiceEnabled=!voiceEnabled;localStorage.setItem("hai_voice",voiceEnabled);updateVoiceBtn();if(!voiceEnabled)stopBgMusic();}
-function updateVoiceBtn(){const b=document.getElementById("vtBtn");if(voiceEnabled){b.textContent="🎙️ Voice: ON";b.classList.remove("off");}else{b.textContent="🔇 Voice: OFF";b.classList.add("off");}}
-
-async function loadBgMusic(){
-  try{
-    const r=await fetch("/api/search?q=Masterpiece+Atlantic+Starr+smooth+soul");
-    const d=await r.json();
-    if(d.results?.length){bgMusicUrl=`/api/download?url=${encodeURIComponent(d.results[0].url)}&title=Masterpiece`;bgReady=true;}
-  }catch{}
-}
-
-function playBgMusic(vol=0.10){
-  if(!bgReady||!voiceEnabled)return;
-  try{
-    if(!bgAudioEl){bgAudioEl=new Audio(bgMusicUrl);bgAudioEl.loop=true;bgAudioEl.volume=vol;}
-    bgAudioEl.play().catch(()=>{});
-  }catch{}
-}
-function stopBgMusic(){if(bgAudioEl){bgAudioEl.pause();bgAudioEl.currentTime=0;}}
-
-async function speakWithMusic(text){
-  if(!voiceEnabled||aiSpeaking)return;
-  aiSpeaking=true;playBgMusic(0.10);charState("talking");
-  try{const a=new Audio(`/api/tts?text=${encodeURIComponent(text)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
-  stopBgMusic();charState("idle");aiSpeaking=false;
-}
-
-function toggleDark(){darkMode=!darkMode;applyTheme();localStorage.setItem("hai_theme",darkMode?"dark":"light");}
-function toggleNotifs(){closeMenus();document.getElementById("notifPanel").classList.toggle("open");}
-function toggleUserMenu(){document.getElementById("notifPanel").classList.remove("open");document.getElementById("userMenu").classList.toggle("open");}
-function closeMenus(){document.getElementById("notifPanel").classList.remove("open");document.getElementById("userMenu").classList.remove("open");}
-function clearNotifs(){notifications=[];renderNotifs();}
-function renderNotifs(){
-  const list=document.getElementById("notifList"),cnt=document.getElementById("nBadge");
-  if(!notifications.length){list.innerHTML='<div style="padding:20px;text-align:center;color:var(--text2);font-size:.83rem">Walang bagong notipikasyon</div>';cnt.style.display="none";return;}
-  list.innerHTML=notifications.map(n=>`<div class="ni"><div class="ni-dot"></div><div><div class="ni-title">${esc(n.title)}</div><div class="ni-text">${esc(n.text)}</div><div class="ni-time">${n.time}</div></div></div>`).join("");
-  cnt.textContent=notifications.length;cnt.style.display="flex";
-}
-function outsideClose(e){
-  if(!e.target.closest("#notifBtn")&&!e.target.closest("#notifPanel"))document.getElementById("notifPanel").classList.remove("open");
-  if(!e.target.closest("#uAvBtn")&&!e.target.closest("#userMenu"))document.getElementById("userMenu").classList.remove("open");
-}
-
-function charState(state){
-  const img=document.getElementById("aiCharImg");
-  const fb=document.getElementById("aiCharFb");
-  const spk=document.getElementById("vcSpkRing");
-  const arm=document.getElementById("aiWaveArm");
-  if(img){img.className="ai-char";if(state==="greeting")img.classList.add("greeting");else if(state==="talking")img.classList.add("talking");}
-  if(fb){fb.className="ai-char-fb";if(state==="greeting")fb.classList.add("greeting");else if(state==="talking")fb.classList.add("talking");}
-  if(spk)spk.classList.toggle("on",state==="talking");
-  if(arm){
-    arm.classList.remove("waving");
-    if(state==="greeting"){
-      void arm.offsetWidth;
-      arm.classList.add("waving");
-      arm.style.opacity="1";
-    } else {
-      arm.style.opacity="0";
-    }
+  try {
+    const res = await fetch('/api/drian/female', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, withMusic })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const blob = await res.blob();
+    fBlob = blob;
+    const url = URL.createObjectURL(blob);
+    const audio = document.getElementById('femaleAudio');
+    audio.src = url;
+    document.getElementById('fPlayer').classList.add('show');
+    document.getElementById('fPlayerSub').textContent = withMusic ? 'Radio Jingle + Background Music' : 'Radio Jingle Voice';
+    document.getElementById('playFBtn').disabled = false;
+    document.getElementById('dlFBtn').disabled = false;
+    setStatus('fStatus', '✅ Handa na ang Radio Jingle Voice! I-play o i-download.', 'success');
+    updateDuetStatus();
+  } catch(e) {
+    setStatus('fStatus', '❌ May problema: ' + e.message, 'error');
+  } finally {
+    fGenerating = false;
+    document.getElementById('genFIco').className = '';
+    document.getElementById('genFIco').textContent = '🎙️';
+    document.getElementById('genFTxt').textContent = 'I-Generate ang Jingle Voice';
+    btn.disabled = false;
   }
-  if(state==="greeting")setTimeout(()=>charState("idle"),2500);
 }
 
-function startVideoCall(){
-  document.getElementById("vcModal").classList.add("open");
-  document.getElementById("vcRinging").style.display="flex";
-  document.getElementById("vcActive").style.display="none";
-  document.getElementById("vcActive").classList.remove("show");
+function playFemale() {
+  const a = document.getElementById('femaleAudio');
+  if (a.paused) { a.play(); startWaves('fWaves'); a.onended = () => stopWaves('fWaves'); }
+  else { a.pause(); stopWaves('fWaves'); }
 }
 
-async function answerCall(){
-  document.getElementById("vcRinging").style.display="none";
-  const vca=document.getElementById("vcActive");vca.style.display="flex";vca.classList.add("show");
-  try{
-    localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    const vid=document.getElementById("localVid");vid.srcObject=localStream;vid.style.display="block";
-    document.getElementById("camOffPh").style.display="none";camOn=true;
-  }catch{camOn=false;}
-  callActive=true;charState("greeting");
-  const greet="Hello there! I am HOME AI, your personal AI assistant from STARTCOPE BETA INC. I am so happy you called! I am here to help you with your studies and any questions you have. How can I help you today?";
-  addVCMsg("ai",greet);
-  setTimeout(async()=>{
-    if(voiceEnabled){playBgMusic(0.08);charState("talking");
-      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(greet)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
-      stopBgMusic();charState("idle");}
-  },600);
+function downloadFemale() {
+  if (!fBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(fBlob);
+  a.download = 'drian-jingle-voice.mp3';
+  a.click();
 }
 
-function endCall(){
-  document.getElementById("vcModal").classList.remove("open");
-  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
-  callActive=false;vcChatOpen=false;
-  document.getElementById("vcChatPanel").classList.remove("open");
-  document.getElementById("vcChatMsgs").innerHTML="";
-  document.getElementById("vcActive").classList.remove("show");
-  stopBgMusic();charState("idle");
+// ── MALE WEATHER VOICE ────────────────────────────────────────────────────────
+async function generateMale() {
+  if (mGenerating) return;
+  const text = document.getElementById('maleText').value.trim();
+  if (!text) { setStatus('mStatus','Mangyaring mag-type muna ng weather script!','error'); return; }
+
+  mGenerating = true;
+  mBlob = null;
+  const btn = document.getElementById('genMBtn');
+  document.getElementById('genMIco').className = 'spin';
+  document.getElementById('genMTxt').textContent = 'Ginagawa ang boses...';
+  btn.disabled = true;
+  document.getElementById('playMBtn').disabled = true;
+  document.getElementById('dlMBtn').disabled = true;
+  document.getElementById('mPlayer').classList.remove('show');
+  setStatus('mStatus','⏳ Ginagawa ang iyong Weather Voice...','loading');
+
+  try {
+    const res = await fetch('/api/drian/male', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const blob = await res.blob();
+    mBlob = blob;
+    const url = URL.createObjectURL(blob);
+    const audio = document.getElementById('maleAudio');
+    audio.src = url;
+    document.getElementById('mPlayer').classList.add('show');
+    document.getElementById('mPlayerSub').textContent = 'Weather Broadcast Voice';
+    document.getElementById('playMBtn').disabled = false;
+    document.getElementById('dlMBtn').disabled = false;
+    setStatus('mStatus', '✅ Handa na ang Weather Voice! I-play o i-download.', 'success');
+    updateDuetStatus();
+  } catch(e) {
+    setStatus('mStatus', '❌ May problema: ' + e.message, 'error');
+  } finally {
+    mGenerating = false;
+    document.getElementById('genMIco').className = '';
+    document.getElementById('genMIco').textContent = '🎤';
+    document.getElementById('genMTxt').textContent = 'I-Generate ang Weather Voice';
+    btn.disabled = false;
+  }
 }
 
-function toggleMute(){
-  isMuted=!isMuted;
-  if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted);
-  const b=document.getElementById("vcMuteBtn");b.textContent=isMuted?"🔇":"🎤";b.classList.toggle("off-s",isMuted);
+function playMale() {
+  const a = document.getElementById('maleAudio');
+  if (a.paused) { a.play(); startWaves('mWaves'); a.onended = () => stopWaves('mWaves'); }
+  else { a.pause(); stopWaves('mWaves'); }
 }
 
-function toggleCam(){
-  camOn=!camOn;
-  if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=camOn);
-  document.getElementById("localVid").style.display=camOn?"block":"none";
-  document.getElementById("camOffPh").style.display=camOn?"none":"flex";
-  const b=document.getElementById("vcCamBtn");b.textContent=camOn?"📹":"📷";b.classList.toggle("off-s",!camOn);
+function downloadMale() {
+  if (!mBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(mBlob);
+  a.download = 'drian-weather-voice.mp3';
+  a.click();
 }
 
-function toggleVCChat(){
-  vcChatOpen=!vcChatOpen;
-  document.getElementById("vcChatPanel").classList.toggle("open",vcChatOpen);
-  document.getElementById("vcChatBtn").classList.toggle("on",vcChatOpen);
-}
+// ── DUET ─────────────────────────────────────────────────────────────────────
+async function generateDuet() {
+  if (dGenerating) return;
+  const femaleText = document.getElementById('femaleText').value.trim();
+  const maleText = document.getElementById('maleText').value.trim();
 
-function addVCMsg(role,text){
-  const msgs=document.getElementById("vcChatMsgs");
-  const div=document.createElement("div");div.className="msg-row "+role;
-  div.style.cssText="max-width:100%;animation:fadeSlideUp .28s ease";
-  const init=(currentUser?.displayName||"?").slice(0,2).toUpperCase();
-  div.innerHTML=role==="user"
-    ?`<div class="msg-av uav" style="flex-shrink:0;width:28px;height:28px;font-size:.65rem">${esc(init)}</div><div class="msg-bubble" style="font-size:.8rem;padding:8px 12px">${esc(text)}</div>`
-    :`<div class="msg-av" style="flex-shrink:0;width:28px;height:28px"><img src="${AI_IMG}" style="width:100%;height:100%;object-fit:cover"/></div><div class="msg-bubble" style="font-size:.8rem;padding:8px 12px">${esc(text)}</div>`;
-  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
-}
-
-async function sendVCMsg(){
-  const inp=document.getElementById("vcChatInp");
-  const txt=inp.value.trim();if(!txt)return;
-  inp.value="";addVCMsg("user",txt);
-  if(/^(hello|hi|kumusta|hey|kamusta|helo|oi|yo|musta|hola)/i.test(txt)){
-    charState("greeting");
-    const reply="Hello there! 😊 Kamusta! Ako si HOME AI — iyong AI best friend! Ano ang maipaglilingkod ko sa iyo ngayon?";
-    addVCMsg("ai",reply);
-    if(voiceEnabled){setTimeout(async()=>{charState("talking");document.getElementById("vcSpkRing").classList.add("on");
-      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(reply)}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
-      document.getElementById("vcSpkRing").classList.remove("on");charState("idle");},500);}
+  if (!femaleText && !maleText) {
+    setStatus('dStatus','I-type muna ang script sa Jingle Voice at/o Weather Voice section sa itaas.','error');
     return;
   }
-  try{
-    const r=await fetch("/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:txt,history:chatHistory.slice(-8)})});
-    const d=await r.json();const reply=d.reply||"Sorry, subukan ulit.";
-    addVCMsg("ai",reply);
-    if(voiceEnabled){charState("talking");document.getElementById("vcSpkRing").classList.add("on");
-      try{const a=new Audio(`/api/tts?text=${encodeURIComponent(reply.slice(0,220))}`);await new Promise(r=>{a.onended=r;a.onerror=r;a.play().catch(r);});}catch{}
-      document.getElementById("vcSpkRing").classList.remove("on");charState("idle");}
-  }catch{}
-}
-function vcKey(e){if(e.key==="Enter")sendVCMsg();}
 
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function now(){return new Date().toLocaleTimeString("en-PH",{hour:"2-digit",minute:"2-digit"});}
+  dGenerating = true;
+  dBlob = null;
+  const btn = document.getElementById('genDBtn');
+  document.getElementById('genDIco').className = 'spin';
+  document.getElementById('genDTxt').textContent = 'Pinagsasama ang mga boses...';
+  btn.disabled = true;
+  document.getElementById('playDBtn').disabled = true;
+  document.getElementById('dlDBtn').disabled = true;
+  document.getElementById('dPlayer').classList.remove('show');
+  setStatus('dStatus','⏳ Pinagsasama ang Jingle Voice at Weather Voice...','loading');
+
+  try {
+    const res = await fetch('/api/drian/duet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ femaleText: femaleText || null, maleText: maleText || null, withMusic })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const blob = await res.blob();
+    dBlob = blob;
+    const url = URL.createObjectURL(blob);
+    const audio = document.getElementById('duetAudio');
+    audio.src = url;
+    document.getElementById('dPlayer').classList.add('show');
+    document.getElementById('dPlayerSub').textContent = 'Jingle + Weather Duet' + (withMusic ? ' + Background Music' : '');
+    document.getElementById('playDBtn').disabled = false;
+    document.getElementById('dlDBtn').disabled = false;
+    setStatus('dStatus', '✅ Handa na ang Duet! I-play o i-download ang combined voice.', 'success');
+
+    // Also update individual blobs if not yet generated
+    if (femaleText) { fBlob = blob; updateDuetStatus(); }
+    if (maleText) { mBlob = blob; updateDuetStatus(); }
+    updateDuetStatus();
+  } catch(e) {
+    setStatus('dStatus', '❌ May problema: ' + e.message, 'error');
+  } finally {
+    dGenerating = false;
+    document.getElementById('genDIco').className = '';
+    document.getElementById('genDIco').textContent = '🎭';
+    document.getElementById('genDTxt').textContent = 'I-Combine ang Dalawang Boses';
+    btn.disabled = false;
+  }
+}
+
+function playDuet() {
+  const a = document.getElementById('duetAudio');
+  if (a.paused) { a.play(); startWaves('dWaves'); a.onended = () => stopWaves('dWaves'); }
+  else { a.pause(); stopWaves('dWaves'); }
+}
+
+function downloadDuet() {
+  if (!dBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(dBlob);
+  a.download = 'drian-duet-voice.mp3';
+  a.click();
+}
 </script>
 </body>
 </html>
