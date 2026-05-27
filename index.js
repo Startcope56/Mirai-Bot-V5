@@ -750,25 +750,36 @@ async function handleRequest(req, res) {
     return Buffer.concat(chunks);
   }
 
-  async function mixWithBgMusic(ttsBuffer) {
+  // gender: "female" = F-major bright pad, "male" = D-minor deep pad
+  // bgVol: 0.0-1.0, voiceVol: 0.0-1.0
+  async function mixWithBgMusic(ttsBuffer, gender = "female", bgVol = 0.85, voiceVol = 0.95) {
     const os = require("os");
     const tmpIn  = path.join(os.tmpdir(), `drian_tts_${Date.now()}.mp3`);
     const tmpOut = path.join(os.tmpdir(), `drian_mix_${Date.now()}.mp3`);
     fs.writeFileSync(tmpIn, ttsBuffer);
+
+    // Female: F-major (F3 A3 C4 F4 A4) — bright, sweet, relaxing
+    // Male:   D-minor (D3 F3 A3 D4 F4) — deep, powerful, different feel
+    const freqs = gender === "female"
+      ? [174.6, 220.0, 261.6, 349.2, 440.0]   // F major chord
+      : [146.8, 174.6, 220.0, 293.7, 349.2];  // D minor chord
+
+    const vols  = [bgVol * 0.9, bgVol * 0.8, bgVol * 0.75, bgVol * 0.65, bgVol * 0.55];
+
+    const ffArgs = [];
+    freqs.forEach(f => { ffArgs.push("-f", "lavfi", "-i", `sine=frequency=${f}:beep_factor=0`); });
+    ffArgs.push("-i", tmpIn);
+
+    const n = freqs.length;
+    const mixParts = freqs.map((_, i) => `[${i}:a]volume=${vols[i].toFixed(2)}[a${i}]`).join(";");
+    const aMixInputs = freqs.map((_, i) => `[a${i}]`).join("");
+    const filterComplex = `${mixParts};${aMixInputs}amix=inputs=${n}:duration=longest[bg];[bg][${n}:a]amix=inputs=2:duration=shortest:weights=1 ${voiceVol.toFixed(2)}[out]`;
+
     await new Promise((resolve, reject) => {
       const { spawn: sp } = require("child_process");
       const ff = sp("ffmpeg", [
-        "-f", "lavfi",
-        "-i", "sine=frequency=174.6:beep_factor=0",
-        "-f", "lavfi",
-        "-i", "sine=frequency=220.0:beep_factor=0",
-        "-f", "lavfi",
-        "-i", "sine=frequency=261.6:beep_factor=0",
-        "-f", "lavfi",
-        "-i", "sine=frequency=329.6:beep_factor=0",
-        "-i", tmpIn,
-        "-filter_complex",
-        "[0:a]volume=0.08[a0];[1:a]volume=0.06[a1];[2:a]volume=0.05[a2];[3:a]volume=0.04[a3];[a0][a1][a2][a3]amix=inputs=4:duration=longest[bg];[bg][4:a]amix=inputs=2:duration=shortest:weights=1 3[out]",
+        ...ffArgs,
+        "-filter_complex", filterComplex,
         "-map", "[out]",
         "-codec:a", "libmp3lame",
         "-b:a", "128k",
@@ -778,6 +789,33 @@ async function handleRequest(req, res) {
       ff.on("close", code => {
         try { fs.unlinkSync(tmpIn); } catch {}
         code === 0 ? resolve() : reject(new Error("ffmpeg bg mix failed (code " + code + ")"));
+      });
+      ff.on("error", reject);
+    });
+    const buf = fs.readFileSync(tmpOut);
+    try { fs.unlinkSync(tmpOut); } catch {}
+    return buf;
+  }
+
+  // Apply singing effects to a TTS buffer — vibrato + echo to simulate singing
+  async function applySingingFx(ttsBuffer) {
+    const os = require("os");
+    const tmpIn  = path.join(os.tmpdir(), `drian_raw_${Date.now()}.mp3`);
+    const tmpOut = path.join(os.tmpdir(), `drian_fx_${Date.now()}.mp3`);
+    fs.writeFileSync(tmpIn, ttsBuffer);
+    await new Promise((resolve, reject) => {
+      const { spawn: sp } = require("child_process");
+      const ff = sp("ffmpeg", [
+        "-i", tmpIn,
+        "-af", "vibrato=f=5.5:d=0.45,aecho=0.7:0.85:50|80:0.35|0.2,treble=g=4",
+        "-codec:a", "libmp3lame",
+        "-b:a", "128k",
+        "-y", tmpOut
+      ]);
+      ff.stderr.on("data", () => {});
+      ff.on("close", code => {
+        try { fs.unlinkSync(tmpIn); } catch {}
+        code === 0 ? resolve() : reject(new Error("ffmpeg fx failed (code " + code + ")"));
       });
       ff.on("error", reject);
     });
@@ -825,19 +863,11 @@ async function handleRequest(req, res) {
       const cleanText = text.trim().slice(0, 350);
       let buf = await drianTTS(cleanText, "fil-PH-BlessicaNeural", "-2%", "+4Hz");
       if (withMusic) {
-        try { buf = await mixWithBgMusic(buf); } catch (e) { console.warn("[DRIAN] bg mix failed:", e.message); }
+        try { buf = await mixWithBgMusic(buf, "female", 0.85, 0.95); } catch (e) { console.warn("[DRIAN] bg mix failed:", e.message); }
       }
-      res.writeHead(200, {
-        "Content-Type": "audio/mpeg",
-        "Content-Length": buf.length,
-        "Content-Disposition": "inline; filename=\"jingle-voice.mp3\"",
-        "Cache-Control": "no-cache",
-        "Access-Control-Allow-Origin": "*"
-      });
+      res.writeHead(200, { "Content-Type": "audio/mpeg", "Content-Length": buf.length, "Content-Disposition": "inline; filename=\"jingle-voice.mp3\"", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
       return res.end(buf);
-    } catch (e) {
-      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
-    }
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
     return;
   }
 
@@ -849,17 +879,9 @@ async function handleRequest(req, res) {
       if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
       const cleanText = text.trim().slice(0, 350);
       const buf = await drianTTS(cleanText, "fil-PH-AngeloNeural", "-4%", "-2Hz");
-      res.writeHead(200, {
-        "Content-Type": "audio/mpeg",
-        "Content-Length": buf.length,
-        "Content-Disposition": "inline; filename=\"weather-voice.mp3\"",
-        "Cache-Control": "no-cache",
-        "Access-Control-Allow-Origin": "*"
-      });
+      res.writeHead(200, { "Content-Type": "audio/mpeg", "Content-Length": buf.length, "Content-Disposition": "inline; filename=\"weather-voice.mp3\"", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
       return res.end(buf);
-    } catch (e) {
-      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
-    }
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
     return;
   }
 
@@ -869,30 +891,77 @@ async function handleRequest(req, res) {
       const body = await _readBody(req);
       const { femaleText, maleText, withMusic } = JSON.parse(body);
       if (!femaleText?.trim() && !maleText?.trim()) { res.writeHead(400); return res.end("Missing texts"); }
-
       let bufF = null, bufM = null;
       if (femaleText?.trim()) bufF = await drianTTS(femaleText.trim().slice(0, 350), "fil-PH-BlessicaNeural", "-2%", "+4Hz");
       if (maleText?.trim())   bufM = await drianTTS(maleText.trim().slice(0, 350), "fil-PH-AngeloNeural", "-4%", "-2Hz");
-
-      let combined;
-      if (bufF && bufM) combined = await concatAudios(bufF, bufM);
-      else combined = bufF || bufM;
-
+      let combined = (bufF && bufM) ? await concatAudios(bufF, bufM) : (bufF || bufM);
       if (withMusic) {
-        try { combined = await mixWithBgMusic(combined); } catch (e) { console.warn("[DRIAN] duet bg mix failed:", e.message); }
+        try { combined = await mixWithBgMusic(combined, "female", 0.85, 0.95); } catch (e) { console.warn("[DRIAN] duet bg mix failed:", e.message); }
+      }
+      res.writeHead(200, { "Content-Type": "audio/mpeg", "Content-Length": combined.length, "Content-Disposition": "inline; filename=\"drian-duet.mp3\"", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
+      return res.end(combined);
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
+    return;
+  }
+
+  // POST /api/drian/song — AI generates lyrics then SINGS them with loud background music
+  // Female: F-major bright pad | Male: D-minor deep pad — magkakaiba ang background!
+  if (pathname === "/api/drian/song" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { prompt, voice = "female" } = JSON.parse(body);
+      if (!prompt?.trim()) { res.writeHead(400); return res.end("Missing prompt"); }
+
+      // 1. Generate song lyrics via Pollinations AI
+      const axios = require("axios");
+      const sysPrompt = voice === "female"
+        ? "Ikaw ay isang Tagalog pop song lyric writer para sa radio jingle. Gumawa ng 4-5 linya ng maikling kanta sa Tagalog/Filipino na may rhyme at masaya. Ang kanta ay para sa radio station jingle. I-output LAMANG ang lyrics, walang label, walang paliwanag, walang preamble."
+        : "Ikaw ay isang Tagalog broadcast jingle lyric writer. Gumawa ng 4-5 linya ng maikling kanta sa Tagalog/Filipino na may rhyme at malakas na dating, pang-broadcast. I-output LAMANG ang lyrics, walang label, walang paliwanag, walang preamble.";
+
+      let lyrics = "";
+      try {
+        const messages = [
+          { role: "system", content: sysPrompt },
+          { role: "user", content: `Pakigawa ng maikling kanta tungkol sa: ${prompt.trim().slice(0, 150)}` }
+        ];
+        const { data } = await axios.post("https://text.pollinations.ai/", { messages, model: "openai", seed: Math.floor(Math.random() * 9999) }, { timeout: 30000, headers: { "Content-Type": "application/json" } });
+        lyrics = (typeof data === "string" ? data : data?.choices?.[0]?.message?.content || "").trim();
+      } catch { lyrics = ""; }
+
+      // Fallback lyrics if AI fails
+      if (!lyrics || lyrics.length < 10) {
+        lyrics = voice === "female"
+          ? `Halika't makinig sa magandang musika\nDito sa aming istasyon ng puso\nAraw-araw may bagong awit para sa iyo\nSamahan mo kami palagi sa aming programa`
+          : `Magandang araw sa inyong lahat\nIto ang inyong pinaka-sikat na istasyon\nPakikinig kayo at mag-enjoy\nHanggang sa muli ay salamat sa pagmamahal`;
       }
 
+      // 2. Generate TTS for the lyrics
+      const voiceName = voice === "female" ? "fil-PH-BlessicaNeural" : "fil-PH-AngeloNeural";
+      const rate = voice === "female" ? "-5%" : "-8%";
+      const pitch = voice === "female" ? "+6Hz" : "-4Hz";
+      let ttsBuf = await drianTTS(lyrics, voiceName, rate, pitch);
+
+      // 3. Apply singing effects — vibrato + echo = kumakanta!
+      try { ttsBuf = await applySingingFx(ttsBuf); } catch (e) { console.warn("[DRIAN Song] singing fx failed:", e.message); }
+
+      // 4. Mix with LOUD background music (100% volume BG)
+      // Female: F-major bright chord | Male: D-minor deep chord — DIFFERENT sounds!
+      const bgVol = 1.0;  // 100% background volume as requested
+      const voiceVol = 0.9;
+      try { ttsBuf = await mixWithBgMusic(ttsBuf, voice, bgVol, voiceVol); } catch (e) { console.warn("[DRIAN Song] bg mix failed:", e.message); }
+
+      // 5. Send with lyrics in response header
+      const lyricsEncoded = encodeURIComponent(lyrics);
       res.writeHead(200, {
         "Content-Type": "audio/mpeg",
-        "Content-Length": combined.length,
-        "Content-Disposition": "inline; filename=\"drian-duet.mp3\"",
+        "Content-Length": ttsBuf.length,
+        "Content-Disposition": `inline; filename="drian-song-${voice}.mp3"`,
         "Cache-Control": "no-cache",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "X-Lyrics": lyricsEncoded.slice(0, 2000)
       });
-      return res.end(combined);
-    } catch (e) {
-      if (!res.headersSent) { res.writeHead(500); return res.end(e.message); }
-    }
+      return res.end(ttsBuf);
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
     return;
   }
 
