@@ -1,22 +1,59 @@
 {
-  "autoUpdate": true,
+  "autoUpdate": false,
   "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
   "mqtt": {
     "enabled": true,
-    "reconnectInterval": 3600,
-    "keepAlive": 60,
-    "reschedulePings": true
+    "reconnectInterval": 7200,
+    "keepAlive": 55,
+    "reschedulePings": true,
+    "protocolVersion": 3,
+    "clean": true
   },
   "browserHeaders": {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9,fil;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Language": "en-US,en;q=0.9,fil;q=0.8,tl;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
     "Cache-Control": "no-cache",
     "Pragma": "no-cache",
+    "Sec-Ch-Ua": "\"Chromium\";v=\"124\", \"Google Chrome\";v=\"124\", \"Not-A.Brand\";v=\"99\"",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "\"Windows\"",
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
     "Upgrade-Insecure-Requests": "1",
-    "DNT": "1"
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "X-FB-LSD": "AVo2NxkDh2s",
+    "X-ASBD-ID": "129477",
+    "X-FB-Friendly-Name": "ProfileTimelineFeedQueryRelayPreloader"
+  },
+  "FCAOption": {
+    "forceLogin": false,
+    "listenEvents": true,
+    "updatePresence": false,
+    "listenTyping": false,
+    "logLevel": "silent",
+    "selfListen": false,
+    "selfListenEvent": false,
+    "autoMarkDelivery": true,
+    "autoMarkRead": false,
+    "autoReconnect": true,
+    "pauseLog": true
+  },
+  "drianFCA": {
+    "enabled": true,
+    "minDelay": 900,
+    "maxDelay": 2800,
+    "maxSendsPerMinute": 5,
+    "randomizeHeaders": true,
+    "humanTypingDelay": true,
+    "stealthMode": {
+      "enabled": true,
+      "passiveChance": 0.60,
+      "idleMinutes": [8, 20],
+      "activityBursts": true
+    }
   }
 }
