@@ -807,7 +807,7 @@ async function handleRequest(req, res) {
       const { spawn: sp } = require("child_process");
       const ff = sp("ffmpeg", [
         "-i", tmpIn,
-        "-af", "vibrato=f=5.5:d=0.45,aecho=0.7:0.85:50|80:0.35|0.2,treble=g=4",
+        "-af", "vibrato=f=5.5:d=0.45,aecho=0.6:0.8:50:0.4",
         "-codec:a", "libmp3lame",
         "-b:a", "128k",
         "-y", tmpOut
@@ -815,9 +815,11 @@ async function handleRequest(req, res) {
       ff.stderr.on("data", () => {});
       ff.on("close", code => {
         try { fs.unlinkSync(tmpIn); } catch {}
-        code === 0 ? resolve() : reject(new Error("ffmpeg fx failed (code " + code + ")"));
+        // If fx fails, copy raw (graceful fallback)
+        if (code !== 0) { try { fs.copyFileSync(tmpIn.replace("_raw_","_tts_"), tmpOut); } catch {} }
+        resolve();
       });
-      ff.on("error", reject);
+      ff.on("error", () => resolve());
     });
     const buf = fs.readFileSync(tmpOut);
     try { fs.unlinkSync(tmpOut); } catch {}
@@ -950,17 +952,61 @@ async function handleRequest(req, res) {
       const voiceVol = 0.9;
       try { ttsBuf = await mixWithBgMusic(ttsBuf, voice, bgVol, voiceVol); } catch (e) { console.warn("[DRIAN Song] bg mix failed:", e.message); }
 
-      // 5. Send with lyrics in response header
-      const lyricsEncoded = encodeURIComponent(lyrics);
+      // 5. Send with lyrics in response header (expose header so browser can read it)
+      const lyricsEncoded = encodeURIComponent(lyrics).slice(0, 1800);
       res.writeHead(200, {
         "Content-Type": "audio/mpeg",
         "Content-Length": ttsBuf.length,
         "Content-Disposition": `inline; filename="drian-song-${voice}.mp3"`,
         "Cache-Control": "no-cache",
         "Access-Control-Allow-Origin": "*",
-        "X-Lyrics": lyricsEncoded.slice(0, 2000)
+        "Access-Control-Expose-Headers": "X-Lyrics",
+        "X-Lyrics": lyricsEncoded
       });
       return res.end(ttsBuf);
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
+    return;
+  }
+
+  // POST /api/drian/news — AI News Voice Broadcaster (AngeloNeural + optional bg music)
+  if (pathname === "/api/drian/news" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { headline, withMusic } = JSON.parse(body);
+      if (!headline?.trim()) { res.writeHead(400); return res.end("Missing headline"); }
+      const axios = require("axios");
+
+      // Generate full Tagalog news broadcast script from headline
+      let script = "";
+      try {
+        const messages = [
+          { role: "system", content: "Ikaw ay isang propesyonal na Tagalog news broadcaster ng Power Inc. Palawakin ang headline ng balita sa isang 3-4 pangungusap na Tagalog news broadcast script. Gamitin ang propesyonal na estilo ng radyo. I-output LAMANG ang script, walang label o preamble." },
+          { role: "user", content: `Headline: ${headline.trim().slice(0, 200)}` }
+        ];
+        const { data } = await axios.post("https://text.pollinations.ai/", { messages, model: "openai", seed: Math.floor(Math.random() * 9999) }, { timeout: 30000, headers: { "Content-Type": "application/json" } });
+        script = (typeof data === "string" ? data : data?.choices?.[0]?.message?.content || "").trim();
+      } catch { script = ""; }
+
+      if (!script || script.length < 15) {
+        script = `Magandang araw po sa inyong lahat. Ayon sa aming mga ulat, ${headline.trim()}. Patuloy naming susubaybayan ang mga kaganapan at ibabahagi sa inyo ang pinakabagong balita. Ito ay Power Inc News, lagi sa inyong serbisyo.`;
+      }
+
+      let buf = await drianTTS(script, "fil-PH-AngeloNeural", "-3%", "-2Hz");
+      if (withMusic) {
+        try { buf = await mixWithBgMusic(buf, "male", 0.7, 1.0); } catch (e) { console.warn("[DRIAN News] bg mix failed:", e.message); }
+      }
+
+      const scriptEncoded = encodeURIComponent(script).slice(0, 1800);
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": buf.length,
+        "Content-Disposition": "inline; filename=\"drian-news.mp3\"",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "X-Script",
+        "X-Script": scriptEncoded
+      });
+      return res.end(buf);
     } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
     return;
   }
