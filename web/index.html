@@ -1071,14 +1071,36 @@ async function doTimeCheck(isTest = false) {
   const hours = now.getHours();
   const minutes = now.getMinutes();
   const h12 = hours % 12 || 12;
-  const ampm = hours >= 12 ? "PM" : "AM";
+
+  // Filipino number words 1-12
+  const filHour = ["","isa","dalawa","tatlo","apat","lima","anim","pito","walo","siyam","sampu","labing-isa","labindalawa"][h12] || String(h12);
+
+  // Filipino minute words 1-59
+  const filMins0to19 = ["","isa","dalawa","tatlo","apat","lima","anim","pito","walo","siyam","sampu",
+    "labing-isa","labindalawa","labintatlo","labing-apat","labinlima","labing-anim","labimpito","labingwalo","labinsiyam"];
+  const filTens = ["","","dalawampu","tatlumpu","apatnapu","limampu"];
+  function filMin(m) {
+    if (m < 20) return filMins0to19[m] || String(m);
+    const t = Math.floor(m / 10);
+    const u = m % 10;
+    return u === 0 ? filTens[t] : filTens[t] + " y " + filMins0to19[u];
+  }
+
+  // Time of day in Filipino
+  let periodo;
+  if (hours >= 0 && hours < 6)  periodo = "ng madaling araw";
+  else if (hours < 12)           periodo = "ng umaga";
+  else if (hours === 12)         periodo = "ng tanghali";
+  else if (hours < 18)           periodo = "ng hapon";
+  else                           periodo = "ng gabi";
+
   let timeText;
   if (minutes === 0) {
-    timeText = `Power FM. Time check is ${h12} o'clock ${ampm}. Ito ay Power Love Song Hits, ang inyong istasyon ng pag-ibig. Stay tuned!`;
+    timeText = `Power Love Song Hits. Ika-${filHour} na ${periodo}. Ito ay Power FM, ang inyong istasyon ng pag-ibig. Patuloy kayong makinig!`;
   } else if (minutes === 30) {
-    timeText = `Power FM. Time check is ${h12} thirty ${ampm}. Ito ay Power Love Song Hits. Makinig pa!`;
+    timeText = `Power Love Song Hits. Ika-${filHour} at kalahati na ${periodo}. Ito ay Power FM. Salamat sa pakikinig!`;
   } else {
-    timeText = `Power FM. Time check is ${h12} ${minutes} ${ampm}. Ito ay Power Love Song Hits, lagi kayong makinig!`;
+    timeText = `Power Love Song Hits. Ika-${filHour} at ${filMin(minutes)} minuto na ${periodo}. Ito ay Power FM, lagi kayong nandito para sa inyo!`;
   }
 
   if (!isTest) {
