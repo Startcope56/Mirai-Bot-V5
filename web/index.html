@@ -64,6 +64,63 @@ input,select{font-family:inherit;outline:none}
   display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.2s;color:var(--pink2)}
 .admin-btn:hover{background:rgba(255,20,119,.3);box-shadow:var(--glow-pink);transform:scale(1.1)}
 
+/* ── MIC MODE SWITCH ── */
+.mic-switch{display:flex;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:30px;padding:3px;gap:2px}
+.mode-pill{padding:5px 12px;border-radius:24px;font-size:.68rem;font-weight:800;letter-spacing:.06em;
+  border:none;background:transparent;color:var(--muted);transition:.25s;cursor:pointer;white-space:nowrap}
+.mode-pill.active-radio{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;
+  box-shadow:0 2px 12px rgba(255,20,119,.5)}
+.mode-pill.active-mic{background:linear-gradient(135deg,#ff4444,#ff8800);color:#fff;
+  box-shadow:0 2px 12px rgba(255,68,68,.6);animation:micPulse .8s ease-in-out infinite}
+@keyframes micPulse{0%,100%{box-shadow:0 2px 12px rgba(255,68,68,.6)}50%{box-shadow:0 2px 24px rgba(255,68,68,.9)}}
+
+/* ── MIC LIVE OVERLAY ── */
+.mic-live-bar{position:fixed;top:56px;left:0;right:0;z-index:200;
+  display:none;align-items:center;justify-content:center;gap:12px;
+  padding:8px 20px;background:linear-gradient(90deg,rgba(255,30,30,.9),rgba(255,100,0,.9));
+  backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,100,0,.5)}
+.mic-live-bar.show{display:flex}
+.mic-live-dot{width:10px;height:10px;border-radius:50%;background:#fff;animation:blink .6s ease-in-out infinite}
+.mic-live-text{font-size:.78rem;font-weight:800;color:#fff;letter-spacing:.1em}
+.mic-level-bar{flex:1;max-width:120px;height:6px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}
+.mic-level-fill{height:100%;background:#fff;border-radius:6px;width:0;transition:width .08s}
+.mic-stop-btn{padding:4px 12px;border-radius:12px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);
+  color:#fff;font-size:.7rem;font-weight:700;cursor:pointer}
+
+/* ── BEAUTIFUL SEARCH CARDS ── */
+.search-results{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;padding-right:2px}
+.sri-card{position:relative;display:flex;gap:0;border-radius:16px;overflow:hidden;
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);
+  transition:.25s cubic-bezier(.25,.8,.25,1);cursor:pointer}
+.sri-card:hover{transform:translateY(-2px);border-color:rgba(0,229,255,.35);
+  box-shadow:0 8px 30px rgba(0,229,255,.2),0 2px 8px rgba(0,0,0,.4)}
+.sri-card::before{content:"";position:absolute;inset:0;background:var(--card-grad,linear-gradient(135deg,rgba(0,229,255,.06),rgba(157,0,255,.06)));pointer-events:none}
+.sri-thumb-wrap{position:relative;width:72px;min-width:72px;height:72px;flex-shrink:0}
+.sri-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.sri-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;background:var(--card-grad,linear-gradient(135deg,rgba(0,229,255,.15),rgba(157,0,255,.15)))}
+.sri-play-hover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);opacity:0;transition:.2s;font-size:1.4rem}
+.sri-card:hover .sri-play-hover{opacity:1}
+.sri-card-body{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.sri-card-title{font-size:.85rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;margin-bottom:2px}
+.sri-card-artist{font-size:.68rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sri-card-dur{font-size:.65rem;color:var(--cyan);font-weight:700;margin-top:2px}
+.sri-card-actions{display:flex;gap:6px;margin-top:6px}
+.sri-action-btn{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:800;
+  letter-spacing:.04em;transition:.2s;cursor:pointer;border:none}
+.sri-action-play{background:linear-gradient(90deg,var(--cyan),var(--purple));color:#fff;
+  box-shadow:0 2px 8px rgba(0,229,255,.3)}
+.sri-action-play:hover{box-shadow:0 4px 16px rgba(0,229,255,.5);transform:scale(1.05)}
+.sri-action-save{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3)!important;
+  color:var(--gold2)}
+.sri-action-save:hover{background:rgba(255,215,0,.25)}
+.search-loading{text-align:center;padding:28px;color:var(--muted);font-size:.85rem}
+.search-loading .spin{display:inline-block;animation:spin 1s linear infinite;font-size:1.2rem;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 /* ── ADMIN MODAL ── */
 .modal-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-start;justify-content:flex-end;
   padding:60px 16px 0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px)}
@@ -286,20 +343,6 @@ canvas.eq-canvas{width:100%;height:80px;border-radius:8px}
 .search-go-btn{padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,.2),rgba(157,0,255,.2));
   border:1px solid rgba(0,229,255,.3);color:var(--cyan);font-weight:700;font-size:.85rem;transition:.2s}
 .search-go-btn:hover{background:linear-gradient(135deg,rgba(0,229,255,.35),rgba(157,0,255,.35));box-shadow:0 0 15px rgba(0,229,255,.3)}
-.search-results{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
-.search-result-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
-  background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.1);transition:.2s;cursor:pointer}
-.search-result-item:hover{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.25)}
-.sri-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;background:rgba(0,229,255,.1);flex-shrink:0}
-.sri-info{flex:1;min-width:0}
-.sri-title{font-size:.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sri-artist{font-size:.7rem;color:var(--muted);margin-top:1px}
-.sri-actions{display:flex;gap:6px;flex-shrink:0}
-.sri-btn{padding:5px 10px;border-radius:8px;font-size:.7rem;font-weight:700;transition:.2s}
-.sri-play-btn{background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.3);color:var(--cyan)}
-.sri-play-btn:hover{background:rgba(0,229,255,.3)}
-.sri-save-btn{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);color:var(--gold2)}
-.sri-save-btn:hover{background:rgba(255,215,0,.2)}
 .search-loading{text-align:center;padding:20px;color:var(--muted);font-size:.85rem}
 
 /* ── LIBRARY ── */
@@ -364,10 +407,22 @@ canvas.eq-canvas{width:100%;height:80px;border-radius:8px}
     </div>
   </div>
   <div class="header-right">
-    <div class="on-air-badge"><span class="dot"></span>ON AIR</div>
+    <div class="on-air-badge" id="onAirBadge"><span class="dot"></span><span id="onAirLabel">ON AIR</span></div>
+    <div class="mic-switch">
+      <button class="mode-pill active-radio" id="radioModeBtn" onclick="switchMode('radio')">📻 RADIO</button>
+      <button class="mode-pill" id="micModeBtn" onclick="switchMode('mic')">🎙️ MIC</button>
+    </div>
     <button class="admin-btn" id="adminBtn" title="Admin Panel">⋮</button>
   </div>
 </header>
+
+<!-- MIC LIVE BAR -->
+<div class="mic-live-bar" id="micLiveBar">
+  <div class="mic-live-dot"></div>
+  <div class="mic-live-text">🎙️ MIC LIVE — Ikaw ay naririnig ngayon</div>
+  <div class="mic-level-bar"><div class="mic-level-fill" id="micLevelFill"></div></div>
+  <button class="mic-stop-btn" onclick="switchMode('radio')">■ Stop</button>
+</div>
 
 <!-- ADMIN MODAL -->
 <div class="modal-overlay" id="adminModal">
@@ -1390,19 +1445,45 @@ async function doSearch() {
     if (!data.results || data.results.length === 0) {
       res.innerHTML = `<div class="search-loading">Walang nahanap. Subukan ng ibang keyword.</div>`; return;
     }
-    res.innerHTML = data.results.map((item, i) => `
-      <div class="search-result-item">
-        <img class="sri-thumb" src="${escHtml(item.thumbnail || "")}" onerror="this.src=''" alt=""/>
-        <div class="sri-info">
-          <div class="sri-title">${escHtml(item.title)}</div>
-          <div class="sri-artist">${escHtml(item.artist)} · ${fmtTime(item.duration)}</div>
+    const cardGrads = [
+    "linear-gradient(135deg,rgba(0,229,255,.12),rgba(157,0,255,.08))",
+    "linear-gradient(135deg,rgba(255,20,119,.12),rgba(255,107,176,.06))",
+    "linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,107,176,.06))",
+    "linear-gradient(135deg,rgba(157,0,255,.12),rgba(0,229,255,.06))",
+    "linear-gradient(135deg,rgba(0,255,127,.08),rgba(0,229,255,.08))",
+  ];
+  res.innerHTML = data.results.map((item, i) => {
+    const g = cardGrads[i % cardGrads.length];
+    const thumb = item.thumbnail || "";
+    const safeUrl = escHtml(item.url);
+    const safeTitle = escHtml(item.title);
+    const safeArtist = escHtml(item.artist);
+    const encUrl = encodeURIComponent(item.url);
+    const encTitle = encodeURIComponent(item.title);
+    const encArtist = encodeURIComponent(item.artist);
+    const encThumb = encodeURIComponent(thumb);
+    const dur = item.duration || 0;
+    return `
+    <div class="sri-card" style="--card-grad:${g}">
+      <div class="sri-thumb-wrap">
+        ${thumb
+          ? `<img src="${escHtml(thumb)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""/><div class="sri-thumb-placeholder" style="display:none">🎵</div>`
+          : `<div class="sri-thumb-placeholder">🎵</div>`}
+        <div class="sri-play-hover" onclick="playOnlineTrack('${safeUrl}','${safeTitle}')">▶</div>
+      </div>
+      <div class="sri-card-body">
+        <div>
+          <div class="sri-card-title">${safeTitle}</div>
+          <div class="sri-card-artist">${safeArtist}</div>
+          <div class="sri-card-dur">⏱ ${fmtTime(dur)}</div>
         </div>
-        <div class="sri-actions">
-          <button class="sri-btn sri-play-btn" onclick="playOnlineTrack('${escHtml(item.url)}','${escHtml(item.title)}')">▶ Play</button>
-          <button class="sri-btn sri-save-btn" onclick="saveToLibrary('${encodeURIComponent(item.url)}','${encodeURIComponent(item.title)}','${encodeURIComponent(item.artist)}','${encodeURIComponent(item.thumbnail||"")}',${item.duration||0})">💾 Save</button>
+        <div class="sri-card-actions">
+          <button class="sri-action-btn sri-action-play" onclick="playOnlineTrack('${safeUrl}','${safeTitle}')">▶ I-play</button>
+          <button class="sri-action-btn sri-action-save" onclick="saveToLibrary('${encUrl}','${encTitle}','${encArtist}','${encThumb}',${dur})">💾</button>
         </div>
       </div>
-    `).join("");
+    </div>`;
+  }).join("");
   } catch (e) {
     res.innerHTML = `<div class="search-loading">Error: ${escHtml(e.message)}</div>`;
   }
@@ -1598,6 +1679,147 @@ async function playWelcomeIntro() {
   document.getElementById("nowPlayingTitle").textContent = "Waiting for songs...";
   document.getElementById("nowPlayingStatus").textContent = "Upload songs sa Admin Panel";
   document.getElementById("vinylDisc").classList.remove("spinning");
+}
+
+/* ══════════════════════════════════════════════
+   MIC MODE — Live Broadcast via Phone/Bluetooth
+   ══════════════════════════════════════════════ */
+let micStream = null;
+let micSourceNode = null;
+let micGainNode = null;
+let micAnalyserNode = null;
+let micLevelRAF = null;
+let micMode = false;
+let radioWasPlaying = false;
+
+async function switchMode(mode) {
+  if (mode === "mic") {
+    await enableMic();
+  } else {
+    disableMic();
+  }
+}
+
+async function enableMic() {
+  if (micMode) return;
+  try {
+    // Ask for mic — echo cancel + noise suppress so no feedback/echo on speaker
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: false,
+        sampleRate: 44100,
+        channelCount: 1
+      }
+    });
+
+    initAudioCtx();
+
+    // Mic source node
+    micSourceNode = audioCtx.createMediaStreamSource(micStream);
+
+    // Mic volume gain — 100% (user controls master vol slider)
+    micGainNode = audioCtx.createGain();
+    micGainNode.gain.value = 1.0;
+
+    // Mic analyser for level meter display
+    micAnalyserNode = audioCtx.createAnalyser();
+    micAnalyserNode.fftSize = 256;
+    micAnalyserNode.smoothingTimeConstant = 0.6;
+
+    // Route: micSource → micGain → compressor(AGC) → analyser → speakers/BT
+    micSourceNode.connect(micGainNode);
+    micGainNode.connect(micAnalyserNode);
+    micGainNode.connect(compressor);
+
+    micMode = true;
+
+    // Pause radio music while mic is live
+    radioWasPlaying = isPlaying;
+    if (radioWasPlaying && activeEl && !activeEl.paused) {
+      activeEl.pause();
+    }
+
+    // UI updates
+    document.getElementById("radioModeBtn").classList.remove("active-radio");
+    document.getElementById("micModeBtn").classList.add("active-mic");
+    document.getElementById("micLiveBar").classList.add("show");
+    document.getElementById("onAirLabel").textContent = "MIC LIVE";
+    document.getElementById("onAirBadge").style.background = "rgba(255,68,68,.2)";
+    document.getElementById("onAirBadge").style.borderColor = "rgba(255,68,68,.5)";
+    document.getElementById("onAirBadge").style.color = "#ff4444";
+    document.getElementById("nowPlayingTitle").textContent = "🎙️ Mic Live";
+    document.getElementById("nowPlayingStatus").textContent = "Ikaw ay on-air ngayon!";
+    document.getElementById("vinylDisc").classList.add("spinning");
+
+    startMicLevelMeter();
+    showToast("🎙️ Mic ON — 100% volume, echo-cancelled!", 3000);
+
+  } catch (e) {
+    let msg = e.message || String(e);
+    if (e.name === "NotAllowedError") msg = "I-allow ang microphone sa browser settings.";
+    if (e.name === "NotFoundError") msg = "Walang microphone na nahanap sa device.";
+    showToast("❌ Mic error: " + msg, 4000);
+    micStream = null;
+  }
+}
+
+function disableMic() {
+  if (!micMode) return;
+  micMode = false;
+
+  // Stop all mic tracks
+  if (micStream) {
+    micStream.getTracks().forEach(t => t.stop());
+    micStream = null;
+  }
+  if (micSourceNode) { try { micSourceNode.disconnect(); } catch(e){} micSourceNode = null; }
+  if (micGainNode) { try { micGainNode.disconnect(); } catch(e){} micGainNode = null; }
+  if (micAnalyserNode) { try { micAnalyserNode.disconnect(); } catch(e){} micAnalyserNode = null; }
+
+  // Stop level meter RAF
+  if (micLevelRAF) { cancelAnimationFrame(micLevelRAF); micLevelRAF = null; }
+  const fill = document.getElementById("micLevelFill");
+  if (fill) fill.style.width = "0";
+
+  // Resume radio if it was playing
+  if (radioWasPlaying && activeEl) {
+    activeEl.play().catch(() => {});
+  }
+
+  // Restore UI
+  document.getElementById("radioModeBtn").classList.add("active-radio");
+  document.getElementById("micModeBtn").classList.remove("active-mic");
+  document.getElementById("micLiveBar").classList.remove("show");
+  document.getElementById("onAirLabel").textContent = "ON AIR";
+  document.getElementById("onAirBadge").removeAttribute("style");
+  if (songs.length > 0) {
+    // Restore song title from active track
+  } else {
+    document.getElementById("nowPlayingTitle").textContent = "Waiting for songs...";
+    document.getElementById("nowPlayingStatus").textContent = "Upload songs sa Admin Panel";
+    document.getElementById("vinylDisc").classList.remove("spinning");
+  }
+  showToast("📻 Radio mode na.", 2000);
+}
+
+function startMicLevelMeter() {
+  if (!micAnalyserNode) return;
+  const fill = document.getElementById("micLevelFill");
+  const buf = new Uint8Array(micAnalyserNode.frequencyBinCount);
+  function tick() {
+    if (!micMode) return;
+    micAnalyserNode.getByteFrequencyData(buf);
+    // Average of first half = mic loudness
+    let sum = 0;
+    for (let i = 0; i < buf.length / 2; i++) sum += buf[i];
+    const avg = sum / (buf.length / 2);
+    const pct = Math.min(100, (avg / 128) * 100 * 2);
+    if (fill) fill.style.width = pct + "%";
+    micLevelRAF = requestAnimationFrame(tick);
+  }
+  micLevelRAF = requestAnimationFrame(tick);
 }
 
 openDB().then(async () => {
