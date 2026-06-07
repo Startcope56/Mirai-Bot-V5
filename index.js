@@ -621,6 +621,35 @@ async function handleRequest(req, res) {
     }));
   }
 
+  // ── GET /api/tts?text=... → BlessicaNeural female Tagalog TTS ────────────
+  if (pathname === "/api/tts") {
+    const text = query.text || "Power FM. Time check.";
+    try {
+      const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
+      const tts = new MsEdgeTTS();
+      await tts.setMetadata("fil-PH-BlessicaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+      const chunks = [];
+      await new Promise((resolve, reject) => {
+        const stream = tts.toStream(text);
+        stream.on("data", d => chunks.push(d));
+        stream.on("end", resolve);
+        stream.on("error", reject);
+      });
+      const buf = Buffer.concat(chunks);
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": buf.length,
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*",
+      });
+      return res.end(buf);
+    } catch (e) {
+      console.error("[TTS]", e.message);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ error: e.message }));
+    }
+  }
+
   // ── HOME DEEP AI — Auth & AI endpoints ───────────────────────────────────
 
   // POST /api/auth/register
