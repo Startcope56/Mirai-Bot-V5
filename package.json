@@ -11,6 +11,9 @@
         "url": "git+https://github.com/DongDev-VN/Mirai-Bot-V3.git"
     },
     "author": "DongDev",
+    "overrides": {
+        "form-data": "^4.0.0"
+    },
     "dependencies": {
         "@distube/ytdl-core": "^4.16.12",
         "@dongdev/fca-unofficial": "^1.0.20",
