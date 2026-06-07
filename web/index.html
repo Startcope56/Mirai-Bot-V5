@@ -1573,14 +1573,46 @@ setInterval(() => {
   }
 }, 5000);
 
-/* ── Init ── */
+/* ── Welcome Intro TTS (plays when 0 songs uploaded) ── */
+async function playWelcomeIntro() {
+  const welcomeText =
+    "Magandang araw sa inyong lahat! " +
+    "Maligayang pagdating sa Power Love Song Hits, " +
+    "ang inyong pinaka-paboritong istasyon ng pag-ibig dito sa Pilipinas. " +
+    "Ito ang inyong live online radio station na nagpapatugtog ng mga pinakamagagandang kanta ng pag-ibig, " +
+    "dalawampu't apat na oras sa isang araw, pitong araw sa isang linggo. " +
+    "Sa ngayon, wala pa kaming mga kanta na naka-upload sa aming sistema. " +
+    "Upang makapagsimula, pindutin ang tatlong tuldok na button sa kanang bahagi ng itaas, " +
+    "at mag-upload ng inyong mga paboritong kanta. " +
+    "Maaari rin kayong mag-upload ng mga jingle para sa mas masayang pakikinig. " +
+    "Kami ay handa na at naghihintay para sa inyo. " +
+    "Salamat sa pagpili ng Power Love Song Hits. " +
+    "Ito ang inyong istasyon ng pag-ibig. Hanggang sa muli!";
+
+  document.getElementById("nowPlayingTitle").textContent = "📻 Power Love Song Hits";
+  document.getElementById("nowPlayingStatus").textContent = "🎙️ Station Intro — nagsasalita...";
+  document.getElementById("vinylDisc").classList.add("spinning");
+
+  await playTTS(welcomeText);
+
+  document.getElementById("nowPlayingTitle").textContent = "Waiting for songs...";
+  document.getElementById("nowPlayingStatus").textContent = "Upload songs sa Admin Panel";
+  document.getElementById("vinylDisc").classList.remove("spinning");
+}
+
 openDB().then(async () => {
   await loadAll();
-  // Auto-start if songs exist
   if (songs.length > 0) {
     setTimeout(() => {
       showToast("📻 Power FM ready! Pindutin ang ▶ para magsimula.");
     }, 800);
+  } else {
+    // No songs yet — play ~40s welcome intro automatically
+    setTimeout(async () => {
+      showToast("🎙️ Power FM — Welcome intro...", 5000);
+      await playWelcomeIntro();
+      showToast("📻 Mag-upload ng songs sa Admin Panel (⋮)", 4000);
+    }, 1200);
   }
 }).catch(e => console.error("DB error:", e));
 </script>

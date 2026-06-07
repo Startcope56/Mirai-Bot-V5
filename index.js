@@ -628,12 +628,13 @@ async function handleRequest(req, res) {
       const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
       const tts = new MsEdgeTTS();
       await tts.setMetadata("fil-PH-BlessicaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+      const { audioStream } = await tts.toStream(text);
       const chunks = [];
       await new Promise((resolve, reject) => {
-        const stream = tts.toStream(text);
-        stream.on("data", d => chunks.push(d));
-        stream.on("end", resolve);
-        stream.on("error", reject);
+        audioStream.on("data", d => chunks.push(d));
+        audioStream.on("end", resolve);
+        audioStream.on("error", reject);
+        setTimeout(() => reject(new Error("TTS timeout")), 25000);
       });
       const buf = Buffer.concat(chunks);
       res.writeHead(200, {
