@@ -2,837 +2,1587 @@
 <html lang="tl">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>DRIAN AI GENERATOR — Power Inc</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>📻 POWER LOVE SONG HITS</title>
 <link rel="manifest" href="/manifest.json"/>
 <link rel="icon" href="/icon-192.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#02020e;
-  --card:rgba(8,8,28,0.94);
-  --pink:#ff2479;--pink2:#ff6db8;--pink3:rgba(255,36,121,.12);
-  --violet:#7c3aed;--violet2:#a78bfa;--violet3:rgba(124,58,237,.12);
-  --cyan:#00d4ff;--cyan2:#67e8f9;--cyan3:rgba(0,212,255,.12);
-  --gold:#f59e0b;--gold2:#fcd34d;--gold3:rgba(245,158,11,.12);
-  --lime:#4ade80;--lime2:#86efac;--lime3:rgba(74,222,128,.12);
-  --red:#f43f5e;--orange:#fb923c;
-  --text:#eeeeff;--muted:#4a4a7a;--dim:#7070a8;
-  --bdr-f:rgba(255,36,121,.28);--bdr-m:rgba(0,212,255,.28);
-  --bdr-s:rgba(74,222,128,.28);--bdr-d:rgba(245,158,11,.28);--bdr-n:rgba(167,139,250,.28);
+  --bg:#070010;--bg2:#0e0020;--bg3:#150030;
+  --pink:#ff1477;--pink2:#ff6bb0;--pink3:rgba(255,20,119,.15);
+  --purple:#9d00ff;--purple2:#c77dff;--purple3:rgba(157,0,255,.15);
+  --gold:#ffd700;--gold2:#ffe066;--gold3:rgba(255,215,0,.12);
+  --cyan:#00e5ff;--red:#ff3860;
+  --text:#f0e8ff;--muted:#7060a0;--dim:#4a3a70;
+  --card:rgba(20,0,40,0.92);
+  --glow-pink:0 0 20px rgba(255,20,119,.5);
+  --glow-purple:0 0 20px rgba(157,0,255,.5);
+  --glow-gold:0 0 20px rgba(255,215,0,.4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-button,input,textarea{font-family:inherit;outline:none;border:none}
-button{cursor:pointer}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:linear-gradient(var(--pink),var(--violet));border-radius:4px}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;user-select:none}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,select{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--pink),var(--purple));border-radius:4px}
 
-/* ─── BACKGROUND ──────────────────────────────────────────────────────────── */
-.bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* ── BG ── */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-layer::before{content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%,rgba(157,0,255,.25) 0%,transparent 60%),
+    radial-gradient(ellipse 70% 60% at 80% 80%,rgba(255,20,119,.2) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 50%,rgba(255,215,0,.06) 0%,transparent 70%),
+    var(--bg)}
+.bg-layer::after{content:"";position:absolute;inset:-50%;width:200%;height:200%;
+  background-image:linear-gradient(rgba(157,0,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(157,0,255,.04) 1px,transparent 1px);
+  background-size:50px 50px;animation:gridMove 40s linear infinite}
+@keyframes gridMove{to{transform:translateX(50px) translateY(50px)}}
 
-/* Deep space gradient */
-.bg-base{position:absolute;inset:0;
-  background:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(124,58,237,.18) 0%,transparent 60%),
-             radial-gradient(ellipse 80% 50% at -10% 30%,rgba(255,36,121,.14) 0%,transparent 55%),
-             radial-gradient(ellipse 70% 60% at 110% 70%,rgba(0,212,255,.1) 0%,transparent 55%),
-             radial-gradient(ellipse 60% 50% at 50% 110%,rgba(74,222,128,.07) 0%,transparent 55%),
-             var(--bg)}
+/* ── HEADER ── */
+.header{position:relative;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:rgba(10,0,25,.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,20,119,.3);box-shadow:0 2px 30px rgba(255,20,119,.2)}
+.station-name{display:flex;align-items:center;gap:10px}
+.station-name .icon{font-size:1.6rem;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 8px var(--pink))}50%{filter:drop-shadow(0 0 20px var(--pink))}}
+.station-name .title{font-family:"Orbitron",sans-serif;font-size:clamp(.9rem,3vw,1.2rem);font-weight:900;
+  background:linear-gradient(90deg,var(--pink),var(--purple2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:.05em;line-height:1}
+.station-name .sub{font-size:.6rem;color:var(--pink2);font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
+.on-air-badge{display:flex;align-items:center;gap:6px;background:rgba(255,56,96,.15);border:1px solid rgba(255,56,96,.4);
+  padding:5px 12px;border-radius:20px;font-size:.7rem;font-weight:800;color:var(--red);letter-spacing:.1em}
+.on-air-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink .8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 8px var(--red)}50%{opacity:.2;box-shadow:none}}
+.admin-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,20,119,.15);border:1px solid rgba(255,20,119,.4);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.2s;color:var(--pink2)}
+.admin-btn:hover{background:rgba(255,20,119,.3);box-shadow:var(--glow-pink);transform:scale(1.1)}
 
-/* Animated mesh lines */
-.bg-grid{position:absolute;inset:-50%;width:200%;height:200%;
-  background-image:linear-gradient(rgba(124,58,237,.045) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(124,58,237,.045) 1px,transparent 1px);
-  background-size:60px 60px;
-  animation:gridDrift 60s linear infinite;transform-origin:center}
-@keyframes gridDrift{from{transform:translateX(0) translateY(0) rotate(0deg)}to{transform:translateX(-60px) translateY(-60px) rotate(.4deg)}}
+/* ── ADMIN MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-start;justify-content:flex-end;
+  padding:60px 16px 0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.admin-panel{background:var(--bg2);border:1px solid rgba(255,20,119,.3);border-radius:20px;
+  width:min(420px,96vw);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.8),var(--glow-pink);
+  animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-20px) scale(.96)}to{opacity:1;transform:none}}
+.panel-header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;background:rgba(14,0,32,.98);border-bottom:1px solid rgba(255,20,119,.2);border-radius:20px 20px 0 0}
+.panel-header h2{font-family:"Orbitron",sans-serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(90deg,var(--pink),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.close-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,56,96,.15);border:1px solid rgba(255,56,96,.3);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;transition:.2s}
+.close-btn:hover{background:rgba(255,56,96,.3)}
+.panel-body{padding:20px}
+.panel-section{margin-bottom:24px}
+.panel-section h3{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--pink2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel-section h3::after{content:"";flex:1;height:1px;background:rgba(255,20,119,.2)}
+.upload-btn-wrap{display:flex;flex-direction:column;gap:8px}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 20px;border-radius:12px;font-size:.875rem;font-weight:700;transition:.2s;
+  background:linear-gradient(135deg,rgba(255,20,119,.2),rgba(157,0,255,.2));
+  border:1px dashed rgba(255,20,119,.5);color:var(--pink2);width:100%;cursor:pointer}
+.upload-btn:hover{background:linear-gradient(135deg,rgba(255,20,119,.35),rgba(157,0,255,.35));border-style:solid;box-shadow:var(--glow-pink)}
+.upload-progress{display:none;height:6px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden;margin-top:6px}
+.upload-progress.show{display:block}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:6px;width:0;transition:width .3s}
+.jingle-list{display:flex;flex-direction:column;gap:8px}
+.jingle-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;
+  background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);font-size:.82rem}
+.jingle-item .jingle-name{flex:1;color:var(--gold2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jingle-item .del-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,56,96,.15);border:1px solid rgba(255,56,96,.3);
+  color:var(--red);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;transition:.2s}
+.jingle-item .del-btn:hover{background:rgba(255,56,96,.3)}
+.add-jingle-btn{display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 16px;border-radius:10px;font-size:.8rem;font-weight:700;
+  background:rgba(255,215,0,.1);border:1px dashed rgba(255,215,0,.4);color:var(--gold2);width:100%;transition:.2s;cursor:pointer}
+.add-jingle-btn:hover{background:rgba(255,215,0,.2);border-style:solid}
+.add-jingle-btn:disabled{opacity:.4;cursor:not-allowed}
+.jingle-limit-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:6px}
+.song-manage-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
+.song-manage-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;
+  background:rgba(157,0,255,.07);border:1px solid rgba(157,0,255,.15);font-size:.8rem}
+.song-manage-item .sname{flex:1;color:var(--purple2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.song-manage-item .sdel{width:26px;height:26px;border-radius:6px;background:rgba(255,56,96,.1);border:1px solid rgba(255,56,96,.25);
+  color:var(--red);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;transition:.2s}
+.song-manage-item .sdel:hover{background:rgba(255,56,96,.3)}
+.empty-note{color:var(--muted);font-size:.8rem;text-align:center;padding:12px}
 
-/* Orbs */
-.orb{position:absolute;border-radius:50%;filter:blur(90px)}
-.o1{width:700px;height:700px;background:radial-gradient(circle,rgba(255,36,121,.2),transparent 65%);top:-20%;left:-12%;animation:o1a 22s ease-in-out infinite}
-.o2{width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 65%);bottom:-15%;right:-10%;animation:o2a 28s ease-in-out infinite}
-.o3{width:450px;height:450px;background:radial-gradient(circle,rgba(0,212,255,.13),transparent 65%);top:30%;right:5%;animation:o3a 18s ease-in-out infinite}
-.o4{width:350px;height:350px;background:radial-gradient(circle,rgba(245,158,11,.1),transparent 65%);bottom:30%;left:8%;animation:o4a 25s ease-in-out infinite}
-.o5{width:280px;height:280px;background:radial-gradient(circle,rgba(74,222,128,.09),transparent 65%);top:55%;left:42%;animation:o5a 32s ease-in-out infinite}
-@keyframes o1a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(80px,50px) scale(1.1)}}
-@keyframes o2a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-70px,-60px) scale(1.08)}}
-@keyframes o3a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,60px) scale(1.12)}}
-@keyframes o4a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-50px) scale(1.07)}}
-@keyframes o5a{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,35px) scale(1.04)}}
+/* ── MAIN STAGE ── */
+.main-wrap{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:16px}
 
-/* Stars */
-#stars{position:absolute;inset:0}
-.st{position:absolute;background:#fff;border-radius:50%;animation:stf ease-in-out infinite}
-@keyframes stf{0%,100%{opacity:.08;transform:scale(1)}50%{opacity:.75;transform:scale(1.5)}}
+/* ── DJ STAGE ── */
+.dj-stage{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:16px}
+@media(max-width:700px){.dj-stage{grid-template-columns:1fr;justify-items:center}}
 
-/* Floating particles */
-.prt{position:absolute;width:3px;height:3px;border-radius:50%;animation:prtf linear infinite}
-@keyframes prtf{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}90%{opacity:.4}100%{transform:translateY(-120vh) translateX(var(--dx));opacity:0}}
-
-/* ─── HEADER ─────────────────────────────────────────────────────────────── */
-header{position:sticky;top:0;z-index:300;
-  background:rgba(2,2,14,.9);backdrop-filter:blur(32px) saturate(160%);
-  border-bottom:1px solid rgba(255,255,255,.06);
-  padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.hd-logo{display:flex;align-items:center;gap:14px}
-.hd-badge{position:relative;width:44px;height:44px;flex-shrink:0}
-.hd-badge::before{content:"";position:absolute;inset:-2px;border-radius:50%;
-  background:conic-gradient(from 0deg,var(--pink),var(--violet),var(--cyan),var(--lime),var(--pink));
-  animation:spin 5s linear infinite;border-radius:50%}
-.hd-badge-inner{position:absolute;inset:2px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(255,36,121,.25),rgba(124,58,237,.25));
-  display:flex;align-items:center;justify-content:center;font-size:18px}
+/* Vinyl disc */
+.disc-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.vinyl{width:200px;height:200px;position:relative;flex-shrink:0}
+@media(max-width:700px){.vinyl{width:160px;height:160px}}
+.vinyl-disc{width:100%;height:100%;border-radius:50%;position:relative;
+  background:conic-gradient(from 0deg,#1a001a,#2a002a,#3a003a,#1a001a,#2a002a,#3a003a,#1a001a,#2a002a,#1a001a);
+  box-shadow:0 0 40px rgba(255,20,119,.4),0 0 80px rgba(157,0,255,.2),inset 0 0 30px rgba(0,0,0,.8)}
+.vinyl-disc.spinning{animation:spin 2s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.hd-name{font-family:"Orbitron",sans-serif;font-weight:900;font-size:1rem;
-  background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
-.hd-sub{font-size:.58rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
-.hd-right{display:flex;align-items:center;gap:10px}
-.live-pill{display:inline-flex;align-items:center;gap:6px;
-  padding:6px 14px;border-radius:20px;
-  background:rgba(255,36,121,.1);border:1px solid rgba(255,36,121,.3);
-  font-size:.68rem;font-weight:800;color:var(--pink2);letter-spacing:.5px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--pink);animation:ldot 1.1s infinite}
-@keyframes ldot{0%,100%{opacity:1;box-shadow:0 0 7px var(--pink)}50%{opacity:.15}}
-.fb-link{display:inline-flex;align-items:center;gap:6px;
-  padding:6px 12px;border-radius:20px;text-decoration:none;
-  background:rgba(24,119,242,.12);border:1px solid rgba(24,119,242,.35);
-  font-size:.68rem;font-weight:700;color:#60a5fa;transition:all .2s}
-.fb-link:hover{background:rgba(24,119,242,.22);border-color:#3b82f6;color:#93c5fd}
+.vinyl-groove{position:absolute;inset:0;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,255,255,.04) 0deg .5deg,transparent .5deg 3deg)}
+.vinyl-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:70px;height:70px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,var(--pink),var(--purple),#1a001a);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 15px rgba(255,20,119,.5)}
+.vinyl-label span{font-size:.45rem;font-weight:900;font-family:"Orbitron",sans-serif;color:#fff;letter-spacing:.06em;text-align:center;line-height:1.3}
+.vinyl-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:12px;height:12px;border-radius:50%;background:#1a001a;border:2px solid rgba(255,255,255,.3)}
+.disc-arm{position:absolute;top:10px;right:10px;width:60px;height:60px;pointer-events:none}
+.disc-arm svg{width:100%;height:100%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 
-/* ─── HERO ───────────────────────────────────────────────────────────────── */
-.hero{position:relative;z-index:1;text-align:center;padding:72px 20px 60px;overflow:hidden}
+/* Now playing center */
+.now-playing-center{text-align:center;min-width:220px}
+@media(max-width:700px){.now-playing-center{min-width:unset;width:100%}}
+.now-playing-label{font-size:.65rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+.now-playing-title{font-size:clamp(.85rem,2.5vw,1.1rem);font-weight:700;color:var(--text);
+  margin-bottom:4px;line-height:1.3;max-height:2.8em;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  text-shadow:0 0 20px rgba(255,20,119,.3)}
+.now-playing-status{font-size:.72rem;color:var(--muted);margin-bottom:16px;min-height:1.2em}
+.progress-wrap{position:relative;margin-bottom:12px}
+.progress-bar-bg{height:6px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden;cursor:pointer}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple2));border-radius:6px;
+  width:0;transition:width .5s linear;position:relative}
+.progress-bar-fill::after{content:"";position:absolute;right:-4px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 8px var(--pink)}
+.time-display{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:5px}
 
-/* Animated rings */
-.ring{position:absolute;top:50%;left:50%;border-radius:50%;
-  border:1px solid;transform:translate(-50%,-50%);pointer-events:none}
-.ring1{width:500px;height:500px;border-color:rgba(255,36,121,.07);animation:rspin 15s linear infinite}
-.ring2{width:700px;height:700px;border-color:rgba(124,58,237,.05);animation:rspin 25s linear infinite reverse}
-.ring3{width:900px;height:900px;border-color:rgba(0,212,255,.04);animation:rspin 38s linear infinite}
-@keyframes rspin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+/* Big play button */
+.play-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:8px}
+.big-play-btn{width:80px;height:80px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  border:none;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 30px rgba(255,20,119,.6),0 0 60px rgba(157,0,255,.3),inset 0 2px 4px rgba(255,255,255,.2);
+  transition:.2s;font-size:2rem;color:#fff}
+.big-play-btn:hover{transform:scale(1.08);box-shadow:0 0 50px rgba(255,20,119,.8),0 0 100px rgba(157,0,255,.4)}
+.big-play-btn:active{transform:scale(.96)}
+.big-play-btn.playing{animation:playGlow 1.5s ease-in-out infinite}
+@keyframes playGlow{0%,100%{box-shadow:0 0 30px rgba(255,20,119,.6),0 0 60px rgba(157,0,255,.3)}50%{box-shadow:0 0 60px rgba(255,20,119,.9),0 0 120px rgba(157,0,255,.5)}}
+.volume-wrap{display:flex;align-items:center;gap:8px;width:100%}
+.vol-icon{font-size:.9rem;color:var(--muted)}
+.vol-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--pink) var(--vol,80%),rgba(255,255,255,.15) var(--vol,80%));cursor:pointer}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--pink);box-shadow:0 0 6px var(--pink);cursor:pointer}
 
-/* Pulsing center glow */
-.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:300px;height:300px;border-radius:50%;
-  background:radial-gradient(circle,rgba(124,58,237,.1),transparent 70%);
-  animation:hglow 4s ease-in-out infinite}
-@keyframes hglow{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6}50%{transform:translate(-50%,-50%) scale(1.3);opacity:1}}
+/* VU / EQ panels */
+.vu-panel,.eq-panel{background:var(--card);border:1px solid rgba(255,20,119,.15);border-radius:16px;padding:14px;
+  display:flex;flex-direction:column;gap:8px}
+.panel-title{font-size:.62rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:center}
+canvas.vu-canvas{width:100%;height:70px;border-radius:8px}
+canvas.eq-canvas{width:100%;height:80px;border-radius:8px}
+@media(max-width:700px){.vu-panel,.eq-panel{display:none}}
 
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
-  color:var(--dim);font-size:.7rem;font-weight:600;
-  padding:6px 16px;border-radius:30px;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px}
+/* ── DJ BOARD ── */
+.dj-board{background:var(--card);border:1px solid rgba(255,20,119,.2);border-radius:20px;
+  padding:16px;margin-bottom:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px;
+  align-items:end}
+.dj-fader-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dj-fader-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dj-fader{-webkit-appearance:none;writing-mode:vertical-lr;direction:rtl;width:28px;height:80px;
+  background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer;position:relative}
+.dj-fader::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:12px;
+  background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:3px;
+  box-shadow:0 2px 8px rgba(255,20,119,.5);cursor:pointer}
+.dj-knob-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dj-knob{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#1a002a,#2a004a);
+  border:2px solid rgba(255,20,119,.3);position:relative;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.4),inset 0 1px 2px rgba(255,255,255,.08)}
+.dj-knob::after{content:"";position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:3px;height:12px;background:var(--pink);border-radius:2px;
+  box-shadow:0 0 6px var(--pink);transform-origin:bottom center}
+.dj-knob.knob-lo::after{transform:rotate(-45deg);transform-origin:50% 100%}
+.dj-knob.knob-mid::after{transform:rotate(0deg);transform-origin:50% 100%}
+.dj-knob.knob-hi::after{transform:rotate(45deg);transform-origin:50% 100%}
+.crossfader-wrap{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.crossfader{-webkit-appearance:none;width:100%;height:8px;border-radius:8px;
+  background:linear-gradient(90deg,var(--pink),rgba(255,255,255,.1),var(--purple));cursor:pointer}
+.crossfader::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 0 10px rgba(255,255,255,.5);cursor:pointer}
+.eq-sliders{grid-column:1/-1;display:flex;gap:8px;justify-content:center;align-items:flex-end}
+.eq-band{display:flex;flex-direction:column;align-items:center;gap:4px}
+.eq-band label{font-size:.58rem;color:var(--muted);font-weight:700}
+.eq-band input[type=range]{-webkit-appearance:none;writing-mode:vertical-lr;direction:rtl;
+  width:22px;height:60px;background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer}
+.eq-band input::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:8px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;cursor:pointer}
 
-.hero-title{font-family:"Orbitron",sans-serif;font-weight:900;
-  font-size:clamp(2rem,8vw,4.2rem);line-height:1.08;margin-bottom:16px}
-.ht1{display:block;
-  background:linear-gradient(90deg,var(--pink),#d946ef,var(--violet2),var(--cyan),var(--pink));
-  background-size:350% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  animation:bgmove 6s ease-in-out infinite}
-@keyframes bgmove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.ht2{display:block;color:rgba(255,255,255,.88);font-size:.6em;letter-spacing:3px;margin-top:6px}
+/* ── SCHEDULE INDICATOR ── */
+.schedule-bar{display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:12px;padding:8px 16px;background:rgba(255,20,119,.06);border-radius:12px;
+  border:1px solid rgba(255,20,119,.12);flex-wrap:wrap}
+.sched-item{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--muted)}
+.sched-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);transition:.3s}
+.sched-dot.active{background:var(--pink);box-shadow:0 0 8px var(--pink)}
+.sched-dot.done{background:var(--purple)}
+.sched-label{font-weight:600}
+.sched-sep{color:var(--dim);margin:0 4px}
 
-.hero-by{display:inline-flex;align-items:center;gap:7px;margin-top:6px;margin-bottom:24px;
-  padding:7px 16px;border-radius:20px;
-  background:rgba(24,119,242,.1);border:1px solid rgba(24,119,242,.3)}
-.hero-by a{color:#60a5fa;text-decoration:none;font-size:.8rem;font-weight:700}
-.hero-by a:hover{color:#93c5fd;text-decoration:underline}
-.hero-by span{color:var(--dim);font-size:.75rem}
+/* ── PLAYLIST BOX ── */
+.playlist-section{background:var(--card);border:1px solid rgba(157,0,255,.2);border-radius:20px;
+  padding:0;overflow:hidden;margin-bottom:16px}
+.playlist-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid rgba(157,0,255,.15);
+  background:rgba(157,0,255,.05)}
+.playlist-header h2{font-family:"Orbitron",sans-serif;font-size:.85rem;font-weight:700;
+  background:linear-gradient(90deg,var(--purple2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.playlist-count{font-size:.7rem;color:var(--muted);font-weight:600}
+.playlist-box{max-height:320px;overflow-y:auto;padding:10px}
+.playlist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  transition:.2s;cursor:pointer;margin-bottom:4px;border:1px solid transparent}
+.playlist-item:hover{background:rgba(157,0,255,.1);border-color:rgba(157,0,255,.2)}
+.playlist-item.active{background:rgba(255,20,119,.1);border-color:rgba(255,20,119,.3)}
+.playlist-item .num{font-size:.7rem;color:var(--muted);font-weight:700;width:22px;text-align:center;flex-shrink:0}
+.playlist-item.active .num{color:var(--pink)}
+.playlist-item .p-icon{width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(157,0,255,.3),rgba(255,20,119,.3));
+  display:flex;align-items:center;justify-content:center;font-size:1rem}
+.playlist-item.active .p-icon{background:linear-gradient(135deg,var(--pink),var(--purple));
+  box-shadow:0 0 12px rgba(255,20,119,.4);animation:iconPulse 1s ease-in-out infinite}
+@keyframes iconPulse{0%,100%{box-shadow:0 0 8px rgba(255,20,119,.4)}50%{box-shadow:0 0 20px rgba(255,20,119,.7)}}
+.playlist-item .p-info{flex:1;min-width:0}
+.playlist-item .p-name{font-size:.83rem;font-weight:600;color:var(--text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.playlist-item.active .p-name{color:var(--pink2)}
+.playlist-item .p-dur{font-size:.68rem;color:var(--muted);margin-top:1px}
+.playlist-item .p-del{width:28px;height:28px;border-radius:8px;background:transparent;
+  border:1px solid transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0;transition:.2s}
+.playlist-item:hover .p-del{background:rgba(255,56,96,.15);border-color:rgba(255,56,96,.3);color:var(--red)}
+.playlist-item .p-playing-anim{display:flex;align-items:center;gap:2px;height:16px;flex-shrink:0}
+.playlist-item .p-playing-anim span{display:block;width:3px;background:var(--pink);border-radius:2px;animation:barAnim 1s ease-in-out infinite}
+.playlist-item .p-playing-anim span:nth-child(2){animation-delay:.15s}
+.playlist-item .p-playing-anim span:nth-child(3){animation-delay:.3s}
+@keyframes barAnim{0%,100%{height:4px}50%{height:14px}}
+.playlist-empty{padding:40px;text-align:center;color:var(--muted)}
+.playlist-empty .e-icon{font-size:2.5rem;margin-bottom:12px;display:block;opacity:.4}
+.playlist-empty p{font-size:.85rem}
 
-.hero-desc{color:var(--dim);font-size:.93rem;line-height:1.75;max-width:580px;margin:0 auto 32px}
-.hero-desc strong{color:var(--pink2)}
+/* ── SEARCH SECTION ── */
+.search-section{background:var(--card);border:1px solid rgba(0,229,255,.15);border-radius:20px;
+  padding:16px;margin-bottom:16px}
+.search-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.search-header h2{font-family:"Orbitron",sans-serif;font-size:.85rem;font-weight:700;
+  background:linear-gradient(90deg,var(--cyan),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.search-bar{display:flex;gap:8px;margin-bottom:12px}
+.search-input{flex:1;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(0,229,255,.2);color:var(--text);font-size:.875rem;transition:.2s}
+.search-input:focus{border-color:rgba(0,229,255,.5);background:rgba(0,229,255,.05);box-shadow:0 0 12px rgba(0,229,255,.15)}
+.search-input::placeholder{color:var(--muted)}
+.search-go-btn{padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,.2),rgba(157,0,255,.2));
+  border:1px solid rgba(0,229,255,.3);color:var(--cyan);font-weight:700;font-size:.85rem;transition:.2s}
+.search-go-btn:hover{background:linear-gradient(135deg,rgba(0,229,255,.35),rgba(157,0,255,.35));box-shadow:0 0 15px rgba(0,229,255,.3)}
+.search-results{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
+.search-result-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.1);transition:.2s;cursor:pointer}
+.search-result-item:hover{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.25)}
+.sri-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;background:rgba(0,229,255,.1);flex-shrink:0}
+.sri-info{flex:1;min-width:0}
+.sri-title{font-size:.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sri-artist{font-size:.7rem;color:var(--muted);margin-top:1px}
+.sri-actions{display:flex;gap:6px;flex-shrink:0}
+.sri-btn{padding:5px 10px;border-radius:8px;font-size:.7rem;font-weight:700;transition:.2s}
+.sri-play-btn{background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.3);color:var(--cyan)}
+.sri-play-btn:hover{background:rgba(0,229,255,.3)}
+.sri-save-btn{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);color:var(--gold2)}
+.sri-save-btn:hover{background:rgba(255,215,0,.2)}
+.search-loading{text-align:center;padding:20px;color:var(--muted);font-size:.85rem}
 
-.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}
-.hp{display:inline-flex;align-items:center;gap:7px;
-  padding:8px 16px;border-radius:24px;font-size:.75rem;font-weight:700;border:1px solid}
-.hp.f{background:var(--pink3);border-color:var(--bdr-f);color:var(--pink2)}
-.hp.m{background:var(--cyan3);border-color:var(--bdr-m);color:var(--cyan2)}
-.hp.s{background:var(--lime3);border-color:var(--bdr-s);color:var(--lime2)}
-.hp.d{background:var(--gold3);border-color:var(--bdr-d);color:var(--gold2)}
-.hp.n{background:var(--violet3);border-color:var(--bdr-n);color:var(--violet2)}
+/* ── LIBRARY ── */
+.library-section{background:var(--card);border:1px solid rgba(255,215,0,.15);border-radius:20px;
+  padding:16px;margin-bottom:16px}
+.library-section h2{font-family:"Orbitron",sans-serif;font-size:.85rem;font-weight:700;margin-bottom:12px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.library-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
+.lib-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+  background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.12);transition:.2s}
+.lib-item:hover{background:rgba(255,215,0,.1)}
+.lib-item .lib-info{flex:1;min-width:0}
+.lib-item .lib-title{font-size:.82rem;font-weight:600;color:var(--gold2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib-item .lib-actions{display:flex;gap:5px}
+.lib-item .lib-btn{padding:4px 10px;border-radius:7px;font-size:.68rem;font-weight:700;transition:.2s}
+.lib-play-btn{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--gold2)}
+.lib-play-btn:hover{background:rgba(255,215,0,.25)}
+.lib-del-btn{background:rgba(255,56,96,.1);border:1px solid rgba(255,56,96,.25);color:var(--red)}
+.lib-del-btn:hover{background:rgba(255,56,96,.25)}
+.lib-dl-btn{background:rgba(157,0,255,.1);border:1px solid rgba(157,0,255,.25);color:var(--purple2)}
+.lib-dl-btn:hover{background:rgba(157,0,255,.25)}
 
-/* ─── SECTIONS ────────────────────────────────────────────────────────────── */
-.wrap{position:relative;z-index:1;max-width:940px;margin:0 auto;padding:0 18px 90px}
+/* ── FOOTER CONTROLS ── */
+.footer-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;
+  padding:16px 20px;background:rgba(7,0,16,.95);border-top:1px solid rgba(255,20,119,.15);
+  position:sticky;bottom:0;z-index:50;backdrop-filter:blur(20px)}
+.fc-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:12px;
+  font-size:.78rem;font-weight:700;transition:.2s;cursor:pointer}
+.tts-test-btn{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--gold2)}
+.tts-test-btn:hover{background:rgba(255,215,0,.25);box-shadow:var(--glow-gold)}
+.copy-code-btn{background:rgba(157,0,255,.12);border:1px solid rgba(157,0,255,.3);color:var(--purple2)}
+.copy-code-btn:hover{background:rgba(157,0,255,.25);box-shadow:var(--glow-purple)}
+.status-pill{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--dim)}
+.status-dot.active{background:#4ade80;box-shadow:0 0 6px #4ade80}
+.agc-badge{font-size:.65rem;padding:4px 10px;border-radius:20px;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);color:var(--cyan);font-weight:700}
 
-.sec{background:var(--card);border-radius:22px;padding:28px;margin-bottom:20px;
-  border:1px solid;position:relative;overflow:hidden}
-.sec::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(135deg,rgba(255,255,255,.025) 0%,transparent 40%)}
-.sec-bar{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(20,0,40,.95);border:1px solid rgba(255,20,119,.4);border-radius:12px;
+  padding:10px 20px;font-size:.8rem;font-weight:600;color:var(--pink2);
+  box-shadow:0 8px 30px rgba(0,0,0,.6);z-index:9999;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-.sec.f{border-color:var(--bdr-f)}.sec.f .sec-bar{background:linear-gradient(90deg,transparent,var(--pink),var(--violet),transparent)}
-.sec.m{border-color:var(--bdr-m)}.sec.m .sec-bar{background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan2),transparent)}
-.sec.s{border-color:var(--bdr-s)}.sec.s .sec-bar{background:linear-gradient(90deg,transparent,var(--lime),var(--gold),transparent)}
-.sec.d{border-color:var(--bdr-d)}.sec.d .sec-bar{background:linear-gradient(90deg,transparent,var(--gold),var(--orange),transparent)}
-.sec.n{border-color:var(--bdr-n)}.sec.n .sec-bar{background:linear-gradient(90deg,transparent,var(--violet2),var(--cyan),transparent)}
-
-.sec-hd{display:flex;align-items:flex-start;gap:14px;margin-bottom:22px}
-.sec-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;position:relative;border:1px solid rgba(255,255,255,.1)}
-.ico-f{background:linear-gradient(135deg,rgba(255,36,121,.3),rgba(124,58,237,.3));box-shadow:0 0 30px rgba(255,36,121,.3)}
-.ico-m{background:linear-gradient(135deg,rgba(0,212,255,.3),rgba(14,165,233,.3));box-shadow:0 0 30px rgba(0,212,255,.28)}
-.ico-s{background:linear-gradient(135deg,rgba(74,222,128,.3),rgba(245,158,11,.3));box-shadow:0 0 30px rgba(74,222,128,.28)}
-.ico-d{background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(251,146,60,.3));box-shadow:0 0 30px rgba(245,158,11,.28)}
-.ico-n{background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(0,212,255,.3));box-shadow:0 0 30px rgba(124,58,237,.28)}
-
-.sec-title{font-family:"Orbitron",sans-serif;font-size:.9rem;font-weight:900;letter-spacing:1.5px;margin-bottom:4px}
-.t-f{background:linear-gradient(90deg,var(--pink),var(--violet2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.t-m{background:linear-gradient(90deg,var(--cyan),var(--cyan2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.t-s{background:linear-gradient(90deg,var(--lime),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.t-d{background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.t-n{background:linear-gradient(90deg,var(--violet2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sec-sub{font-size:.73rem;color:var(--muted);letter-spacing:.5px;line-height:1.5}
-
-/* ─── HINTS ───────────────────────────────────────────────────────────────── */
-.hints{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px}
-.h{padding:5px 12px;border-radius:18px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .16s}
-.h.f{background:var(--pink3);border-color:rgba(255,36,121,.22);color:var(--pink2)}.h.f:hover{background:rgba(255,36,121,.22);border-color:var(--pink);transform:translateY(-1px)}
-.h.m{background:var(--cyan3);border-color:rgba(0,212,255,.22);color:var(--cyan2)}.h.m:hover{background:rgba(0,212,255,.22);border-color:var(--cyan);transform:translateY(-1px)}
-.h.s{background:var(--lime3);border-color:rgba(74,222,128,.22);color:var(--lime2)}.h.s:hover{background:rgba(74,222,128,.22);border-color:var(--lime);transform:translateY(-1px)}
-.h.n{background:var(--violet3);border-color:rgba(124,58,237,.22);color:var(--violet2)}.h.n:hover{background:rgba(124,58,237,.22);border-color:var(--violet2);transform:translateY(-1px)}
-
-/* ─── INPUTS ─────────────────────────────────────────────────────────────── */
-.vi{width:100%;padding:13px 15px;border-radius:13px;
-  background:rgba(255,255,255,.03);border:1.5px solid;
-  color:var(--text);font-size:.9rem;line-height:1.65;resize:vertical;min-height:82px;transition:all .2s}
-.vi.f{border-color:rgba(255,36,121,.18)}.vi.f:focus{border-color:var(--pink);background:rgba(255,36,121,.04);box-shadow:0 0 0 3px rgba(255,36,121,.09)}
-.vi.m{border-color:rgba(0,212,255,.18)}.vi.m:focus{border-color:var(--cyan);background:rgba(0,212,255,.04);box-shadow:0 0 0 3px rgba(0,212,255,.09)}
-.vi.s{border-color:rgba(74,222,128,.18)}.vi.s:focus{border-color:var(--lime);background:rgba(74,222,128,.04);box-shadow:0 0 0 3px rgba(74,222,128,.09)}
-.vi.n{border-color:rgba(124,58,237,.18)}.vi.n:focus{border-color:var(--violet2);background:rgba(124,58,237,.04);box-shadow:0 0 0 3px rgba(124,58,237,.09)}
-.vi::placeholder{color:var(--muted);opacity:.55}
-.cc{font-size:.68rem;color:var(--muted);text-align:right;margin:5px 0 13px}
-
-/* Voice toggle */
-.vt-row{display:flex;gap:8px;margin-bottom:15px}
-.vt{flex:1;padding:11px 8px;border-radius:11px;font-size:.8rem;font-weight:700;
-  border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);
-  color:var(--muted);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px}
-.vt.af{background:var(--pink3);border-color:var(--pink);color:var(--pink2);box-shadow:0 0 20px rgba(255,36,121,.2)}
-.vt.am{background:var(--cyan3);border-color:var(--cyan);color:var(--cyan2);box-shadow:0 0 20px rgba(0,212,255,.2)}
-.vt:not(.af):not(.am):hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18)}
-
-/* Music toggle */
-.mtgl{display:flex;align-items:center;gap:10px;margin-bottom:15px;
-  padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-  border-radius:12px;cursor:pointer;user-select:none;transition:all .2s}
-.mtgl:hover{border-color:rgba(255,36,121,.28)}
-.mtgl-chk{width:22px;height:22px;border-radius:7px;border:2px solid rgba(255,255,255,.18);
-  display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s;flex-shrink:0}
-.mtgl-chk.on{background:linear-gradient(135deg,var(--pink),var(--violet));border-color:transparent;box-shadow:0 0 10px rgba(255,36,121,.4)}
-.mtgl-txt{font-size:.82rem;font-weight:600}
-.mtgl-right{margin-left:auto;font-size:.7rem;font-weight:800;color:var(--lime2)}
-
-/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
-.brow{display:flex;flex-wrap:wrap;gap:9px}
-.b{display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:12px;
-  font-size:.85rem;font-weight:700;transition:all .18s;white-space:nowrap;letter-spacing:.2px}
-.b:disabled{opacity:.35;cursor:not-allowed!important;transform:none!important}
-.b.gf{background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;box-shadow:0 4px 22px rgba(255,36,121,.35)}
-.b.gf:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,36,121,.55)}
-.b.gm{background:linear-gradient(135deg,var(--cyan),#0284c7);color:#02020e;box-shadow:0 4px 22px rgba(0,212,255,.32)}
-.b.gm:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,.55)}
-.b.gs{background:linear-gradient(135deg,var(--lime),#16a34a);color:#02020e;box-shadow:0 4px 22px rgba(74,222,128,.32)}
-.b.gs:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(74,222,128,.55)}
-.b.gd{background:linear-gradient(135deg,var(--gold),var(--orange));color:#fff;box-shadow:0 4px 22px rgba(245,158,11,.35)}
-.b.gd:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,158,11,.55)}
-.b.gn{background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;box-shadow:0 4px 22px rgba(124,58,237,.35)}
-.b.gn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,58,237,.55)}
-.b.play{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.13);color:var(--text)}
-.b.play:not(:disabled):hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.28)}
-.b.dl{background:rgba(74,222,128,.09);border:1.5px solid rgba(74,222,128,.28);color:var(--lime2)}
-.b.dl:not(:disabled):hover{background:rgba(74,222,128,.18);border-color:var(--lime);transform:scale(1.04)}
-
-/* ─── STATUS ─────────────────────────────────────────────────────────────── */
-.st{font-size:.8rem;padding:10px 14px;border-radius:11px;margin-top:12px;display:none}
-.st.show{display:block;animation:fin .22s ease}
-@keyframes fin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
-.st.load{background:rgba(124,58,237,.09);border:1px solid rgba(124,58,237,.28);color:var(--violet2)}
-.st.ok{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);color:var(--lime2)}
-.st.err{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);color:#fda4af}
-
-/* ─── PLAYER ─────────────────────────────────────────────────────────────── */
-.player{margin-top:16px;padding:16px;background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.07);border-radius:16px;
-  display:none;flex-direction:column;gap:10px}
-.player.show{display:flex;animation:fin .28s ease}
-.pl-top{display:flex;align-items:center;gap:11px}
-.pl-ico{font-size:1.4rem}
-.pl-title{font-size:.86rem;font-weight:700}
-.pl-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
-.wave{display:flex;align-items:center;gap:3px;margin-left:auto}
-.wb{width:3px;border-radius:2px;animation:wavea 1.1s ease-in-out infinite}
-.wb.pink{background:var(--pink)}.wb.cyan{background:var(--cyan)}.wb.lime{background:var(--lime)}.wb.gold{background:var(--gold)}.wb.vio{background:var(--violet2)}
-.wb:nth-child(1){height:5px}.wb:nth-child(2){height:12px;animation-delay:.1s}.wb:nth-child(3){height:8px;animation-delay:.22s}.wb:nth-child(4){height:16px;animation-delay:.34s}.wb:nth-child(5){height:10px;animation-delay:.46s}.wb:nth-child(6){height:14px;animation-delay:.58s}
-@keyframes wavea{0%,100%{transform:scaleY(.4);opacity:.4}50%{transform:scaleY(1.3);opacity:1}}
-.wave.off .wb{animation:none;transform:scaleY(.3);opacity:.25}
-audio{width:100%;border-radius:10px;accent-color:var(--pink)}
-
-/* Script/Lyrics box */
-.script-box{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
-  border-radius:12px;padding:14px 16px;margin-top:12px;display:none}
-.script-box.show{display:block;animation:fin .3s ease}
-.sb-title{font-size:.67rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.sb-body{font-size:.87rem;line-height:1.85;color:var(--dim);white-space:pre-wrap;font-style:italic}
-
-/* ─── DUET GRID ──────────────────────────────────────────────────────────── */
-.dg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
-@media(max-width:480px){.dg{grid-template-columns:1fr}}
-.dcard{padding:13px;border-radius:13px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025)}
-.dcard-lbl{font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
-.dcard-lbl.f{color:var(--pink)}.dcard-lbl.m{color:var(--cyan)}.dcard-lbl.n{color:var(--violet2)}
-.dcard-val{font-size:.79rem;color:var(--muted)}.dcard-val.rdy{color:var(--lime)}
-
-/* ─── SPIN ───────────────────────────────────────────────────────────────── */
-.spin{display:inline-block;width:13px;height:13px;
-  border:2px solid rgba(255,255,255,.2);border-top-color:#fff;
-  border-radius:50%;animation:spi .6s linear infinite;flex-shrink:0}
-.spin.dk{border:2px solid rgba(0,0,0,.15);border-top-color:#02020e}
-@keyframes spi{to{transform:rotate(360deg)}}
-
-/* ─── FOOTER ────────────────────────────────────────────────────────────── */
-footer{position:relative;z-index:1;
-  background:rgba(2,2,14,.92);backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,.05);
-  padding:36px 24px;text-align:center}
-.ft-ring{position:relative;width:52px;height:52px;margin:0 auto 14px}
-.ft-ring::before{content:"";position:absolute;inset:-2px;border-radius:50%;
-  background:conic-gradient(var(--pink),var(--violet),var(--cyan),var(--pink));
-  animation:spin 6s linear infinite}
-.ft-ring-inner{position:absolute;inset:2px;border-radius:50%;
-  background:rgba(2,2,14,.95);display:flex;align-items:center;justify-content:center;font-size:20px}
-.ft-name{font-family:"Orbitron",sans-serif;font-size:1.05rem;font-weight:900;
-  background:linear-gradient(90deg,var(--pink),var(--violet2),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-.ft-by{margin-bottom:10px}
-.ft-by a{color:#60a5fa;text-decoration:none;font-size:.82rem;font-weight:700;
-  padding:5px 14px;border-radius:20px;
-  background:rgba(24,119,242,.1);border:1px solid rgba(24,119,242,.3);
-  display:inline-flex;align-items:center;gap:6px;transition:all .2s}
-.ft-by a:hover{background:rgba(24,119,242,.2);color:#93c5fd}
-.ft-dim{font-size:.68rem;color:var(--muted);margin-top:8px}
-
-@media(max-width:520px){
-  header{padding:0 14px}.hd-name{font-size:.85rem}
-  .hero{padding:50px 14px 44px}
-  .wrap{padding:0 12px 60px}
-  .sec{padding:18px 15px}
-  .b{padding:10px 14px;font-size:.78rem}
-}
+/* ── UTILITIES ── */
+.hidden{display:none!important}
 </style>
 </head>
 <body>
 
-<!-- BACKGROUND -->
-<div class="bg-wrap">
-  <div class="bg-base"></div>
-  <div class="bg-grid"></div>
-  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-  <div class="orb o4"></div><div class="orb o5"></div>
-  <div id="stars"></div>
-</div>
+<div class="bg-layer"></div>
 
 <!-- HEADER -->
-<header>
-  <div class="hd-logo">
-    <div class="hd-badge">
-      <div class="hd-badge-inner">🎙️</div>
-    </div>
+<header class="header">
+  <div class="station-name">
+    <span class="icon">📻</span>
     <div>
-      <div class="hd-name">DRIAN AI GENERATOR</div>
-      <div class="hd-sub">Radio Jingle Voice Studio</div>
+      <div class="title">POWER LOVE SONG HITS</div>
+      <div class="sub">Live Radio Station · 24/7</div>
     </div>
   </div>
-  <div class="hd-right">
-    <a class="fb-link" href="https://www.facebook.com/profile.php?id=61589941790784" target="_blank">
-      👥 Power Inc
-    </a>
-    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+  <div class="header-right">
+    <div class="on-air-badge"><span class="dot"></span>ON AIR</div>
+    <button class="admin-btn" id="adminBtn" title="Admin Panel">⋮</button>
   </div>
 </header>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="ring ring1"></div>
-  <div class="ring ring2"></div>
-  <div class="ring ring3"></div>
-  <div class="hero-glow"></div>
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="adminModal">
+  <div class="admin-panel">
+    <div class="panel-header">
+      <h2>🎛️ ADMIN PANEL</h2>
+      <button class="close-btn" id="closeAdmin">✕</button>
+    </div>
+    <div class="panel-body">
 
-  <div class="hero-eyebrow">🇵🇭 Tagalog AI Voice · Libre · Walang Sign Up Needed</div>
+      <div class="panel-section">
+        <h3>🎵 Upload Music</h3>
+        <div class="upload-btn-wrap">
+          <label class="upload-btn" for="musicFileInput">
+            <span>📂</span> Pumili ng Music Files (No Limit)
+          </label>
+          <input type="file" id="musicFileInput" accept="audio/*" multiple style="display:none"/>
+          <div class="upload-progress" id="musicProgress"><div class="upload-progress-bar" id="musicProgressBar"></div></div>
+          <div id="uploadStatus" style="font-size:.72rem;color:var(--pink2);text-align:center;min-height:1.2em"></div>
+        </div>
+      </div>
 
-  <h1 class="hero-title">
-    <span class="ht1">DRIAN AI GENERATOR</span>
-    <span class="ht2">🎵 RADIO JINGLE VOICE STUDIO</span>
-  </h1>
+      <div class="panel-section">
+        <h3>🎺 Jingle Box <span style="font-size:.7rem;color:var(--muted);font-weight:400">(Max 4)</span></h3>
+        <div class="jingle-list" id="jingleList"></div>
+        <label class="add-jingle-btn" for="jingleFileInput" id="addJingleBtn">
+          <span>➕</span> Mag-upload ng Jingle
+        </label>
+        <input type="file" id="jingleFileInput" accept="audio/*" style="display:none"/>
+        <div class="jingle-limit-note" id="jingleLimitNote">0 / 4 jingles</div>
+      </div>
 
-  <div class="hero-by">
-    <span style="font-size:.75rem;color:var(--muted)">Made by</span>
-    <a href="https://www.facebook.com/profile.php?id=61589941790784" target="_blank">👑 Power Inc Official</a>
-  </div>
+      <div class="panel-section">
+        <h3>📋 Manage Songs</h3>
+        <div class="song-manage-list" id="songManageList"></div>
+      </div>
 
-  <p class="hero-desc">
-    I-type ang iyong script at awtomatikong gagawa ng <strong>tunay na kumakantang boses</strong> — may malakas na relaxing background music! Magkakaiba ang tunog ng babae at lalake. Libre para sa lahat.
-  </p>
-
-  <div class="hero-pills">
-    <div class="hp s">🎤 Song Generator · Kumakanta</div>
-    <div class="hp n">📺 AI News Broadcaster</div>
-    <div class="hp f">🎵 Jingle Voice · Babae</div>
-    <div class="hp m">🌤️ Weather Voice · Lalake</div>
-    <div class="hp d">🎭 Duet Mode · I-Download</div>
+    </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="wrap">
+<!-- MAIN WRAP -->
+<div class="main-wrap">
 
-  <!-- SONG GENERATOR -->
-  <div class="sec s">
-    <div class="sec-bar"></div>
-    <div class="sec-hd">
-      <div class="sec-ico ico-s">🎤</div>
-      <div>
-        <div class="sec-title t-s">SONG GENERATOR — KUMAKANTA</div>
-        <div class="sec-sub">I-type ang tema → AI gagawa ng lyrics → Kumakanta talaga, hindi nagbabasa · Malakas na background music 🔊</div>
+  <!-- DJ STAGE -->
+  <div class="dj-stage">
+    <!-- Left: VU Meter -->
+    <div class="vu-panel">
+      <div class="panel-title">VU METER</div>
+      <canvas class="vu-canvas" id="vuCanvas"></canvas>
+      <canvas class="eq-canvas" id="eqCanvas"></canvas>
+    </div>
+
+    <!-- Center: Vinyl + Controls -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div class="disc-wrap">
+        <div class="vinyl" id="vinylWrap">
+          <div class="vinyl-disc" id="vinylDisc">
+            <div class="vinyl-groove"></div>
+            <div class="vinyl-label">
+              <span>POWER</span>
+              <span>LOVE FM</span>
+            </div>
+            <div class="vinyl-center"></div>
+          </div>
+        </div>
+      </div>
+      <div class="now-playing-center">
+        <div class="now-playing-label">♪ NOW PLAYING</div>
+        <div class="now-playing-title" id="nowPlayingTitle">Waiting for songs...</div>
+        <div class="now-playing-status" id="nowPlayingStatus">Upload songs sa Admin Panel</div>
+        <div class="progress-wrap">
+          <div class="progress-bar-bg" id="progressBg">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="time-display">
+            <span id="timeElapsed">0:00</span>
+            <span id="timeDuration">0:00</span>
+          </div>
+        </div>
+        <div class="play-wrap">
+          <button class="big-play-btn" id="bigPlayBtn">▶</button>
+          <div class="volume-wrap">
+            <span class="vol-icon">🔈</span>
+            <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="85" style="--vol:85%"/>
+            <span class="vol-icon">🔊</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="hints">
-      <div class="h s" onclick="qs('#songTxt').value=this.dataset.t;cc('songTxt','sCt',180)" data-t="Power FM ang bagong relaxing music station ng Pilipinas!">📻 Power FM</div>
-      <div class="h s" onclick="qs('#songTxt').value=this.dataset.t;cc('songTxt','sCt',180)" data-t="Isang masaya at magandang umaga para sa lahat ng Pilipino!">🌅 Umaga</div>
-      <div class="h s" onclick="qs('#songTxt').value=this.dataset.t;cc('songTxt','sCt',180)" data-t="Salamat sa iyong pagmamahal, ika-y mahal kita nang walang hanggan.">💕 Love Song</div>
-      <div class="h s" onclick="qs('#songTxt').value=this.dataset.t;cc('songTxt','sCt',180)" data-t="DRIAN Radio, ang pinaka-sikat na istasyon ngayon sa buong Pilipinas!">🎶 Radio ID</div>
-      <div class="h s" onclick="qs('#songTxt').value=this.dataset.t;cc('songTxt','sCt',180)" data-t="Pilipinas kong mahal, ikaw ang aking pag-asa at inspirasyon.">🇵🇭 Bayan</div>
-    </div>
-
-    <textarea class="vi s" id="songTxt" placeholder="I-type ang tema ng kanta... Halimbawa: Power FM ang pinaka-relaxing music station!" rows="3" oninput="cc(this.id,'sCt',180)" maxlength="180"></textarea>
-    <div class="cc"><span id="sCt">0</span>/180</div>
-
-    <div style="font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Boses ng Kanta:</div>
-    <div class="vt-row">
-      <button class="vt af" id="svF" onclick="sv('f')">🎵 Babae · Jingle</button>
-      <button class="vt" id="svM" onclick="sv('m')">🌤️ Lalake · Broadcast</button>
-    </div>
-
-    <div class="brow">
-      <button class="b gs" id="bSong" onclick="genSong()"><span id="iSong">🎤</span><span id="lSong">I-Generate ang Kanta</span></button>
-      <button class="b play" id="bSPlay" onclick="pAud('songAud','wSong')" disabled>▶ I-Play</button>
-      <button class="b dl" id="bSDl" onclick="dl(sBlob,'drian-song.mp3')" disabled>⬇ I-Download</button>
-    </div>
-    <div class="st" id="sSt"></div>
-
-    <div class="script-box" id="lyBox">
-      <div class="sb-title">🎵 AI-Generated Lyrics:</div>
-      <div class="sb-body" id="lyTxt"></div>
-    </div>
-
-    <div class="player" id="sPlayer">
-      <div class="pl-top">
-        <div class="pl-ico">🎤</div>
-        <div><div class="pl-title">AI Song · Kumakanta</div><div class="pl-sub" id="sSubtitle">Power Inc</div></div>
-        <div class="wave" id="wSong"><div class="wb lime"></div><div class="wb lime"></div><div class="wb lime"></div><div class="wb lime"></div><div class="wb lime"></div><div class="wb lime"></div></div>
-      </div>
-      <audio id="songAud" controls></audio>
+    <!-- Right: EQ Panel (desktop only) -->
+    <div class="eq-panel">
+      <div class="panel-title">SPECTRUM</div>
+      <canvas class="eq-canvas" id="specCanvas" style="height:120px"></canvas>
+      <canvas class="vu-canvas" id="vu2Canvas"></canvas>
     </div>
   </div>
 
-  <!-- AI NEWS BROADCASTER -->
-  <div class="sec n">
-    <div class="sec-bar"></div>
-    <div class="sec-hd">
-      <div class="sec-ico ico-n">📺</div>
-      <div>
-        <div class="sec-title t-n">AI NEWS BROADCASTER — POWER INC NEWS</div>
-        <div class="sec-sub">I-type ang headline → AI gagawa ng buong Tagalog news script → AngeloNeural broadcast voice · Professional at malinaw</div>
-      </div>
+  <!-- SCHEDULE INDICATOR -->
+  <div class="schedule-bar" id="schedBar">
+    <span class="sched-item"><span class="sched-dot" id="sd1"></span><span class="sched-label">Song 1</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item"><span class="sched-dot" id="sd2"></span><span class="sched-label">Song 2</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item"><span class="sched-dot" id="sd3"></span><span class="sched-label">Song 3</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item" style="color:var(--gold2)"><span class="sched-dot" id="sdJ" style="background:var(--dim)"></span><span class="sched-label">🎺 Jingle</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item"><span class="sched-dot" id="sd4"></span><span class="sched-label">Song 4</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item"><span class="sched-dot" id="sd5"></span><span class="sched-label">Song 5</span></span>
+    <span class="sched-sep">›</span>
+    <span class="sched-item" style="color:var(--cyan)"><span class="sched-dot" id="sdT" style="background:var(--dim)"></span><span class="sched-label">🕐 Time Check</span></span>
+  </div>
+
+  <!-- DJ BOARD -->
+  <div class="dj-board">
+    <div class="dj-fader-wrap">
+      <div class="dj-fader-label">GAIN A</div>
+      <input type="range" class="dj-fader" id="faderA" min="0" max="100" value="80" orient="vertical"/>
     </div>
-
-    <div class="hints">
-      <div class="h n" onclick="qs('#newsTxt').value=this.dataset.t;cc('newsTxt','nCt',220)" data-t="Malakas na bagyo ang babagyo sa Luzon bukas ayon sa PAGASA">🌀 Bagyo</div>
-      <div class="h n" onclick="qs('#newsTxt').value=this.dataset.t;cc('newsTxt','nCt',220)" data-t="Bagong presyo ng bilihin sa pamilihan ngayong Lunes">🛒 Bilihin</div>
-      <div class="h n" onclick="qs('#newsTxt').value=this.dataset.t;cc('newsTxt','nCt',220)" data-t="Nagwagi ang Pilipinas sa internasyonal na palaro ngayong Sabado">🏅 Palaro</div>
-      <div class="h n" onclick="qs('#newsTxt').value=this.dataset.t;cc('newsTxt','nCt',220)" data-t="Mainit na panahon inaasahan sa buong Pilipinas ngayong linggo ayon sa PAGASA">☀️ Panahon</div>
-      <div class="h n" onclick="qs('#newsTxt').value=this.dataset.t;cc('newsTxt','nCt',220)" data-t="Power Inc naglunsad ng bagong serbisyo para sa mga Pilipino sa buong mundo">📣 Power Inc</div>
+    <div class="dj-fader-wrap">
+      <div class="dj-fader-label">GAIN B</div>
+      <input type="range" class="dj-fader" id="faderB" min="0" max="100" value="80" orient="vertical"/>
     </div>
-
-    <textarea class="vi n" id="newsTxt" placeholder="I-type ang news headline... Halimbawa: Bagong batas laban sa kriminalidad ipinasa ng Senado" rows="3" oninput="cc(this.id,'nCt',220)" maxlength="220"></textarea>
-    <div class="cc"><span id="nCt">0</span>/220</div>
-
-    <div class="mtgl" id="nMtgl" onclick="toggleMusicN()">
-      <div class="mtgl-chk" id="nMchk">  </div>
-      <div><div class="mtgl-txt">🎵 Background Music — <span id="nMtxt">OFF</span></div><div style="font-size:.68rem;color:var(--muted);margin-top:1px">Malambot na ambient tones</div></div>
-      <div class="mtgl-right" id="nMright">OFF</div>
+    <div class="dj-knob-wrap">
+      <div class="dj-knob knob-lo" id="kLo" title="Low EQ"></div>
+      <div class="dj-fader-label">LOW</div>
     </div>
-
-    <div class="brow">
-      <button class="b gn" id="bNews" onclick="genNews()"><span id="iNews">📺</span><span id="lNews">I-Generate ang News Voice</span></button>
-      <button class="b play" id="bNPlay" onclick="pAud('newsAud','wNews')" disabled>▶ I-Play</button>
-      <button class="b dl" id="bNDl" onclick="dl(nBlob,'drian-news.mp3')" disabled>⬇ I-Download</button>
+    <div class="dj-knob-wrap">
+      <div class="dj-knob knob-mid" id="kMid" title="Mid EQ"></div>
+      <div class="dj-fader-label">MID</div>
     </div>
-    <div class="st" id="nSt"></div>
-
-    <div class="script-box" id="newsScBox">
-      <div class="sb-title">📺 AI-Generated News Script:</div>
-      <div class="sb-body" id="newsScTxt"></div>
+    <div class="dj-knob-wrap">
+      <div class="dj-knob knob-hi" id="kHi" title="High EQ"></div>
+      <div class="dj-fader-label">HIGH</div>
     </div>
-
-    <div class="player" id="nPlayer">
-      <div class="pl-top">
-        <div class="pl-ico">📺</div>
-        <div><div class="pl-title">Power Inc News Broadcast</div><div class="pl-sub" id="nSubtitle">AI News Voice</div></div>
-        <div class="wave" id="wNews"><div class="wb vio"></div><div class="wb vio"></div><div class="wb vio"></div><div class="wb vio"></div><div class="wb vio"></div><div class="wb vio"></div></div>
-      </div>
-      <audio id="newsAud" controls></audio>
+    <div class="dj-fader-wrap">
+      <div class="dj-fader-label">MASTER</div>
+      <input type="range" class="dj-fader" id="faderMaster" min="0" max="100" value="85" orient="vertical"/>
+    </div>
+    <div class="eq-sliders">
+      <div class="eq-band"><label>60Hz</label><input type="range" id="eq60" min="-12" max="12" value="0"/></div>
+      <div class="eq-band"><label>250</label><input type="range" id="eq250" min="-12" max="12" value="0"/></div>
+      <div class="eq-band"><label>1K</label><input type="range" id="eq1k" min="-12" max="12" value="0"/></div>
+      <div class="eq-band"><label>4K</label><input type="range" id="eq4k" min="-12" max="12" value="0"/></div>
+      <div class="eq-band"><label>16K</label><input type="range" id="eq16k" min="-12" max="12" value="0"/></div>
+    </div>
+    <div class="crossfader-wrap">
+      <div class="dj-fader-label">CROSSFADER — A ◄──────── ► B</div>
+      <input type="range" class="crossfader" id="crossfader" min="0" max="100" value="50"/>
     </div>
   </div>
 
-  <!-- FEMALE JINGLE -->
-  <div class="sec f">
-    <div class="sec-bar"></div>
-    <div class="sec-hd">
-      <div class="sec-ico ico-f">🎵</div>
-      <div>
-        <div class="sec-title t-f">RADIO JINGLE VOICE — BABAE</div>
-        <div class="sec-sub">fil-PH-BlessicaNeural · Tagalog · May kasamang malambot na relaxing background music</div>
+  <!-- PLAYLIST BOX -->
+  <div class="playlist-section">
+    <div class="playlist-header">
+      <h2>🎵 SONGS PLAYLIST</h2>
+      <span class="playlist-count" id="playlistCount">0 songs</span>
+    </div>
+    <div class="playlist-box" id="playlistBox">
+      <div class="playlist-empty">
+        <span class="e-icon">🎵</span>
+        <p>Walang songs pa. Mag-upload sa Admin Panel (⋮).</p>
       </div>
-    </div>
-
-    <div class="hints">
-      <div class="h f" onclick="qs('#fTxt').value=this.dataset.t;cc('fTxt','fCt',300)" data-t="Ito ang Power FM, ang bagong relaxing music station ng Pilipinas!">📻 Power FM</div>
-      <div class="h f" onclick="qs('#fTxt').value=this.dataset.t;cc('fTxt','fCt',300)" data-t="Magandang umaga! Nandito na kayo sa aming programa. Makinig at mag-enjoy ng magandang musika.">🌅 Morning</div>
-      <div class="h f" onclick="qs('#fTxt').value=this.dataset.t;cc('fTxt','fCt',300)" data-t="You are listening to the best hits of today and yesterday, only here on Power Inc Radio!">🎶 Station ID</div>
-      <div class="h f" onclick="qs('#fTxt').value=this.dataset.t;cc('fTxt','fCt',300)" data-t="Salamat sa pakikinig! Patuloy na makisamahan sa amin sa Power Inc Radio.">💫 Sign Off</div>
-    </div>
-
-    <textarea class="vi f" id="fTxt" placeholder="I-type ang radio jingle script..." rows="3" oninput="cc(this.id,'fCt',300)" maxlength="300"></textarea>
-    <div class="cc"><span id="fCt">0</span>/300</div>
-
-    <div class="mtgl" id="fMtgl" onclick="toggleMusicF()">
-      <div class="mtgl-chk on" id="fMchk">✓</div>
-      <div><div class="mtgl-txt">🎵 Background Music — <span id="fMtxt">ON</span></div><div style="font-size:.68rem;color:var(--muted);margin-top:1px">F-major chord · Maliwanag at matamis</div></div>
-      <div class="mtgl-right" id="fMright" style="color:var(--lime2)">ON</div>
-    </div>
-
-    <div class="brow">
-      <button class="b gf" id="bFem" onclick="genFem()"><span id="iFem">🎙️</span><span id="lFem">I-Generate ang Jingle Voice</span></button>
-      <button class="b play" id="bFPlay" onclick="pAud('femAud','wFem')" disabled>▶ I-Play</button>
-      <button class="b dl" id="bFDl" onclick="dl(fBlob,'drian-jingle.mp3')" disabled>⬇ I-Download</button>
-    </div>
-    <div class="st" id="fSt"></div>
-    <div class="player" id="fPlayer">
-      <div class="pl-top">
-        <div class="pl-ico">🎵</div>
-        <div><div class="pl-title">Radio Jingle Voice</div><div class="pl-sub" id="fSubtitle">Babae · BlessicaNeural</div></div>
-        <div class="wave" id="wFem"><div class="wb pink"></div><div class="wb pink"></div><div class="wb pink"></div><div class="wb pink"></div><div class="wb pink"></div><div class="wb pink"></div></div>
-      </div>
-      <audio id="femAud" controls></audio>
     </div>
   </div>
 
-  <!-- MALE WEATHER -->
-  <div class="sec m">
-    <div class="sec-bar"></div>
-    <div class="sec-hd">
-      <div class="sec-ico ico-m">🌤️</div>
-      <div>
-        <div class="sec-title t-m">WEATHER / BROADCAST VOICE — LALAKE</div>
-        <div class="sec-sub">fil-PH-AngeloNeural · Tagalog · Malinaw at malakas na broadcast voice · Walang background music</div>
-      </div>
+  <!-- ONLINE SEARCH -->
+  <div class="search-section">
+    <div class="search-header">
+      <span>🔍</span>
+      <h2>ONLINE MUSIC SEARCH</h2>
     </div>
-
-    <div class="hints">
-      <div class="h m" onclick="qs('#mTxt').value=this.dataset.t;cc('mTxt','mCt',300)" data-t="Magandang umaga! Ayon sa PAGASA, mainit at maulap ang panahon ngayon sa Kamaynilaan. Inaasahang maabot ang 34 degrees Celsius.">⛅ Weather</div>
-      <div class="h m" onclick="qs('#mTxt').value=this.dataset.t;cc('mTxt','mCt',300)" data-t="Babala para sa lahat! Malakas na ulan at hangin ang inaasahan bukas sa buong bansa. Mangyaring mag-ingat.">⚠️ Storm</div>
-      <div class="h m" onclick="qs('#mTxt').value=this.dataset.t;cc('mTxt','mCt',300)" data-t="Ito ang Power Inc Radio. Temperatura ngayon: 28 degrees Celsius. Bahagyang maulap ang kalangitan.">📊 Forecast</div>
-      <div class="h m" onclick="qs('#mTxt').value=this.dataset.t;cc('mTxt','mCt',300)" data-t="Magandang gabi! Malamig ang panahon ngayong gabi sa Metro Manila. Temperatura: 24 degrees Celsius.">🌙 Gabi</div>
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Hanapin ang kanta... (e.g. Apo Hiking Society)"/>
+      <button class="search-go-btn" id="searchBtn">SEARCH</button>
     </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
 
-    <textarea class="vi m" id="mTxt" placeholder="I-type ang weather o broadcast script..." rows="3" oninput="cc(this.id,'mCt',300)" maxlength="300"></textarea>
-    <div class="cc"><span id="mCt">0</span>/300</div>
-
-    <div class="brow">
-      <button class="b gm" id="bMal" onclick="genMal()"><span id="iMal">🎤</span><span id="lMal">I-Generate ang Weather Voice</span></button>
-      <button class="b play" id="bMPlay" onclick="pAud('malAud','wMal')" disabled>▶ I-Play</button>
-      <button class="b dl" id="bMDl" onclick="dl(mBlob,'drian-weather.mp3')" disabled>⬇ I-Download</button>
-    </div>
-    <div class="st" id="mSt"></div>
-    <div class="player" id="mPlayer">
-      <div class="pl-top">
-        <div class="pl-ico">🌤️</div>
-        <div><div class="pl-title">Weather / Broadcast Voice</div><div class="pl-sub" id="mSubtitle">Lalake · AngeloNeural</div></div>
-        <div class="wave" id="wMal"><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div><div class="wb cyan"></div></div>
-      </div>
-      <audio id="malAud" controls></audio>
+  <!-- LIBRARY -->
+  <div class="library-section">
+    <h2>📚 MY LIBRARY</h2>
+    <div class="library-list" id="libraryList">
+      <div class="empty-note">Walang naka-save pa. Mag-search at i-save ang mga kanta.</div>
     </div>
   </div>
 
-  <!-- DUET MODE -->
-  <div class="sec d">
-    <div class="sec-bar"></div>
-    <div class="sec-hd">
-      <div class="sec-ico ico-d">🎭</div>
-      <div>
-        <div class="sec-title t-d">DUET MODE — PAGSAMAHIN</div>
-        <div class="sec-sub">I-combine ang Jingle Voice (Babae) + Broadcast Voice (Lalake) · I-download bilang isang MP3 file</div>
-      </div>
-    </div>
+</div><!-- /main-wrap -->
 
-    <div class="dg">
-      <div class="dcard">
-        <div class="dcard-lbl f">🎵 Jingle Voice (Babae)</div>
-        <div class="dcard-val" id="dFSt">Wala pang na-generate</div>
-      </div>
-      <div class="dcard">
-        <div class="dcard-lbl m">🌤️ Weather Voice (Lalake)</div>
-        <div class="dcard-val" id="dMSt">Wala pang na-generate</div>
-      </div>
-    </div>
+<!-- FOOTER CONTROLS -->
+<div class="footer-controls">
+  <button class="fc-btn tts-test-btn" id="ttsTestBtn">🎙️ Test Time Check Voice</button>
+  <button class="fc-btn copy-code-btn" id="copyCodeBtn">📋 Copy Full HTML Code</button>
+  <div class="status-pill"><span class="status-dot" id="statusDot"></span><span id="statusText">Radio OFF</span></div>
+  <div class="agc-badge">AGC ON</div>
+</div>
 
-    <div class="mtgl" id="dMtgl" onclick="toggleMusicD()">
-      <div class="mtgl-chk" id="dMchk">  </div>
-      <div><div class="mtgl-txt">🎵 Background Music sa Duet — <span id="dMtxt">OFF</span></div></div>
-      <div class="mtgl-right" id="dMright">OFF</div>
-    </div>
-
-    <div class="brow">
-      <button class="b gd" id="bDuet" onclick="genDuet()"><span id="iDuet">🎭</span><span id="lDuet">I-Combine ang Dalawang Boses</span></button>
-      <button class="b play" id="bDPlay" onclick="pAud('duetAud','wDuet')" disabled>▶ I-Play ang Duet</button>
-      <button class="b dl" id="bDDl" onclick="dl(dBlob,'drian-duet.mp3')" disabled>⬇ I-Download ang Duet</button>
-    </div>
-    <div class="st" id="dSt"></div>
-    <div class="player" id="dPlayer">
-      <div class="pl-top">
-        <div class="pl-ico">🎭</div>
-        <div><div class="pl-title">Duet — Babae + Lalake</div><div class="pl-sub" id="dSubtitle">Combined Track</div></div>
-        <div class="wave" id="wDuet"><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div><div class="wb gold"></div></div>
-      </div>
-      <audio id="duetAud" controls></audio>
-    </div>
-  </div>
-
-</div><!-- /wrap -->
-
-<!-- FOOTER -->
-<footer>
-  <div class="ft-ring">
-    <div class="ft-ring-inner">🎙️</div>
-  </div>
-  <div class="ft-name">DRIAN AI GENERATOR</div>
-  <div class="ft-by">
-    <a href="https://www.facebook.com/profile.php?id=61589941790784" target="_blank">
-      👑 Made by Power Inc Official
-    </a>
-  </div>
-  <div class="ft-dim">Radio Jingle Voice Studio · Tagalog AI · Libre para sa lahat ng Pilipino 🇵🇭</div>
-</footer>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-/* ── INIT ─────────────────────────────────────────────────────────────────── */
-const qs = s => document.querySelector(s);
+// ══════════════════════════════════════════════════════════════
+//  POWER LOVE SONG HITS — Complete Radio Engine
+// ══════════════════════════════════════════════════════════════
 
-// Stars
-(function(){
-  const c=qs('#stars');
-  for(let i=0;i<90;i++){
-    const s=document.createElement('div');s.className='st';
-    const z=Math.random()*2.2+.6;
-    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*6}s`;
-    c.appendChild(s);
+/* ── IndexedDB Setup ── */
+const DB_NAME = "powerFMRadio";
+const DB_VER = 2;
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains("songs"))
+        d.createObjectStore("songs", { keyPath: "id", autoIncrement: true });
+      if (!d.objectStoreNames.contains("jingles"))
+        d.createObjectStore("jingles", { keyPath: "id", autoIncrement: true });
+      if (!d.objectStoreNames.contains("library"))
+        d.createObjectStore("library", { keyPath: "id" });
+    };
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror = () => rej(req.error);
+  });
+}
+
+function dbOp(store, mode, fn) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, mode);
+    const s = tx.objectStore(store);
+    const req = fn(s);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, "readonly");
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+function dbAdd(store, data) { return dbOp(store, "readwrite", s => s.add(data)); }
+function dbDelete(store, id) { return dbOp(store, "readwrite", s => s.delete(id)); }
+function dbPut(store, data) { return dbOp(store, "readwrite", s => s.put(data)); }
+
+/* ── State ── */
+let songs = [], jingles = [], libraryItems = [];
+let currentIndex = 0;
+let songCycleCount = 0;   // songs since last jingle/timecheck
+let totalSongsPlayed = 0;
+let isPlaying = false;
+let isCrossfading = false;
+let isDoingBreak = false;  // true when playing jingle or TTS
+let currentBlobUrls = {};
+let preloadedNextBlob = null;
+let radioStarted = false;
+
+/* ── Audio Elements (2 for crossfade) ── */
+const audioA = new Audio();
+const audioB = new Audio();
+audioA.crossOrigin = "anonymous";
+audioB.crossOrigin = "anonymous";
+audioA.preload = "auto";
+audioB.preload = "auto";
+let activeEl = audioA, inactiveEl = audioB;
+let currentIsA = true;
+
+/* ── Web Audio Setup ── */
+let audioCtx, analyser, compressor, masterGainNode;
+let srcNodeA, srcNodeB;
+let gainNodeA, gainNodeB;
+let eqFilters = {};
+const CROSSFADE_SECS = 3;
+
+function initAudioCtx() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  // AGC compressor
+  compressor = audioCtx.createDynamicsCompressor();
+  compressor.threshold.value = -20;
+  compressor.knee.value = 30;
+  compressor.ratio.value = 10;
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.3;
+
+  // EQ filters
+  const bands = [{id:"eq60",freq:60,type:"lowshelf"},{id:"eq250",freq:250,type:"peaking"},
+    {id:"eq1k",freq:1000,type:"peaking"},{id:"eq4k",freq:4000,type:"peaking"},
+    {id:"eq16k",freq:16000,type:"highshelf"}];
+  let prevNode = null;
+  bands.forEach(b => {
+    const f = audioCtx.createBiquadFilter();
+    f.type = b.type; f.frequency.value = b.freq; f.gain.value = 0;
+    eqFilters[b.id] = f;
+    if (prevNode) prevNode.connect(f);
+    prevNode = f;
+  });
+
+  masterGainNode = audioCtx.createGain();
+  masterGainNode.gain.value = 0.85;
+
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  analyser.smoothingTimeConstant = 0.75;
+
+  gainNodeA = audioCtx.createGain(); gainNodeA.gain.value = 1;
+  gainNodeB = audioCtx.createGain(); gainNodeB.gain.value = 0;
+
+  srcNodeA = audioCtx.createMediaElementSource(audioA);
+  srcNodeB = audioCtx.createMediaElementSource(audioB);
+
+  const firstEQ = eqFilters["eq60"];
+  const lastEQ = eqFilters["eq16k"];
+
+  srcNodeA.connect(gainNodeA); gainNodeA.connect(firstEQ);
+  srcNodeB.connect(gainNodeB); gainNodeB.connect(firstEQ);
+  lastEQ.connect(masterGainNode);
+  masterGainNode.connect(compressor);
+  compressor.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  // EQ band controls
+  bands.forEach(b => {
+    const el = document.getElementById(b.id);
+    if (el) el.addEventListener("input", () => { eqFilters[b.id].gain.value = +el.value; });
+  });
+}
+
+/* ── Volume & Fader Controls ── */
+const volSlider = document.getElementById("volSlider");
+const faderMaster = document.getElementById("faderMaster");
+
+volSlider.addEventListener("input", () => {
+  const v = volSlider.value / 100;
+  volSlider.style.setProperty("--vol", volSlider.value + "%");
+  if (masterGainNode) masterGainNode.gain.value = v;
+  audioA.volume = audioB.volume = v; // fallback
+});
+faderMaster.addEventListener("input", () => {
+  const v = faderMaster.value / 100;
+  if (masterGainNode) masterGainNode.gain.value = v;
+});
+
+/* ── Utility: format time ── */
+function fmtTime(s) {
+  if (!s || isNaN(s)) return "0:00";
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return m + ":" + String(sec).padStart(2, "0");
+}
+
+/* ── Toast ── */
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), dur);
+}
+
+/* ── Schedule dots UI ── */
+function updateScheduleDots() {
+  const ids = ["sd1","sd2","sd3","sd4","sd5"];
+  ids.forEach((id, i) => {
+    const el = document.getElementById(id);
+    const pos = i < 3 ? i : i - 1; // position in cycle (0-4 but with jingle gap)
+    const cyclePos = songCycleCount; // 0-2 before jingle
+    const totalCyclePos = songCycleCount + (totalSongsPlayed >= 3 ? 1 : 0);
+    el.className = "sched-dot";
+    if (i < 3) {
+      if (i < cyclePos % 3) el.classList.add("done");
+      else if (i === cyclePos % 3 && isPlaying && !isDoingBreak) el.classList.add("active");
+    } else {
+      const posAfter = i - 3;
+      if (totalSongsPlayed % 5 > posAfter + 3) el.classList.add("done");
+      else if ((totalSongsPlayed % 5 === posAfter + 3) && isPlaying && !isDoingBreak) el.classList.add("active");
+    }
+  });
+  document.getElementById("sdJ").className = "sched-dot" + (isDoingBreak && document.getElementById("nowPlayingStatus").textContent.includes("Jingle") ? " active" : "");
+  document.getElementById("sdT").className = "sched-dot" + (isDoingBreak && document.getElementById("nowPlayingStatus").textContent.includes("Time") ? " active" : "");
+}
+
+/* ── Status ── */
+function setStatus(text, active = false) {
+  document.getElementById("statusText").textContent = text;
+  document.getElementById("statusDot").className = "status-dot" + (active ? " active" : "");
+}
+
+/* ── Load blob from stored ArrayBuffer ── */
+function songToBlob(song) {
+  return URL.createObjectURL(new Blob([song.data], { type: song.type || "audio/mpeg" }));
+}
+
+/* ── Clean up blob URL ── */
+function revoke(url) { if (url && url.startsWith("blob:")) URL.revokeObjectURL(url); }
+
+/* ── Play song at index ── */
+async function playSongAtIndex(idx, el, gainNode, fade = false) {
+  if (songs.length === 0) return;
+  const s = songs[idx];
+  const url = songToBlob(s);
+  if (currentBlobUrls[el === audioA ? "A" : "B"]) revoke(currentBlobUrls[el === audioA ? "A" : "B"]);
+  currentBlobUrls[el === audioA ? "A" : "B"] = url;
+  el.src = url;
+  el.currentTime = 0;
+  if (fade) {
+    gainNode.gain.value = 0;
+    el.volume = 0;
+  } else {
+    gainNode.gain.value = 1;
+    el.volume = volSlider.value / 100;
   }
-})();
+  try { await el.play(); } catch (e) { console.warn("Play error:", e.message); }
+  updateNowPlaying(idx);
+}
 
-// Floating particles
-(function(){
-  const bg=qs('.bg-wrap');
-  const cols=['rgba(255,36,121,.6)','rgba(124,58,237,.6)','rgba(0,212,255,.5)','rgba(74,222,128,.5)','rgba(245,158,11,.5)'];
-  for(let i=0;i<18;i++){
-    const p=document.createElement('div');p.className='prt';
-    const x=Math.random()*100;
-    p.style.cssText=`left:${x}%;bottom:-5px;background:${cols[i%5]};--dx:${(Math.random()-.5)*80}px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*15}s;filter:blur(1px)`;
-    bg.appendChild(p);
+/* ── Now Playing UI ── */
+function updateNowPlaying(idx) {
+  const i = idx !== undefined ? idx : currentIndex;
+  if (songs.length === 0) {
+    document.getElementById("nowPlayingTitle").textContent = "Walang songs pa...";
+    document.getElementById("nowPlayingStatus").textContent = "Upload songs sa Admin Panel";
+    return;
   }
-})();
-
-/* ── STATE ───────────────────────────────────────────────────────────────── */
-let fBlob=null,mBlob=null,dBlob=null,sBlob=null,nBlob=null;
-let fMusic=true, dMusic=false, nMusic=false;
-let songVoice='f';
-const busy={f:false,m:false,s:false,d:false,n:false};
-
-/* ── HELPERS ─────────────────────────────────────────────────────────────── */
-function cc(id,cid,max){const v=qs('#'+id).value.length;qs('#'+cid).textContent=v;}
-
-function setSt(id,msg,cls){const el=qs('#'+id);el.textContent=msg;el.className='st show '+cls;}
-function clrSt(id){qs('#'+id).className='st';}
-
-function pAud(aid,wid){
-  const a=qs('#'+aid);
-  if(a.paused){a.play();qs('#'+wid).classList.remove('off');a.onended=()=>qs('#'+wid).classList.add('off');}
-  else{a.pause();qs('#'+wid).classList.add('off');}
-}
-function setAud(pid,aid,sub,blob){
-  qs('#'+aid).src=URL.createObjectURL(blob);
-  qs('#'+pid).classList.add('show');
-  if(sub) qs('#'+sub.id).textContent=sub.txt;
-}
-function dl(blob,name){if(!blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
-
-function setBusy(key,bid,iid,lid,icon,loadTxt,val){
-  busy[key]=val;
-  qs('#'+bid).disabled=val;
-  if(val){qs('#'+iid).className='spin'+(icon==='dk'?' dk':'');qs('#'+iid).textContent='';qs('#'+lid).textContent=loadTxt;}
-  else{qs('#'+iid).className='';qs('#'+iid).textContent=icon;qs('#'+lid).textContent=lid==='lFem'?'I-Generate ang Jingle Voice':lid==='lMal'?'I-Generate ang Weather Voice':lid==='lSong'?'I-Generate ang Kanta':lid==='lNews'?'I-Generate ang News Voice':'I-Combine ang Dalawang Boses';}
+  const s = songs[i];
+  document.getElementById("nowPlayingTitle").textContent = s.name;
+  document.getElementById("nowPlayingStatus").textContent = "📻 Live on Power FM";
+  updatePlaylistHighlight(i);
+  updateMediaSession(s.name);
 }
 
-function setDuetState(){
-  const fok=!!fBlob,mok=!!mBlob;
-  qs('#dFSt').className='dcard-val'+(fok?' rdy':'');
-  qs('#dFSt').textContent=fok?'✅ Handa na':'Wala pang na-generate';
-  qs('#dMSt').className='dcard-val'+(mok?' rdy':'');
-  qs('#dMSt').textContent=mok?'✅ Handa na':'Wala pang na-generate';
+function updateMediaSession(title) {
+  if (!("mediaSession" in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title, artist: "Power Love Song Hits", album: "📻 Power FM Radio"
+  });
+  navigator.mediaSession.setActionHandler("pause", () => { /* prevent external pause */ });
+  navigator.mediaSession.setActionHandler("play", () => { startRadio(); });
 }
 
-/* ── TOGGLES ─────────────────────────────────────────────────────────────── */
-function toggleMusicF(){
-  fMusic=!fMusic;
-  qs('#fMchk').className='mtgl-chk'+(fMusic?' on':'');
-  qs('#fMchk').textContent=fMusic?'✓':'';
-  qs('#fMtxt').textContent=fMusic?'ON':'OFF';
-  qs('#fMright').textContent=fMusic?'ON':'OFF';
-  qs('#fMright').style.color=fMusic?'var(--lime2)':'var(--muted)';
-}
-function toggleMusicN(){
-  nMusic=!nMusic;
-  qs('#nMchk').className='mtgl-chk'+(nMusic?' on':'');
-  qs('#nMchk').textContent=nMusic?'✓':'';
-  qs('#nMtxt').textContent=nMusic?'ON':'OFF';
-  qs('#nMright').textContent=nMusic?'ON':'OFF';
-  qs('#nMright').style.color=nMusic?'var(--lime2)':'var(--muted)';
-}
-function toggleMusicD(){
-  dMusic=!dMusic;
-  qs('#dMchk').className='mtgl-chk'+(dMusic?' on':'');
-  qs('#dMchk').textContent=dMusic?'✓':'';
-  qs('#dMtxt').textContent=dMusic?'ON':'OFF';
-  qs('#dMright').textContent=dMusic?'ON':'OFF';
-  qs('#dMright').style.color=dMusic?'var(--lime2)':'var(--muted)';
+/* ── Progress bar update ── */
+function updateProgress() {
+  const el = activeEl;
+  if (!el || !el.duration) return;
+  const pct = (el.currentTime / el.duration) * 100;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("timeElapsed").textContent = fmtTime(el.currentTime);
+  document.getElementById("timeDuration").textContent = fmtTime(el.duration);
 }
 
-function sv(v){
-  songVoice=v;
-  qs('#svF').className='vt'+(v==='f'?' af':'');
-  qs('#svM').className='vt'+(v==='m'?' am':'');
+/* ── Crossfade logic ── */
+let crossfadeTimer = null;
+let crossfadeStarted = false;
+
+function startCrossfade(nextIdx) {
+  if (crossfadeStarted || isCrossfading) return;
+  crossfadeStarted = true;
+  isCrossfading = true;
+
+  const nextEl = inactiveEl;
+  const nextGain = currentIsA ? gainNodeB : gainNodeA;
+  const curGain = currentIsA ? gainNodeA : gainNodeB;
+
+  const nextSong = songs[nextIdx];
+  const url = songToBlob(nextSong);
+  const key = currentIsA ? "B" : "A";
+  if (currentBlobUrls[key]) revoke(currentBlobUrls[key]);
+  currentBlobUrls[key] = url;
+  nextEl.src = url;
+  nextEl.currentTime = 0;
+  nextEl.volume = 0;
+  nextGain.gain.value = 0;
+  nextEl.play().catch(() => {});
+
+  const duration = CROSSFADE_SECS * 1000;
+  const startTime = performance.now();
+  const volBase = volSlider.value / 100;
+
+  function doFade() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    curGain.gain.value = (1 - t);
+    nextGain.gain.value = t;
+    nextEl.volume = t * volBase;
+    activeEl.volume = (1 - t) * volBase;
+    if (t < 1) { requestAnimationFrame(doFade); return; }
+
+    // Swap
+    activeEl.pause();
+    currentIsA = !currentIsA;
+    [activeEl, inactiveEl] = [inactiveEl, activeEl];
+    curGain.gain.value = 0;
+    nextGain.gain.value = 1;
+    activeEl.volume = volBase;
+
+    currentIndex = nextIdx;
+    isCrossfading = false;
+    crossfadeStarted = false;
+
+    songCycleCount++;
+    totalSongsPlayed++;
+    updateNowPlaying(currentIndex);
+    updatePlaylistHighlight(currentIndex);
+    updateScheduleDots();
+    checkScheduleAfterCrossfade();
+  }
+  requestAnimationFrame(doFade);
 }
 
-/* ── SONG GENERATOR ──────────────────────────────────────────────────────── */
-async function genSong(){
-  if(busy.s)return;
-  const p=qs('#songTxt').value.trim();
-  if(!p){setSt('sSt','Mag-type muna ng tema ng kanta!','err');return;}
-  setBusy('s','bSong','iSong','lSong','🎤','Ginagawa ang kanta...',true);
-  qs('#bSPlay').disabled=true;qs('#bSDl').disabled=true;
-  qs('#sPlayer').classList.remove('show');qs('#lyBox').classList.remove('show');
-  setSt('sSt','⏳ Ginagawa ang lyrics at kumakanta ang AI — sandali lang (15-30 sec)...','load');
-  try{
-    const r=await fetch('/api/drian/song',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p,voice:songVoice==='f'?'female':'male'})});
-    if(!r.ok)throw new Error(await r.text());
-    const lyrics=r.headers.get('X-Lyrics')||'';
-    sBlob=await r.blob();
-    setAud('sPlayer','songAud',{id:'sSubtitle',txt:(songVoice==='f'?'Babae · Jingle':'Lalake · Broadcast')+' · Kumakanta + Malakas na Music'},sBlob);
-    qs('#bSPlay').disabled=false;qs('#bSDl').disabled=false;
-    if(lyrics){qs('#lyTxt').textContent=decodeURIComponent(lyrics);qs('#lyBox').classList.add('show');}
-    setSt('sSt','✅ Handa na! Kumakanta na ang AI. I-play o i-download.','ok');
-  }catch(e){setSt('sSt','❌ Error: '+e.message,'err');}
-  finally{setBusy('s','bSong','iSong','lSong','🎤','',false);}
+function checkScheduleAfterCrossfade() {
+  if (totalSongsPlayed % 5 === 0 && totalSongsPlayed > 0) {
+    // Time check next when this song ends
+    activeEl.removeEventListener("ended", onSongEnded);
+    activeEl.addEventListener("ended", function h() {
+      activeEl.removeEventListener("ended", h);
+      doTimeCheck();
+    }, { once: true });
+    // No crossfade for time check
+  } else if (songCycleCount >= 3) {
+    activeEl.removeEventListener("ended", onSongEnded);
+    activeEl.addEventListener("ended", function h() {
+      activeEl.removeEventListener("ended", h);
+      doJingle();
+    }, { once: true });
+  }
+  // else normal flow continues via timeupdate
 }
 
-/* ── AI NEWS BROADCASTER ─────────────────────────────────────────────────── */
-async function genNews(){
-  if(busy.n)return;
-  const h=qs('#newsTxt').value.trim();
-  if(!h){setSt('nSt','Mag-type muna ng headline!','err');return;}
-  setBusy('n','bNews','iNews','lNews','📺','Ginagawa ang news broadcast...',true);
-  qs('#bNPlay').disabled=true;qs('#bNDl').disabled=true;
-  qs('#nPlayer').classList.remove('show');qs('#newsScBox').classList.remove('show');
-  setSt('nSt','⏳ AI nagse-script ng balita at ginagawa ang broadcast voice...','load');
-  try{
-    const r=await fetch('/api/drian/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({headline:h,withMusic:nMusic})});
-    if(!r.ok)throw new Error(await r.text());
-    const sc=r.headers.get('X-Script')||'';
-    nBlob=await r.blob();
-    setAud('nPlayer','newsAud',{id:'nSubtitle',txt:'Power Inc News'+(nMusic?' + Music':'')},nBlob);
-    qs('#bNPlay').disabled=false;qs('#bNDl').disabled=false;
-    if(sc){qs('#newsScTxt').textContent=decodeURIComponent(sc);qs('#newsScBox').classList.add('show');}
-    setSt('nSt','✅ Handa na ang balita! I-play o i-download.','ok');
-  }catch(e){setSt('nSt','❌ Error: '+e.message,'err');}
-  finally{setBusy('n','bNews','iNews','lNews','📺','',false);}
+/* ── Song ended handler ── */
+function onSongEnded() {
+  if (!isPlaying || isCrossfading || isDoingBreak) return;
+  songCycleCount++;
+  totalSongsPlayed++;
+  updateScheduleDots();
+
+  if (totalSongsPlayed % 5 === 0 && totalSongsPlayed > 0) {
+    doTimeCheck();
+  } else if (songCycleCount >= 3) {
+    doJingle();
+  } else {
+    playNextSong();
+  }
 }
 
-/* ── FEMALE JINGLE ───────────────────────────────────────────────────────── */
-async function genFem(){
-  if(busy.f)return;
-  const t=qs('#fTxt').value.trim();
-  if(!t){setSt('fSt','Mag-type muna ng script!','err');return;}
-  setBusy('f','bFem','iFem','lFem','🎙️','Ginagawa ang jingle voice...',true);
-  qs('#bFPlay').disabled=true;qs('#bFDl').disabled=true;
-  qs('#fPlayer').classList.remove('show');
-  setSt('fSt','⏳ Ginagawa ang Radio Jingle Voice'+(fMusic?' na may background music':'')+'...','load');
-  try{
-    const r=await fetch('/api/drian/female',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t,withMusic:fMusic})});
-    if(!r.ok)throw new Error(await r.text());
-    fBlob=await r.blob();
-    setAud('fPlayer','femAud',{id:'fSubtitle',txt:'Babae · BlessicaNeural'+(fMusic?' + F-major Music':'')},fBlob);
-    qs('#bFPlay').disabled=false;qs('#bFDl').disabled=false;
-    setSt('fSt','✅ Handa na! I-play o i-download.','ok');
-    setDuetState();
-  }catch(e){setSt('fSt','❌ Error: '+e.message,'err');}
-  finally{setBusy('f','bFem','iFem','lFem','🎙️','',false);}
+/* ── Time update — trigger crossfade ── */
+function onTimeUpdate() {
+  updateProgress();
+  if (!isPlaying || isCrossfading || isDoingBreak || songs.length <= 1) return;
+
+  const remaining = activeEl.duration - activeEl.currentTime;
+  if (remaining > 0 && remaining <= CROSSFADE_SECS && !crossfadeStarted) {
+    // Determine what's next
+    const nextSongCount = totalSongsPlayed + 1;
+    const nextCycle = songCycleCount + 1;
+    const nextIsTimeCheck = (nextSongCount % 5 === 0 && nextSongCount > 0);
+    const nextIsJingle = (nextCycle >= 3 && jingles.length > 0);
+
+    if (!nextIsTimeCheck && !nextIsJingle) {
+      // Crossfade to next song
+      const nextIdx = (currentIndex + 1) % songs.length;
+      startCrossfade(nextIdx);
+    }
+    // else: no crossfade, let it end naturally, onSongEnded handles it
+  }
 }
 
-/* ── MALE WEATHER ────────────────────────────────────────────────────────── */
-async function genMal(){
-  if(busy.m)return;
-  const t=qs('#mTxt').value.trim();
-  if(!t){setSt('mSt','Mag-type muna ng script!','err');return;}
-  setBusy('m','bMal','iMal','lMal','🎤','Ginagawa ang boses...',true);
-  qs('#bMPlay').disabled=true;qs('#bMDl').disabled=true;
-  qs('#mPlayer').classList.remove('show');
-  setSt('mSt','⏳ Ginagawa ang Weather Broadcast Voice...','load');
-  try{
-    const r=await fetch('/api/drian/male',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})});
-    if(!r.ok)throw new Error(await r.text());
-    mBlob=await r.blob();
-    setAud('mPlayer','malAud',{id:'mSubtitle',txt:'Lalake · AngeloNeural'},mBlob);
-    qs('#bMPlay').disabled=false;qs('#bMDl').disabled=false;
-    setSt('mSt','✅ Handa na! I-play o i-download.','ok');
-    setDuetState();
-  }catch(e){setSt('mSt','❌ Error: '+e.message,'err');}
-  finally{setBusy('m','bMal','iMal','lMal','🎤','',false);}
+/* ── Play next song ── */
+function playNextSong() {
+  if (songs.length === 0) return;
+  const nextIdx = (currentIndex + 1) % songs.length;
+  currentIndex = nextIdx;
+  const el = activeEl;
+  const gain = currentIsA ? gainNodeA : gainNodeB;
+  playSongAtIndex(nextIdx, el, gain);
+  el.removeEventListener("ended", onSongEnded);
+  el.addEventListener("ended", onSongEnded, { once: true });
+  el.removeEventListener("timeupdate", onTimeUpdate);
+  el.addEventListener("timeupdate", onTimeUpdate);
 }
 
-/* ── DUET ────────────────────────────────────────────────────────────────── */
-async function genDuet(){
-  if(busy.d)return;
-  const ft=qs('#fTxt').value.trim(), mt=qs('#mTxt').value.trim();
-  if(!ft&&!mt&&!fBlob&&!mBlob){setSt('dSt','I-generate muna ang Jingle Voice at Weather Voice sa itaas.','err');return;}
-  if(!ft&&!fBlob){setSt('dSt','Mag-type muna ng script sa Jingle Voice (Babae) section.','err');return;}
-  if(!mt&&!mBlob){setSt('dSt','Mag-type muna ng script sa Weather Voice (Lalake) section.','err');return;}
-  setBusy('d','bDuet','iDuet','lDuet','🎭','Pinagsasama ang mga boses...',true);
-  qs('#bDPlay').disabled=true;qs('#bDDl').disabled=true;
-  qs('#dPlayer').classList.remove('show');
-  setSt('dSt','⏳ Pinagsasama ang babae + lalake na boses...','load');
-  try{
-    const r=await fetch('/api/drian/duet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({femaleText:ft||null,maleText:mt||null,withMusic:dMusic})});
-    if(!r.ok)throw new Error(await r.text());
-    dBlob=await r.blob();
-    setAud('dPlayer','duetAud',{id:'dSubtitle',txt:'Babae + Lalake Combined'+(dMusic?' + Music':'')},dBlob);
-    qs('#bDPlay').disabled=false;qs('#bDDl').disabled=false;
-    setSt('dSt','✅ Handa na ang Duet! I-play o i-download.','ok');
-  }catch(e){setSt('dSt','❌ Error: '+e.message,'err');}
-  finally{setBusy('d','bDuet','iDuet','lDuet','🎭','',false);}
+/* ── Start Radio ── */
+async function startRadio() {
+  if (songs.length === 0) { showToast("🎵 Mag-upload muna ng songs sa Admin Panel!"); return; }
+  initAudioCtx();
+  if (audioCtx.state === "suspended") await audioCtx.resume();
+
+  isPlaying = true;
+  isDoingBreak = false;
+  radioStarted = true;
+  document.getElementById("bigPlayBtn").textContent = "⏸";
+  document.getElementById("bigPlayBtn").classList.add("playing");
+  document.getElementById("vinylDisc").classList.add("spinning");
+  setStatus("Radio LIVE", true);
+
+  const gain = currentIsA ? gainNodeA : gainNodeB;
+  gain.gain.value = 1;
+  await playSongAtIndex(currentIndex, activeEl, gain);
+  activeEl.addEventListener("ended", onSongEnded, { once: true });
+  activeEl.addEventListener("timeupdate", onTimeUpdate);
+  updateScheduleDots();
 }
+
+/* ── Stop Radio ── */
+function stopRadio() {
+  isPlaying = false;
+  activeEl.pause();
+  inactiveEl.pause();
+  document.getElementById("bigPlayBtn").textContent = "▶";
+  document.getElementById("bigPlayBtn").classList.remove("playing");
+  document.getElementById("vinylDisc").classList.remove("spinning");
+  setStatus("Radio OFF", false);
+}
+
+/* ── Play Jingle ── */
+async function doJingle() {
+  if (jingles.length === 0) { songCycleCount = 0; playNextSong(); return; }
+  isDoingBreak = true;
+  const j = jingles[Math.floor(Math.random() * jingles.length)];
+  const url = songToBlob(j);
+
+  document.getElementById("nowPlayingTitle").textContent = "🎺 Station Jingle";
+  document.getElementById("nowPlayingStatus").textContent = "🎺 Power FM Jingle — Back to music soon!";
+
+  const jingleEl = new Audio();
+  jingleEl.src = url;
+  jingleEl.volume = volSlider.value / 100;
+  try { await jingleEl.play(); } catch (e) {}
+  jingleEl.addEventListener("ended", () => {
+    revoke(url);
+    isDoingBreak = false;
+    songCycleCount = 0;
+    updateScheduleDots();
+    playNextSong();
+    activeEl.addEventListener("ended", onSongEnded, { once: true });
+    activeEl.addEventListener("timeupdate", onTimeUpdate);
+  }, { once: true });
+}
+
+/* ── TTS Time Check ── */
+async function doTimeCheck(isTest = false) {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const h12 = hours % 12 || 12;
+  const ampm = hours >= 12 ? "PM" : "AM";
+  let timeText;
+  if (minutes === 0) {
+    timeText = `Power FM. Time check is ${h12} o'clock ${ampm}. Ito ay Power Love Song Hits, ang inyong istasyon ng pag-ibig. Stay tuned!`;
+  } else if (minutes === 30) {
+    timeText = `Power FM. Time check is ${h12} thirty ${ampm}. Ito ay Power Love Song Hits. Makinig pa!`;
+  } else {
+    timeText = `Power FM. Time check is ${h12} ${minutes} ${ampm}. Ito ay Power Love Song Hits, lagi kayong makinig!`;
+  }
+
+  if (!isTest) {
+    isDoingBreak = true;
+    document.getElementById("nowPlayingTitle").textContent = "🕐 Time Check";
+    document.getElementById("nowPlayingStatus").textContent = "🕐 Power FM Time Check";
+  }
+
+  try {
+    await playTTS(timeText);
+  } catch (e) {
+    console.warn("TTS failed:", e.message);
+  }
+
+  if (!isTest) {
+    isDoingBreak = false;
+    songCycleCount = 0;
+    updateScheduleDots();
+    playNextSong();
+    activeEl.addEventListener("ended", onSongEnded, { once: true });
+    activeEl.addEventListener("timeupdate", onTimeUpdate);
+  }
+}
+
+/* ── TTS via server (BlessicaNeural) or Web Speech fallback ── */
+async function playTTS(text) {
+  return new Promise(async (resolve) => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(); } };
+
+    try {
+      const res = await fetch(`/api/tts?text=${encodeURIComponent(text)}`);
+      if (!res.ok) throw new Error("TTS server error");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const ttsEl = new Audio(url);
+      ttsEl.volume = 1.0;
+      ttsEl.play().catch(() => webSpeechFallback(text, finish));
+      ttsEl.addEventListener("ended", () => { revoke(url); finish(); }, { once: true });
+      ttsEl.addEventListener("error", () => { revoke(url); webSpeechFallback(text, finish); }, { once: true });
+    } catch (e) {
+      webSpeechFallback(text, finish);
+    }
+  });
+}
+
+function webSpeechFallback(text, onDone) {
+  if (!window.speechSynthesis) { onDone(); return; }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    v.name.includes("Samantha") || v.name.includes("Female") ||
+    v.name.includes("Google UK English Female") || v.name.includes("Microsoft Zira") ||
+    v.name.includes("Microsoft Eva") || v.name.includes("Karen") ||
+    (v.lang.startsWith("en") && v.name.toLowerCase().includes("female"))
+  ) || voices.find(v => v.lang.startsWith("en")) || voices[0];
+  if (preferred) utt.voice = preferred;
+  utt.rate = 0.78;
+  utt.pitch = 1.15;
+  utt.volume = 1.0;
+  utt.lang = "en-US";
+  utt.onend = onDone;
+  utt.onerror = onDone;
+  window.speechSynthesis.speak(utt);
+}
+
+/* ── Big Play Button ── */
+document.getElementById("bigPlayBtn").addEventListener("click", async () => {
+  initAudioCtx();
+  if (audioCtx?.state === "suspended") await audioCtx.resume();
+  if (isPlaying) { stopRadio(); }
+  else if (radioStarted) {
+    isPlaying = true;
+    activeEl.play().catch(() => {});
+    document.getElementById("bigPlayBtn").textContent = "⏸";
+    document.getElementById("bigPlayBtn").classList.add("playing");
+    document.getElementById("vinylDisc").classList.add("spinning");
+    setStatus("Radio LIVE", true);
+  } else { startRadio(); }
+});
+
+/* ── Prevent auto-pause on tab/app switch ── */
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return;
+  if (isPlaying && activeEl.paused && !isDoingBreak) {
+    activeEl.play().catch(() => {});
+  }
+});
+// Never pause on page hide
+window.addEventListener("pagehide", e => { e.preventDefault(); }, { capture: true, passive: false });
+
+/* ── VU / Spectrum Canvas ── */
+const vuCanvas = document.getElementById("vuCanvas");
+const vuCtx = vuCanvas?.getContext("2d");
+const specCanvas = document.getElementById("specCanvas");
+const specCtx = specCanvas?.getContext("2d");
+const vu2Canvas = document.getElementById("vu2Canvas");
+const vu2Ctx = vu2Canvas?.getContext("2d");
+
+function resizeCanvases() {
+  [vuCanvas, specCanvas, vu2Canvas].forEach(c => {
+    if (!c) return;
+    c.width = c.offsetWidth * devicePixelRatio;
+    c.height = c.offsetHeight * devicePixelRatio;
+  });
+}
+window.addEventListener("resize", resizeCanvases);
+setTimeout(resizeCanvases, 200);
+
+function drawVisualizers() {
+  requestAnimationFrame(drawVisualizers);
+  if (!analyser || !isPlaying) return;
+
+  const bufLen = analyser.frequencyBinCount;
+  const freqData = new Uint8Array(bufLen);
+  const timeData = new Uint8Array(bufLen);
+  analyser.getByteFrequencyData(freqData);
+  analyser.getByteTimeDomainData(timeData);
+
+  // VU Meter (left panel)
+  if (vuCtx && vuCanvas.width) {
+    const w = vuCanvas.width, h = vuCanvas.height;
+    vuCtx.clearRect(0, 0, w, h);
+    const avg = freqData.slice(0, 8).reduce((a, b) => a + b, 0) / 8 / 255;
+    const barW = Math.max(1, w / 20 - 2);
+    for (let i = 0; i < 20; i++) {
+      const filled = i < Math.floor(avg * 20);
+      const hue = i < 14 ? 140 : i < 17 ? 60 : 0;
+      vuCtx.fillStyle = filled ? `hsl(${hue},80%,55%)` : "rgba(255,255,255,.06)";
+      vuCtx.fillRect(i * (barW + 2), 0, barW, h);
+    }
+  }
+
+  // Spectrum (right panel)
+  if (specCtx && specCanvas.width) {
+    const w = specCanvas.width, h = specCanvas.height;
+    specCtx.clearRect(0, 0, w, h);
+    const bars = 64;
+    const bw = w / bars;
+    for (let i = 0; i < bars; i++) {
+      const idx = Math.floor(i * bufLen / bars);
+      const val = freqData[idx] / 255;
+      const bh = val * h;
+      const hue = (i / bars) * 280 + 260;
+      specCtx.fillStyle = `hsl(${hue},90%,${40 + val * 30}%)`;
+      specCtx.fillRect(i * bw + 0.5, h - bh, bw - 1, bh);
+    }
+  }
+
+  // VU2 (right panel)
+  if (vu2Ctx && vu2Canvas.width) {
+    const w = vu2Canvas.width, h = vu2Canvas.height;
+    vu2Ctx.clearRect(0, 0, w, h);
+    const avg = freqData.slice(0, 8).reduce((a, b) => a + b, 0) / 8 / 255;
+    const barW = Math.max(1, w / 20 - 2);
+    for (let i = 0; i < 20; i++) {
+      const filled = i < Math.floor(avg * 20);
+      const hue = i < 14 ? 280 : i < 17 ? 200 : 0;
+      vu2Ctx.fillStyle = filled ? `hsl(${hue},80%,60%)` : "rgba(255,255,255,.06)";
+      vu2Ctx.fillRect(i * (barW + 2), 0, barW, h);
+    }
+  }
+}
+drawVisualizers();
+
+/* ── DB Load on start ── */
+async function loadAll() {
+  songs = await dbGetAll("songs");
+  jingles = await dbGetAll("jingles");
+  libraryItems = await dbGetAll("library");
+  renderPlaylist();
+  renderJingleList();
+  renderSongManageList();
+  renderLibrary();
+}
+
+/* ── Render Playlist ── */
+function renderPlaylist() {
+  const box = document.getElementById("playlistBox");
+  document.getElementById("playlistCount").textContent = songs.length + " songs";
+  if (songs.length === 0) {
+    box.innerHTML = `<div class="playlist-empty"><span class="e-icon">🎵</span><p>Walang songs pa. Mag-upload sa Admin Panel (⋮).</p></div>`;
+    return;
+  }
+  box.innerHTML = songs.map((s, i) => `
+    <div class="playlist-item ${i === currentIndex && isPlaying ? "active" : ""}" data-idx="${i}" onclick="playFromPlaylist(${i})">
+      <span class="num">${i + 1}</span>
+      <div class="p-icon">${i === currentIndex && isPlaying ? "🎵" : "♪"}</div>
+      <div class="p-info">
+        <div class="p-name">${escHtml(s.name)}</div>
+        <div class="p-dur">${s.dur || ""}</div>
+      </div>
+      ${i === currentIndex && isPlaying ? `<div class="p-playing-anim"><span></span><span></span><span></span></div>` : ""}
+      <button class="p-del" onclick="event.stopPropagation();deleteSong(${s.id})" title="Delete">🗑</button>
+    </div>
+  `).join("");
+}
+
+function updatePlaylistHighlight(idx) {
+  document.querySelectorAll(".playlist-item").forEach((el, i) => {
+    el.classList.toggle("active", i === idx && isPlaying);
+    const icon = el.querySelector(".p-icon");
+    if (icon) icon.textContent = (i === idx && isPlaying) ? "🎵" : "♪";
+    const num = el.querySelector(".num");
+    if (i === idx && isPlaying) {
+      if (!el.querySelector(".p-playing-anim")) {
+        const anim = document.createElement("div");
+        anim.className = "p-playing-anim";
+        anim.innerHTML = "<span></span><span></span><span></span>";
+        el.insertBefore(anim, el.querySelector(".p-del"));
+      }
+    } else {
+      const anim = el.querySelector(".p-playing-anim");
+      if (anim) anim.remove();
+    }
+  });
+}
+
+function escHtml(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+async function playFromPlaylist(idx) {
+  initAudioCtx();
+  if (audioCtx?.state === "suspended") await audioCtx.resume();
+  if (!isPlaying) {
+    currentIndex = idx;
+    isPlaying = true;
+    isDoingBreak = false;
+    radioStarted = true;
+    document.getElementById("bigPlayBtn").textContent = "⏸";
+    document.getElementById("bigPlayBtn").classList.add("playing");
+    document.getElementById("vinylDisc").classList.add("spinning");
+    setStatus("Radio LIVE", true);
+    const gain = currentIsA ? gainNodeA : gainNodeB;
+    gain.gain.value = 1;
+    await playSongAtIndex(idx, activeEl, gain);
+    activeEl.addEventListener("ended", onSongEnded, { once: true });
+    activeEl.addEventListener("timeupdate", onTimeUpdate);
+  } else {
+    currentIndex = idx;
+    crossfadeStarted = false;
+    isCrossfading = false;
+    const gain = currentIsA ? gainNodeA : gainNodeB;
+    await playSongAtIndex(idx, activeEl, gain);
+    activeEl.addEventListener("ended", onSongEnded, { once: true });
+    activeEl.addEventListener("timeupdate", onTimeUpdate);
+  }
+}
+
+/* ── Upload Music ── */
+const musicFileInput = document.getElementById("musicFileInput");
+musicFileInput.addEventListener("change", async () => {
+  const files = Array.from(musicFileInput.files);
+  if (!files.length) return;
+  const prog = document.getElementById("musicProgress");
+  const bar = document.getElementById("musicProgressBar");
+  const stat = document.getElementById("uploadStatus");
+  prog.classList.add("show"); bar.style.width = "0%";
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    const data = await f.arrayBuffer();
+    const name = f.name.replace(/\.[^.]+$/, "");
+    await dbAdd("songs", { name, data, type: f.type || "audio/mpeg", addedAt: Date.now() });
+    bar.style.width = ((i + 1) / files.length * 100) + "%";
+    stat.textContent = `✅ ${i + 1}/${files.length} — ${name}`;
+  }
+  songs = await dbGetAll("songs");
+  renderPlaylist(); renderSongManageList();
+  prog.classList.remove("show"); bar.style.width = "0%";
+  stat.textContent = `✅ ${files.length} songs na-upload!`;
+  setTimeout(() => { stat.textContent = ""; }, 3000);
+  musicFileInput.value = "";
+  showToast(`✅ ${files.length} songs uploaded!`);
+  if (!radioStarted && isPlaying === false) {
+    setTimeout(() => startRadio(), 500);
+  }
+});
+
+/* ── Delete Song ── */
+async function deleteSong(id) {
+  await dbDelete("songs", id);
+  songs = await dbGetAll("songs");
+  if (currentIndex >= songs.length && songs.length > 0) currentIndex = songs.length - 1;
+  if (songs.length === 0) { stopRadio(); radioStarted = false; currentIndex = 0; }
+  renderPlaylist(); renderSongManageList();
+  showToast("🗑 Song deleted");
+}
+
+/* ── Jingle Upload ── */
+const jingleFileInput = document.getElementById("jingleFileInput");
+const addJingleBtn = document.getElementById("addJingleBtn");
+jingleFileInput.addEventListener("change", async () => {
+  if (jingles.length >= 4) { showToast("❌ Max 4 jingles lang!"); return; }
+  const f = jingleFileInput.files[0];
+  if (!f) return;
+  const data = await f.arrayBuffer();
+  const name = f.name.replace(/\.[^.]+$/, "");
+  await dbAdd("jingles", { name, data, type: f.type || "audio/mpeg", addedAt: Date.now() });
+  jingles = await dbGetAll("jingles");
+  renderJingleList();
+  showToast("✅ Jingle added!");
+  jingleFileInput.value = "";
+});
+
+async function deleteJingle(id) {
+  await dbDelete("jingles", id);
+  jingles = await dbGetAll("jingles");
+  renderJingleList();
+  showToast("🗑 Jingle deleted");
+}
+
+function renderJingleList() {
+  const list = document.getElementById("jingleList");
+  const note = document.getElementById("jingleLimitNote");
+  const btn = document.getElementById("addJingleBtn");
+  note.textContent = jingles.length + " / 4 jingles";
+  btn.disabled = jingles.length >= 4;
+  if (jingles.length === 0) { list.innerHTML = `<div class="empty-note">Walang jingle pa.</div>`; return; }
+  list.innerHTML = jingles.map(j => `
+    <div class="jingle-item">
+      <span style="font-size:1rem">🎺</span>
+      <span class="jingle-name">${escHtml(j.name)}</span>
+      <button class="del-btn" onclick="deleteJingle(${j.id})">🗑</button>
+    </div>
+  `).join("");
+}
+
+function renderSongManageList() {
+  const list = document.getElementById("songManageList");
+  if (songs.length === 0) { list.innerHTML = `<div class="empty-note">Walang songs pa.</div>`; return; }
+  list.innerHTML = songs.map(s => `
+    <div class="song-manage-item">
+      <span style="font-size:.9rem">🎵</span>
+      <span class="sname">${escHtml(s.name)}</span>
+      <button class="sdel" onclick="deleteSong(${s.id})">🗑</button>
+    </div>
+  `).join("");
+}
+
+/* ── Admin Panel ── */
+document.getElementById("adminBtn").addEventListener("click", () => {
+  document.getElementById("adminModal").classList.add("open");
+});
+document.getElementById("closeAdmin").addEventListener("click", () => {
+  document.getElementById("adminModal").classList.remove("open");
+});
+document.getElementById("adminModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("adminModal"))
+    document.getElementById("adminModal").classList.remove("open");
+});
+
+/* ── Online Search (SoundCloud via /api/search) ── */
+document.getElementById("searchBtn").addEventListener("click", doSearch);
+document.getElementById("searchInput").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+
+async function doSearch() {
+  const q = document.getElementById("searchInput").value.trim();
+  if (!q) return;
+  const res = document.getElementById("searchResults");
+  res.innerHTML = `<div class="search-loading">🔍 Naghahanap...</div>`;
+  try {
+    const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+    const data = await r.json();
+    if (!data.results || data.results.length === 0) {
+      res.innerHTML = `<div class="search-loading">Walang nahanap. Subukan ng ibang keyword.</div>`; return;
+    }
+    res.innerHTML = data.results.map((item, i) => `
+      <div class="search-result-item">
+        <img class="sri-thumb" src="${escHtml(item.thumbnail || "")}" onerror="this.src=''" alt=""/>
+        <div class="sri-info">
+          <div class="sri-title">${escHtml(item.title)}</div>
+          <div class="sri-artist">${escHtml(item.artist)} · ${fmtTime(item.duration)}</div>
+        </div>
+        <div class="sri-actions">
+          <button class="sri-btn sri-play-btn" onclick="playOnlineTrack('${escHtml(item.url)}','${escHtml(item.title)}')">▶ Play</button>
+          <button class="sri-btn sri-save-btn" onclick="saveToLibrary('${encodeURIComponent(item.url)}','${encodeURIComponent(item.title)}','${encodeURIComponent(item.artist)}','${encodeURIComponent(item.thumbnail||"")}',${item.duration||0})">💾 Save</button>
+        </div>
+      </div>
+    `).join("");
+  } catch (e) {
+    res.innerHTML = `<div class="search-loading">Error: ${escHtml(e.message)}</div>`;
+  }
+}
+
+/* ── Play Online Track ── */
+let onlineAudioEl = null;
+async function playOnlineTrack(url, title) {
+  showToast("⏳ Loading: " + title.slice(0, 30) + "...", 4000);
+  try {
+    const streamUrl = `/api/download?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+    if (!onlineAudioEl) {
+      onlineAudioEl = new Audio();
+      onlineAudioEl.crossOrigin = "anonymous";
+    }
+    onlineAudioEl.src = streamUrl;
+    onlineAudioEl.volume = volSlider.value / 100;
+    await onlineAudioEl.play();
+    document.getElementById("nowPlayingTitle").textContent = "🌐 " + title;
+    document.getElementById("nowPlayingStatus").textContent = "Online stream";
+    showToast("▶ Playing: " + title.slice(0, 30));
+  } catch (e) {
+    showToast("❌ Hindi ma-play: " + e.message);
+  }
+}
+
+/* ── Save to Library ── */
+async function saveToLibrary(urlEnc, titleEnc, artistEnc, thumbEnc, duration) {
+  const url = decodeURIComponent(urlEnc);
+  const title = decodeURIComponent(titleEnc);
+  const artist = decodeURIComponent(artistEnc);
+  const thumb = decodeURIComponent(thumbEnc);
+  const id = "lib_" + Date.now();
+  await dbPut("library", { id, url, title, artist, thumb, duration, savedAt: Date.now() });
+  libraryItems = await dbGetAll("library");
+  renderLibrary();
+  showToast("💾 Saved to library: " + title.slice(0, 30));
+}
+
+/* ── Render Library ── */
+function renderLibrary() {
+  const list = document.getElementById("libraryList");
+  if (!libraryItems || libraryItems.length === 0) {
+    list.innerHTML = `<div class="empty-note">Walang naka-save pa. Mag-search at i-save ang mga kanta.</div>`; return;
+  }
+  list.innerHTML = libraryItems.map(item => `
+    <div class="lib-item">
+      <div class="lib-info">
+        <div class="lib-title">${escHtml(item.title)}</div>
+      </div>
+      <div class="lib-actions">
+        <button class="lib-btn lib-play-btn" onclick="playOnlineTrack('${escHtml(item.url)}','${escHtml(item.title)}')">▶</button>
+        <button class="lib-btn lib-dl-btn" onclick="downloadTrack('${escHtml(item.url)}','${encodeURIComponent(item.title)}')">⬇</button>
+        <button class="lib-btn lib-del-btn" onclick="deleteFromLibrary('${escHtml(item.id)}')">🗑</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function deleteFromLibrary(id) {
+  await dbDelete("library", id);
+  libraryItems = await dbGetAll("library");
+  renderLibrary();
+  showToast("🗑 Removed from library");
+}
+
+/* ── Download (force download, no open) ── */
+async function downloadTrack(url, titleEnc) {
+  const title = decodeURIComponent(titleEnc);
+  showToast("⬇ Downloading: " + title.slice(0, 30) + "...", 5000);
+  try {
+    const streamUrl = `/api/download?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+    const res = await fetch(streamUrl);
+    if (!res.ok) throw new Error("Download failed");
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = title.replace(/[^\w\s\-]/g, "") + ".mp3";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    showToast("✅ Downloaded: " + title.slice(0, 30));
+  } catch (e) {
+    showToast("❌ Download error: " + e.message);
+  }
+}
+
+/* ── Test TTS Button ── */
+document.getElementById("ttsTestBtn").addEventListener("click", async () => {
+  showToast("🎙️ Testing voice...", 5000);
+  await doTimeCheck(true);
+});
+
+/* ── Copy Full HTML Code ── */
+document.getElementById("copyCodeBtn").addEventListener("click", async () => {
+  try {
+    const res = await fetch(window.location.pathname);
+    const html = await res.text();
+    await navigator.clipboard.writeText(html);
+    showToast("✅ Full HTML code copied to clipboard!");
+  } catch (e) {
+    // Fallback
+    try {
+      const el = document.createElement("textarea");
+      el.value = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      showToast("✅ HTML code copied!");
+    } catch (e2) {
+      showToast("❌ Copy failed: " + e2.message);
+    }
+  }
+});
+
+/* ── DJ Knob drag simulation (visual) ── */
+["kLo","kMid","kHi"].forEach(id => {
+  const el = document.getElementById(id);
+  let startY, startAngle;
+  el.addEventListener("mousedown", e => {
+    startY = e.clientY;
+    startAngle = parseFloat(el.dataset.angle || "0");
+    const onMove = ev => {
+      const delta = startY - ev.clientY;
+      const angle = Math.max(-140, Math.min(140, startAngle + delta));
+      el.dataset.angle = angle;
+      el.querySelector ? null : null;
+      el.style.transform = `rotate(${angle}deg)`;
+      // Apply to EQ if applicable
+      if (id === "kLo") { const v = angle / 140 * 12; if (eqFilters["eq60"]) eqFilters["eq60"].gain.value = v; }
+      if (id === "kMid") { const v = angle / 140 * 12; if (eqFilters["eq1k"]) eqFilters["eq1k"].gain.value = v; }
+      if (id === "kHi") { const v = angle / 140 * 12; if (eqFilters["eq16k"]) eqFilters["eq16k"].gain.value = v; }
+    };
+    const onUp = () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+  // Touch support
+  el.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+    startAngle = parseFloat(el.dataset.angle || "0");
+    const onMove = ev => {
+      const delta = startY - ev.touches[0].clientY;
+      const angle = Math.max(-140, Math.min(140, startAngle + delta));
+      el.dataset.angle = angle;
+      el.style.transform = `rotate(${angle}deg)`;
+    };
+    const onUp = () => { document.removeEventListener("touchmove", onMove); document.removeEventListener("touchend", onUp); };
+    document.addEventListener("touchmove", onMove);
+    document.addEventListener("touchend", onUp);
+  });
+});
+
+/* ── Pre-load voices for Web Speech ── */
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.addEventListener("voiceschanged", () => window.speechSynthesis.getVoices());
+}
+
+/* ── Auto-restart radio if songs exist but stopped ── */
+setInterval(() => {
+  if (songs.length > 0 && radioStarted && isPlaying && activeEl.paused && !isDoingBreak) {
+    activeEl.play().catch(() => {});
+  }
+}, 5000);
+
+/* ── Init ── */
+openDB().then(async () => {
+  await loadAll();
+  // Auto-start if songs exist
+  if (songs.length > 0) {
+    setTimeout(() => {
+      showToast("📻 Power FM ready! Pindutin ang ▶ para magsimula.");
+    }, 800);
+  }
+}).catch(e => console.error("DB error:", e));
 </script>
 </body>
 </html>
