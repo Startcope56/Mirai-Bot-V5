@@ -225,6 +225,47 @@ input,textarea,select{font-family:inherit;outline:none}
 .lib-del-btn:hover{background:rgba(255,56,96,.28)}
 .lib-empty{font-size:.78rem;color:var(--dim);text-align:center;padding:14px}
 
+/* AUTO DJ CARD */
+.autodj-card{background:linear-gradient(135deg,rgba(0,0,0,.5),rgba(20,0,50,.7));
+  border:1px solid rgba(0,230,118,.25);border-radius:24px;padding:22px;margin-bottom:20px;
+  box-shadow:0 8px 40px rgba(0,230,118,.08)}
+.autodj-card.on{border-color:rgba(0,230,118,.6);box-shadow:0 8px 40px rgba(0,230,118,.25)}
+.autodj-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.autodj-icon{font-size:1.5rem;animation:djSpin 3s linear infinite}
+@keyframes djSpin{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.autodj-title{font-family:"Orbitron",sans-serif;font-size:.9rem;font-weight:900;
+  background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.autodj-toggle{margin-left:auto;padding:10px 24px;border-radius:20px;font-size:.82rem;font-weight:900;
+  letter-spacing:.08em;transition:.25s;cursor:pointer;border:none}
+.autodj-toggle.off{background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.3);color:var(--green)}
+.autodj-toggle.off:hover{background:rgba(0,230,118,.22);box-shadow:0 0 16px rgba(0,230,118,.3)}
+.autodj-toggle.on{background:linear-gradient(135deg,#c62828,#ff5252);color:#fff;
+  box-shadow:0 0 20px rgba(255,82,82,.5);animation:startPulse 1.2s ease-in-out infinite}
+
+.autodj-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.autodj-stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px 14px}
+.autodj-stat-label{font-size:.6rem;color:var(--muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.autodj-stat-val{font-size:.85rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.autodj-stat-val.green{color:var(--green)}
+.autodj-stat-val.cyan{color:var(--cyan)}
+.autodj-stat-val.gold{color:var(--gold)}
+
+.autodj-log{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:14px;
+  padding:10px 14px;max-height:130px;overflow-y:auto;font-size:.72rem;
+  font-family:"Inter",monospace;line-height:1.7;color:var(--muted)}
+.autodj-log-line{display:flex;gap:8px;align-items:flex-start}
+.autodj-log-line .ts{color:var(--dim);flex-shrink:0;font-size:.65rem}
+.autodj-log-line .msg{color:var(--text)}
+.autodj-log-line.speaking .msg{color:var(--green)}
+.autodj-log-line.playing .msg{color:var(--cyan)}
+.autodj-log-line.fetching .msg{color:var(--gold)}
+.autodj-log-line.error .msg{color:var(--red)}
+
+.autodj-script-box{background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.15);
+  border-radius:12px;padding:10px 14px;margin-top:10px;
+  font-size:.78rem;color:var(--text);line-height:1.6;font-style:italic;display:none}
+.autodj-script-box.show{display:block}
+
 /* FOOTER */
 .footer-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;
   padding:10px 20px;background:rgba(4,0,16,.97);backdrop-filter:blur(20px);
@@ -334,6 +375,44 @@ input,textarea,select{font-family:inherit;outline:none}
     <div class="history-list" id="historyList">
       <div class="hist-empty">Wala pang history. Mag-generate ka muna!</div>
     </div>
+  </div>
+
+  <!-- AUTO DJ CARD -->
+  <div class="autodj-card" id="autoDjCard">
+    <div class="autodj-header">
+      <span class="autodj-icon">🤖</span>
+      <div>
+        <div class="autodj-title">AUTO DJ MODE</div>
+        <div style="font-size:.62rem;color:var(--muted);margin-top:2px">AI script + love song · 1 oras non-stop</div>
+      </div>
+      <button class="autodj-toggle off" id="autoDjBtn" onclick="toggleAutoDJ()">▶ START AUTO DJ</button>
+    </div>
+
+    <div class="autodj-info">
+      <div class="autodj-stat">
+        <div class="autodj-stat-label">⏱ Countdown</div>
+        <div class="autodj-stat-val gold" id="adjCountdown">1:00:00</div>
+      </div>
+      <div class="autodj-stat">
+        <div class="autodj-stat-label">📻 Phase</div>
+        <div class="autodj-stat-val green" id="adjPhase">Naghihintay...</div>
+      </div>
+      <div class="autodj-stat" style="grid-column:1/-1">
+        <div class="autodj-stat-label">🎵 Kasalukuyang Kanta</div>
+        <div class="autodj-stat-val cyan" id="adjSong">—</div>
+      </div>
+    </div>
+
+    <!-- CURRENT SCRIPT -->
+    <div class="autodj-script-box" id="adjScriptBox"></div>
+
+    <!-- DJ LOG -->
+    <div class="autodj-log" id="adjLog">
+      <div class="autodj-log-line"><span class="ts">--:--</span><span class="msg">I-start ang AUTO DJ para magsimula ang 1-oras na live broadcast...</span></div>
+    </div>
+
+    <!-- AUTO DJ AUDIO (hidden, programmatic only) -->
+    <audio id="adjAudio" style="display:none"></audio>
   </div>
 
   <!-- MUSIC SEARCH -->
@@ -771,6 +850,213 @@ async function delLib(encUrl) {
 
 // Init DB + library
 openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
+
+/* ══════════════════════════════════════════════════
+   AUTO DJ  — 1-hour non-stop: AI script + love song
+   ══════════════════════════════════════════════════ */
+const ADJ_KEYWORDS = [
+  "OPM love songs","hugot songs Tagalog","Filipino love songs",
+  "Taylor Swift love","Mariah Carey","Ed Sheeran romantic",
+  "Adele ballad","Sarah Geronimo","Moira Dela Torre",
+  "Ben and Ben love","December Avenue","Kyla love songs",
+  "Yeng Constantino","regine velasquez","Martin Nievera",
+  "Rico J Puno","Gary Valenciano","Ice Cream 486",
+  "kundiman songs","Daniel Padilla love","Thyro Alfaro",
+  "Julie Ann San Jose","I belong to the zoo","love song 90s OPM",
+];
+let adjActive = false;
+let adjEndTime = 0;
+let adjKeywordIdx = Math.floor(Math.random() * ADJ_KEYWORDS.length);
+let adjCountdownInterval = null;
+let adjAudioEl = document.getElementById("adjAudio");
+let adjAbort = null;   // AbortController for voice fetch
+let adjRunning = false; // loop guard
+
+function adjLog(msg, type = "") {
+  const log = document.getElementById("adjLog");
+  const now = new Date();
+  const ts = now.toTimeString().slice(0,5);
+  const line = document.createElement("div");
+  line.className = "autodj-log-line" + (type ? " " + type : "");
+  line.innerHTML = `<span class="ts">${ts}</span><span class="msg">${msg}</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+function adjSetPhase(ph) { document.getElementById("adjPhase").textContent = ph; }
+function adjSetSong(s)   { document.getElementById("adjSong").textContent = s; }
+function adjSetScript(s) {
+  const el = document.getElementById("adjScriptBox");
+  el.textContent = "🗣 " + s;
+  el.classList.add("show");
+}
+function adjFmtTime(sec) {
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  return [h, String(m).padStart(2,"0"), String(s).padStart(2,"0")].join(":");
+}
+
+function toggleAutoDJ() {
+  if (adjActive) stopAutoDJ();
+  else startAutoDJ();
+}
+
+function startAutoDJ() {
+  adjActive = true;
+  adjEndTime = Date.now() + 60 * 60 * 1000; // 1 hour
+  const btn = document.getElementById("autoDjBtn");
+  const card = document.getElementById("autoDjCard");
+  btn.textContent = "⏹ STOP"; btn.className = "autodj-toggle on";
+  card.classList.add("on");
+  document.getElementById("adjLog").innerHTML = "";
+  adjLog("🚀 AUTO DJ nagsimula na! 1 oras ng non-stop love song broadcast.", "speaking");
+
+  // Countdown ticker
+  adjCountdownInterval = setInterval(() => {
+    const rem = Math.max(0, Math.round((adjEndTime - Date.now()) / 1000));
+    document.getElementById("adjCountdown").textContent = adjFmtTime(rem);
+    if (rem <= 0) stopAutoDJ();
+  }, 1000);
+
+  adjLoop();
+}
+
+function stopAutoDJ() {
+  adjActive = false;
+  if (adjAbort) { adjAbort.abort(); adjAbort = null; }
+  adjAudioEl.pause(); adjAudioEl.src = "";
+  if (adjCountdownInterval) { clearInterval(adjCountdownInterval); adjCountdownInterval = null; }
+  const btn = document.getElementById("autoDjBtn");
+  const card = document.getElementById("autoDjCard");
+  btn.textContent = "▶ START AUTO DJ"; btn.className = "autodj-toggle off";
+  card.classList.remove("on");
+  adjSetPhase("Natapos na."); adjSetSong("—");
+  document.getElementById("adjScriptBox").classList.remove("show");
+  adjLog("⏹ AUTO DJ stopped.", "error");
+}
+
+async function adjLoop() {
+  if (adjRunning) return;
+  adjRunning = true;
+  while (adjActive && Date.now() < adjEndTime) {
+    try {
+      // ── STEP 1: Generate DJ script via Pollinations AI ──
+      adjSetPhase("Gumagawa ng script...");
+      adjLog("🤖 Kumuha ng AI DJ script...", "fetching");
+      let script = "";
+      try {
+        const r = await fetch("/api/dj/script");
+        script = (await r.text()).trim();
+      } catch (e) {
+        script = "Ito ang Power Love Song Hits! Patuloy kayong makinig mga ka-Power FM!";
+      }
+      if (!adjActive) break;
+      adjLog("🗣 Magsasalita: "" + script.slice(0, 80) + (script.length > 80 ? "…" : "") + """, "speaking");
+      adjSetScript(script);
+      adjSetPhase("Nagsasalita...");
+
+      // ── STEP 2: Speak the script via DRIAN female voice ──
+      await adjSpeak(script);
+      if (!adjActive) break;
+
+      // Small pause between voice and music
+      await adjWait(800);
+      if (!adjActive) break;
+
+      // ── STEP 3: Search for a love song ──
+      const keyword = ADJ_KEYWORDS[adjKeywordIdx % ADJ_KEYWORDS.length];
+      adjKeywordIdx++;
+      adjSetPhase("Naghahanap ng kanta...");
+      adjLog(`🔍 Hinahanap: "${keyword}"`, "fetching");
+      let songUrl = "", songTitle = "";
+      try {
+        const sr = await fetch(`/api/search?q=${encodeURIComponent(keyword)}`);
+        const sj = await sr.json();
+        const tracks = sj.tracks || sj.songs || sj.results || [];
+        if (tracks.length > 0) {
+          const pick = tracks[Math.floor(Math.random() * Math.min(tracks.length, 6))];
+          songUrl   = pick.url   || pick.stream_url || pick.permalink_url || "";
+          songTitle = pick.title || pick.name || keyword;
+        }
+      } catch (e) { adjLog("⚠ Search error: " + e.message, "error"); }
+
+      if (!adjActive) break;
+
+      if (songUrl) {
+        // ── STEP 4: Download + play the song ──
+        adjSetPhase("Nagda-download...");
+        adjLog(`⬇ I-download: "${songTitle.slice(0,50)}"`, "fetching");
+        adjSetSong(songTitle.slice(0, 60));
+        try {
+          const dr = await fetch(`/api/download?url=${encodeURIComponent(songUrl)}&title=${encodeURIComponent(songTitle)}`);
+          if (!dr.ok) throw new Error("Download failed");
+          const blob = await dr.blob();
+          const burl = URL.createObjectURL(blob);
+          adjAudioEl.src = burl;
+          adjLog(`🎵 Nagpe-play: "${songTitle.slice(0,50)}"`, "playing");
+          adjSetPhase("Nagpe-play ng kanta...");
+          await adjPlayAudio(adjAudioEl, burl);
+          URL.revokeObjectURL(burl);
+        } catch (e) {
+          adjLog("⚠ Playback error: " + e.message, "error");
+        }
+      } else {
+        adjLog("⚠ Walang nakitang kanta. Skip.", "error");
+        await adjWait(3000);
+      }
+
+      // Small gap between cycles
+      if (adjActive) await adjWait(1200);
+
+    } catch (e) {
+      adjLog("⚠ Loop error: " + e.message, "error");
+      await adjWait(4000);
+    }
+  }
+  adjRunning = false;
+  if (adjActive) stopAutoDJ(); // time's up
+}
+
+function adjWait(ms) {
+  return new Promise(res => {
+    const t = setTimeout(res, ms);
+    // Listen for stop
+    const check = setInterval(() => { if (!adjActive) { clearTimeout(t); clearInterval(check); res(); }}, 200);
+    setTimeout(() => clearInterval(check), ms + 500);
+  });
+}
+
+async function adjSpeak(text) {
+  if (adjAbort) adjAbort.abort();
+  adjAbort = new AbortController();
+  try {
+    const resp = await fetch("/api/drian/female", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, withMusic: false }),
+      signal: adjAbort.signal
+    });
+    if (!resp.ok) throw new Error("TTS error");
+    const blob = await resp.blob();
+    const burl = URL.createObjectURL(blob);
+    adjAudioEl.src = burl;
+    await adjPlayAudio(adjAudioEl, burl);
+    URL.revokeObjectURL(burl);
+  } catch (e) {
+    if (e.name !== "AbortError") adjLog("⚠ Voice error: " + e.message, "error");
+  }
+}
+
+function adjPlayAudio(audioEl, burl) {
+  return new Promise(resolve => {
+    const onEnd = () => { audioEl.removeEventListener("ended", onEnd); audioEl.removeEventListener("error", onEnd); resolve(); };
+    audioEl.addEventListener("ended", onEnd);
+    audioEl.addEventListener("error", onEnd);
+    audioEl.play().catch(() => resolve());
+    // Safety: resolve if stopped externally
+    const guard = setInterval(() => { if (!adjActive || audioEl.paused && audioEl.ended) { clearInterval(guard); resolve(); }}, 500);
+    audioEl.addEventListener("ended", () => clearInterval(guard));
+    audioEl.addEventListener("error", () => clearInterval(guard));
+  });
+}
 
 /* ── COPY CODE ── */
 document.getElementById("copyBtn").addEventListener("click", async () => {

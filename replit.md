@@ -16,6 +16,20 @@ A Facebook Messenger chatbot built with Node.js that listens for messages and re
 - Music: `msedge-tts` (Microsoft TTS Tagalog voices), `play-dl` (SoundCloud streaming), `fluent-ffmpeg`
 - Scheduling: `node-cron`
 
+## AUTO DJ MODE (web/index.html)
+- **Toggle**: "▶ START AUTO DJ" button sa AUTO DJ card
+- **Flow (auto-loop, 1 oras)**:
+  1. Kuha ng AI-generated DJ script → `GET /api/dj/script` (Pollinations text API, libre, walang key)
+  2. DRIAN speaks the script → `POST /api/drian/female` (female voice, natural pace)
+  3. Auto-search love song → `GET /api/search?q=...` (24 rotating Filipino/OPM/international keywords)
+  4. Download + play → `GET /api/download` → blob URL → `<audio>` element
+  5. Repeat hanggang 1 oras tapos o i-STOP ng user
+- **Countdown**: Live 1:00:00 timer
+- **Log**: Color-coded live activity log (speaking=green, playing=cyan, fetching=gold, error=red)
+- **Fallback**: 8 built-in DJ scripts kapag offline si Pollinations AI
+- **Keywords (24)**: OPM love, hugot, Taylor Swift, Mariah Carey, Sarah Geronimo, Ben&Ben, Moira, etc.
+- **Server endpoint**: `GET /api/dj/script` → Pollinations text API with seed-based variety + 8 fallbacks
+
 ## GOMO App PWA (Progressive Web App) — v1.0
 - **Install**: Android Chrome shows install banner + header button; iOS Safari shows "Add to Home Screen" guide
 - **Standalone**: Opens with ZERO Chrome UI (no address bar, no browser buttons) — looks like a real app

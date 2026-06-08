@@ -1041,6 +1041,44 @@ async function handleRequest(req, res) {
     return;
   }
 
+  // GET /api/dj/script — Pollinations AI generates unique DJ announcement
+  if (pathname === "/api/dj/script" && req.method === "GET") {
+    const FALLBACKS = [
+      "Magandang araw sa inyong lahat! Ito si DRIAN ng Power Love Song Hits, ang inyong istasyon ng pag-ibig. Patuloy kayong makinig dahil marami pa kaming magagandang kanta para sa inyong mga puso!",
+      "Nandito pa rin tayo para sa inyo, mga mahal naming tagapakinig. Ito ang Power Love Song Hits, at ito ang susunod na kanta para sa inyong puso. Salamat sa inyong pagmamahal!",
+      "Power Love Song Hits, lagi sa inyong puso. Kung mahal mo ang isang tao, ipadama mo sa kanya ngayon. Ito ang inyong DJ DRIAN, at ito ang aming regalo para sa inyo!",
+      "Kumusta na kayo mga ka-Power FM! Sana masaya kayo ngayon at nararamdaman ninyo ang pagmamahal sa bawat kanta namin. Ito si DRIAN at patuloy kaming nandito para sa inyo!",
+      "Ito ang Power Love Song Hits, ang tanging istasyon na nagpapatugtog ng mga kanta para sa inyong mga puso. Makinig kayo at hayaan ninyong ang musika ang mag-alaga sa inyong damdamin!",
+      "Magandang hapon mga ka-Power FM! Sana kahit anong pagsubok ang inyong naranasan ngayon, nandito ang musika para magbigay ng lakas sa inyong puso. Ito si DRIAN, lagi para sa inyo!",
+      "Mga minamahal naming tagapakinig, salamat sa inyong tiwala at pagmamahal sa Power Love Song Hits. Ipinagmamalaki namin kayong lahat. Patuloy na makinig dahil may espesyal kaming para sa inyo!",
+      "Huwag kayong umalis dahil ito ay Power Love Song Hits at marami pa kaming love songs na ibibigay sa inyo. Ito si DRIAN, ang inyong DJ ng pag-ibig, lagi para sa inyong mga puso!",
+    ];
+    try {
+      const seed = Math.floor(Math.random() * 999999);
+      const templates = [
+        `Write one warm 2-sentence Tagalog Filipino radio DJ announcement for Power Love Song Hits radio station. Sound like a professional friendly Filipino DJ. Talk about love music and your listeners. Make it unique seed${seed}. Output ONLY the script text no quotes no labels.`,
+        `Ikaw si DRIAN DJ ng Power Love Song Hits radio. Gumawa ng 1-2 sentence na Tagalog na announcement para sa mga nakikinig. Malambing at propesyonal. Unique seed${seed}. Script text lang ang output walang quotes.`,
+        `You are a warm Filipino DJ on Power Love Song Hits. Write 2 sentences in natural Tagalog welcoming listeners and hyping the next love song. Fresh unique message seed${seed}. Pure script output only.`,
+      ];
+      const prompt = templates[seed % templates.length];
+      const axios = require("axios");
+      const r = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
+        timeout: 12000,
+        headers: { "User-Agent": "PowerFM-DJ/1.0" }
+      });
+      let script = (r.data || "").toString().trim()
+        .replace(/^["']|["']$/g, "")   // strip wrapping quotes
+        .replace(/^Script:|^Output:|^Announcement:/i, "").trim();
+      if (!script || script.length < 10) throw new Error("empty");
+      res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
+      return res.end(script.slice(0, 400));
+    } catch (e) {
+      const fb = FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)];
+      res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
+      return res.end(fb);
+    }
+  }
+
   // ── 404 ───────────────────────────────────────────────────────────────────
   res.writeHead(404, { "Content-Type": "text/plain" });
   res.end("Not found");
