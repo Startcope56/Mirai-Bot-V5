@@ -225,6 +225,60 @@ input,textarea,select{font-family:inherit;outline:none}
 .lib-del-btn:hover{background:rgba(255,56,96,.28)}
 .lib-empty{font-size:.78rem;color:var(--dim);text-align:center;padding:14px}
 
+/* ── MIC STUDIO ── */
+.mic-card{background:linear-gradient(135deg,rgba(20,0,0,.7),rgba(40,0,10,.85));
+  border:2px solid rgba(255,56,96,.22);border-radius:24px;padding:20px;margin-bottom:20px;
+  box-shadow:0 8px 40px rgba(255,56,96,.07)}
+.mic-card.listening{border-color:rgba(255,56,96,.7);box-shadow:0 0 40px rgba(255,56,96,.3)}
+.mic-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mic-icon-big{font-size:1.5rem;flex-shrink:0}
+.mic-titles{flex:1;min-width:0}
+.mic-title{font-family:"Orbitron",sans-serif;font-size:.88rem;font-weight:900;
+  background:linear-gradient(90deg,#ff3860,#ff8fab);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mic-sub{font-size:.6rem;color:var(--muted);margin-top:2px}
+
+/* A / M / W voice buttons */
+.mic-voice-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.mvc{padding:14px 8px;border-radius:16px;border:2px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;
+  font-weight:900;font-size:1.1rem;letter-spacing:.04em;transition:.2s;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:4px}
+.mvc small{font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.mvc:hover{background:rgba(255,255,255,.09)}
+.mvc.mv-a{border-color:rgba(0,229,255,.35);color:var(--cyan)}
+.mvc.mv-a.active{background:rgba(0,229,255,.18);border-color:var(--cyan);
+  box-shadow:0 0 18px rgba(0,229,255,.35);color:#fff}
+.mvc.mv-m{border-color:rgba(157,0,255,.35);color:var(--purple2)}
+.mvc.mv-m.active{background:rgba(157,0,255,.18);border-color:var(--purple2);
+  box-shadow:0 0 18px rgba(157,0,255,.35);color:#fff}
+.mvc.mv-w{border-color:rgba(255,20,119,.35);color:var(--pink2)}
+.mvc.mv-w.active{background:rgba(255,20,119,.18);border-color:var(--pink);
+  box-shadow:0 0 18px rgba(255,20,119,.35);color:#fff}
+
+/* Record button */
+.mic-rec-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
+.mic-rec-btn{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,56,96,.4);
+  background:rgba(255,56,96,.1);cursor:pointer;font-size:2rem;transition:.22s;
+  display:flex;align-items:center;justify-content:center;position:relative}
+.mic-rec-btn:hover{background:rgba(255,56,96,.22);border-color:rgba(255,56,96,.7)}
+.mic-rec-btn.recording{background:rgba(255,56,96,.28);border-color:var(--red);
+  box-shadow:0 0 0 0 rgba(255,56,96,.6);animation:micPulse 1s ease-out infinite}
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(255,56,96,.6)}70%{box-shadow:0 0 0 18px rgba(255,56,96,0)}100%{box-shadow:0 0 0 0 rgba(255,56,96,0)}}
+.mic-rec-label{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.mic-rec-label.active-label{color:var(--red)}
+
+/* Transcript + status */
+.mic-transcript{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:10px 14px;min-height:48px;font-size:.8rem;color:var(--text);
+  line-height:1.6;margin-bottom:10px;word-break:break-word}
+.mic-transcript .interim{color:var(--muted);font-style:italic}
+.mic-status-bar{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--muted)}
+.mic-status-bar .mic-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0}
+.mic-status-bar.on .mic-dot{background:var(--red);animation:micDotBlink .7s ease-in-out infinite}
+@keyframes micDotBlink{0%,100%{opacity:1}50%{opacity:.2}}
+.mic-status-bar.on .mic-status-txt{color:var(--red)}
+.mic-bt-note{font-size:.6rem;color:var(--dim);margin-top:6px;text-align:center;line-height:1.5}
+
 /* AUTO DJ CARD */
 .autodj-card{background:linear-gradient(135deg,rgba(0,0,0,.5),rgba(10,0,40,.8));
   border:2px solid rgba(0,230,118,.22);border-radius:24px;padding:20px;margin-bottom:20px;
@@ -379,6 +433,54 @@ input,textarea,select{font-family:inherit;outline:none}
     <div class="history-list" id="historyList">
       <div class="hist-empty">Wala pang history. Mag-generate ka muna!</div>
     </div>
+  </div>
+
+  <!-- MIC STUDIO CARD -->
+  <div class="mic-card" id="micCard">
+    <div class="mic-header">
+      <span class="mic-icon-big">&#127908;</span>
+      <div class="mic-titles">
+        <div class="mic-title">MIC STUDIO</div>
+        <div class="mic-sub">Magsalita sa mic &#8594; DRIAN ang mag-aannounce &middot; Volume 100%</div>
+      </div>
+    </div>
+
+    <!-- VOICE SELECTOR: A / M / W -->
+    <div class="mic-voice-row">
+      <button class="mvc mv-a active" id="mvcA" onclick="micSetVoice('A')">
+        A
+        <small>Angelo<br>Lalake</small>
+      </button>
+      <button class="mvc mv-m" id="mvcM" onclick="micSetVoice('M')">
+        M
+        <small>Mixed<br>+Music</small>
+      </button>
+      <button class="mvc mv-w" id="mvcW" onclick="micSetVoice('W')">
+        W
+        <small>Blessica<br>Babae</small>
+      </button>
+    </div>
+
+    <!-- RECORD BUTTON -->
+    <div class="mic-rec-wrap">
+      <button class="mic-rec-btn" id="micRecBtn" onclick="micToggle()">&#127908;</button>
+      <div class="mic-rec-label" id="micRecLabel">PINDUTIN PARA MAGSALITA</div>
+    </div>
+
+    <!-- WHAT YOU SAID -->
+    <div class="mic-transcript" id="micTranscript">
+      <span style="color:var(--dim);font-size:.75rem">Ang sinabi mo ay lalabas dito...</span>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="mic-status-bar" id="micStatusBar">
+      <div class="mic-dot"></div>
+      <span class="mic-status-txt" id="micStatusTxt">Handa. Piliin ang boses at pindutin ang mic.</span>
+    </div>
+    <div class="mic-bt-note">&#128266; Bluetooth: i-connect ang speaker bago pindutin ang mic. Audio ay dadaan sa default speaker ng sistema.</div>
+
+    <!-- HIDDEN AUDIO -->
+    <audio id="micAudio" style="display:none"></audio>
   </div>
 
   <!-- AUTO DJ CARD -->
@@ -854,6 +956,249 @@ async function delLib(encUrl) {
 
 // Init DB + library
 openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
+
+/* ══════════════════════════════════════════════════
+   MIC STUDIO — speak → DRIAN voice plays back
+   ══════════════════════════════════════════════════ */
+(function() {
+  var micVoice     = 'A';   // A=Angelo(male), M=Mixed(male+music), W=Woman(female)
+  var micListening = false;
+  var micSpeaking  = false;
+  var micRecog     = null;
+  var micFinalText = '';
+  var micInterimText = '';
+
+  // ── helpers ──
+  function micEl(id) { return document.getElementById(id); }
+
+  function micSetStatus(txt, on) {
+    var bar = micEl('micStatusBar');
+    var sp  = micEl('micStatusTxt');
+    if (bar) { bar.className = 'mic-status-bar' + (on ? ' on' : ''); }
+    if (sp)  sp.textContent = txt;
+  }
+
+  function micShowTranscript(interim, final) {
+    var el = micEl('micTranscript');
+    if (!el) return;
+    el.innerHTML = '';
+    if (final) {
+      var f = document.createElement('span');
+      f.textContent = final;
+      el.appendChild(f);
+    }
+    if (interim) {
+      var i = document.createElement('span');
+      i.className = 'interim';
+      i.textContent = (final ? ' ' : '') + interim;
+      el.appendChild(i);
+    }
+    if (!interim && !final) {
+      el.innerHTML = '<span style="color:var(--dim);font-size:.75rem">Ang sinabi mo ay lalabas dito...</span>';
+    }
+  }
+
+  function micSetListening(on) {
+    micListening = on;
+    var btn   = micEl('micRecBtn');
+    var label = micEl('micRecLabel');
+    var card  = micEl('micCard');
+    if (btn)   btn.classList.toggle('recording', on);
+    if (label) { label.textContent = on ? 'NAKIKINIG...' : 'PINDUTIN PARA MAGSALITA';
+                 label.className   = 'mic-rec-label' + (on ? ' active-label' : ''); }
+    if (card)  card.classList.toggle('listening', on);
+    micSetStatus(on ? 'Nakikinig sa iyong boses...' : 'Handa. Piliin ang boses at pindutin ang mic.', on);
+  }
+
+  // ── voice selector ──
+  window.micSetVoice = function(v) {
+    micVoice = v;
+    ['A','M','W'].forEach(function(x) {
+      var b = micEl('mvc' + x);
+      if (b) b.classList.toggle('active', x === v);
+    });
+  };
+
+  // ── play audio through Bluetooth-friendly AudioContext ──
+  function micPlayBlob(blob) {
+    return new Promise(function(resolve) {
+      var au = micEl('micAudio');
+      if (!au) { resolve(); return; }
+      var url = URL.createObjectURL(blob);
+
+      // Try AudioContext route first (goes to default system output = Bluetooth)
+      if (window.AudioContext || window.webkitAudioContext) {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          ctx.decodeAudioData(e.target.result, function(buf) {
+            var src = ctx.createBufferSource();
+            var gain = ctx.createGain();
+            gain.gain.value = 1.0;  // 100% volume
+            src.buffer = buf;
+            src.connect(gain);
+            gain.connect(ctx.destination);
+            src.onended = function() { ctx.close(); URL.revokeObjectURL(url); resolve(); };
+            src.start(0);
+            micSetStatus('Nagsasalita si DRIAN...', true);
+          }, function() {
+            // fallback: plain audio element
+            ctx.close();
+            micPlayViaElement(au, url, resolve);
+          });
+        };
+        reader.onerror = function() { ctx.close(); micPlayViaElement(au, url, resolve); };
+        reader.readAsArrayBuffer(blob);
+      } else {
+        micPlayViaElement(au, url, resolve);
+      }
+    });
+  }
+
+  function micPlayViaElement(au, url, resolve) {
+    au.src = url;
+    au.volume = 1.0;
+    // Try setSinkId to force default output (Bluetooth)
+    if (au.setSinkId) {
+      au.setSinkId('').catch(function() {});
+    }
+    var done = false;
+    function finish() {
+      if (done) return; done = true;
+      au.removeEventListener('ended', finish);
+      au.removeEventListener('error', finish);
+      URL.revokeObjectURL(url);
+      resolve();
+    }
+    au.addEventListener('ended', finish);
+    au.addEventListener('error', finish);
+    au.play().catch(function() { finish(); });
+  }
+
+  // ── send text to DRIAN and play ──
+  async function micSendToDrian(text) {
+    if (!text || micSpeaking) return;
+    micSpeaking = true;
+    micSetStatus('Ginagawa ni DRIAN ang boses...', false);
+
+    try {
+      var endpoint, body;
+      if (micVoice === 'A') {
+        endpoint = '/api/drian/male';
+        body = JSON.stringify({ text: text });
+      } else if (micVoice === 'W') {
+        endpoint = '/api/drian/female';
+        body = JSON.stringify({ text: text, withMusic: false });
+      } else {
+        // M = Mixed: male voice + music background
+        endpoint = '/api/drian/female';
+        body = JSON.stringify({ text: text, withMusic: true });
+      }
+
+      var resp = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+      });
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      var blob = await resp.blob();
+      await micPlayBlob(blob);
+    } catch(e) {
+      micSetStatus('Error: ' + e.message, false);
+    }
+
+    micSpeaking = false;
+    micSetStatus('Tapos na. Pindutin ulit ang mic para magsalita.', false);
+  }
+
+  // ── Web Speech API setup ──
+  function micBuildRecognizer() {
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return null;
+
+    var r = new SpeechRec();
+    r.lang = 'fil-PH';               // Filipino primary
+    r.interimResults = true;
+    r.maxAlternatives = 1;
+    r.continuous = false;
+
+    r.onstart = function() {
+      micFinalText = ''; micInterimText = '';
+      micShowTranscript('', '');
+      micSetListening(true);
+    };
+
+    r.onresult = function(e) {
+      var interim = '', final = micFinalText;
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) { final += t; }
+        else { interim += t; }
+      }
+      micFinalText = final;
+      micInterimText = interim;
+      micShowTranscript(interim, final);
+    };
+
+    r.onerror = function(e) {
+      micSetListening(false);
+      if (e.error === 'not-allowed') {
+        micSetStatus('Hindi pinayagan ang mic. I-allow sa browser settings.', false);
+      } else if (e.error === 'no-speech') {
+        micSetStatus('Walang narinig. Pindutin ulit at magsalita.', false);
+      } else {
+        micSetStatus('Mic error: ' + e.error, false);
+      }
+    };
+
+    r.onend = function() {
+      micSetListening(false);
+      var text = (micFinalText || micInterimText || '').trim();
+      if (text) {
+        micShowTranscript('', text);
+        micSendToDrian(text);
+      } else {
+        micSetStatus('Walang narinig. Subukan ulit.', false);
+      }
+    };
+
+    return r;
+  }
+
+  // ── toggle recording ──
+  window.micToggle = function() {
+    if (micSpeaking) return; // wait for DRIAN to finish
+
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      micSetStatus('Hindi sinusuportahan ng browser na ito ang mic. Gamitin ang Chrome o Edge.', false);
+      return;
+    }
+
+    if (micListening) {
+      // Stop listening → will trigger onend → send to DRIAN
+      if (micRecog) { try { micRecog.stop(); } catch(e) {} }
+      micSetListening(false);
+      return;
+    }
+
+    // Start listening
+    micRecog = micBuildRecognizer();
+    if (!micRecog) {
+      micSetStatus('Hindi available ang speech recognition. Gamitin ang Chrome.', false);
+      return;
+    }
+
+    // Resume AudioContext if suspended (required on mobile after user gesture)
+    try { if (window._micCtx && window._micCtx.state === 'suspended') window._micCtx.resume(); } catch(e) {}
+
+    try {
+      micRecog.start();
+    } catch(e) {
+      micSetStatus('Mic start error: ' + e.message, false);
+    }
+  };
+})();
 
 /* ══════════════════════════════════════════════════
    AUTO DJ — 1-hour non-stop: AI script + love song
