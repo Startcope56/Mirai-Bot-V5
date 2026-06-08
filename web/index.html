@@ -448,36 +448,28 @@ input,textarea,select{font-family:inherit;outline:none}
     <!-- VOICE SELECTOR: A / M / W -->
     <div class="mic-voice-row">
       <button class="mvc mv-a active" id="mvcA" onclick="micSetVoice('A')">
-        A
-        <small>Angelo<br>Lalake</small>
+        A<small>Angelo · Lalake</small>
       </button>
       <button class="mvc mv-m" id="mvcM" onclick="micSetVoice('M')">
-        M
-        <small>Mixed<br>+Music</small>
+        M<small>Mixed · +Music</small>
       </button>
       <button class="mvc mv-w" id="mvcW" onclick="micSetVoice('W')">
-        W
-        <small>Blessica<br>Babae</small>
+        W<small>Blessica · Babae</small>
       </button>
     </div>
 
-    <!-- RECORD BUTTON -->
+    <!-- BIG RECORD TOGGLE BUTTON -->
     <div class="mic-rec-wrap">
       <button class="mic-rec-btn" id="micRecBtn" onclick="micToggle()">&#127908;</button>
-      <div class="mic-rec-label" id="micRecLabel">PINDUTIN PARA MAGSALITA</div>
+      <div class="mic-rec-label" id="micRecLabel">PINDUTIN PARA I-ON</div>
     </div>
 
-    <!-- WHAT YOU SAID -->
-    <div class="mic-transcript" id="micTranscript">
-      <span style="color:var(--dim);font-size:.75rem">Ang sinabi mo ay lalabas dito...</span>
-    </div>
-
-    <!-- STATUS BAR -->
+    <!-- STATUS ONLY — walang transcript -->
     <div class="mic-status-bar" id="micStatusBar">
       <div class="mic-dot"></div>
-      <span class="mic-status-txt" id="micStatusTxt">Handa. Piliin ang boses at pindutin ang mic.</span>
+      <span class="mic-status-txt" id="micStatusTxt">Handa. Piliin ang boses at i-on ang mic.</span>
     </div>
-    <div class="mic-bt-note">&#128266; Bluetooth: i-connect ang speaker bago pindutin ang mic. Audio ay dadaan sa default speaker ng sistema.</div>
+    <div class="mic-bt-note">&#128266; Bluetooth: i-connect muna bago i-on. Volume: MAX.</div>
 
     <!-- HIDDEN AUDIO -->
     <audio id="micAudio" style="display:none"></audio>
@@ -958,244 +950,233 @@ async function delLib(encUrl) {
 openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
 
 /* ══════════════════════════════════════════════════
-   MIC STUDIO — speak → DRIAN voice plays back
+   MIC STUDIO — continuous: speak → DRIAN voice
+   Toggle ON/OFF. No transcript. Auto-restart loop.
    ══════════════════════════════════════════════════ */
 (function() {
-  var micVoice     = 'A';   // A=Angelo(male), M=Mixed(male+music), W=Woman(female)
-  var micListening = false;
-  var micSpeaking  = false;
-  var micRecog     = null;
-  var micFinalText = '';
-  var micInterimText = '';
+  var micVoice   = 'A';   // A=Angelo(male)  M=Mixed(+music)  W=Blessica(female)
+  var micOn      = false; // global ON/OFF toggle
+  var micBusy    = false; // true while DRIAN is speaking
+  var micRecog   = null;
+  var MIC_GAIN   = 2.0;   // output volume multiplier (louder = higher)
 
-  // ── helpers ──
-  function micEl(id) { return document.getElementById(id); }
+  function $id(id) { return document.getElementById(id); }
 
-  function micSetStatus(txt, on) {
-    var bar = micEl('micStatusBar');
-    var sp  = micEl('micStatusTxt');
-    if (bar) { bar.className = 'mic-status-bar' + (on ? ' on' : ''); }
-    if (sp)  sp.textContent = txt;
+  /* ─── UI helpers ─── */
+  function micSetUI(state) {
+    // state: 'off' | 'listening' | 'processing' | 'speaking'
+    var btn   = $id('micRecBtn');
+    var label = $id('micRecLabel');
+    var bar   = $id('micStatusBar');
+    var txt   = $id('micStatusTxt');
+    var card  = $id('micCard');
+
+    var isOn = state !== 'off';
+    if (btn)  btn.classList.toggle('recording', isOn);
+    if (card) card.classList.toggle('listening', isOn);
+    if (bar)  bar.className = 'mic-status-bar' + (isOn ? ' on' : '');
+
+    var labels = {
+      off:        { btn: 'PINDUTIN PARA I-ON',  txt: 'Handa. Piliin ang boses at i-on ang mic.' },
+      listening:  { btn: 'NAKIKINIG \u2014 TAP TO OFF', txt: '\uD83D\uDFE2 Nakikinig... Magsalita na!' },
+      processing: { btn: 'GINAGAWA NG DRIAN...', txt: '\u23F3 Ginagawa ang boses ni DRIAN...' },
+      speaking:   { btn: 'NAGSASALITA SI DRIAN', txt: '\uD83C\uDFA4 Nagsasalita si DRIAN...' }
+    };
+    var s = labels[state] || labels.off;
+    if (label) label.textContent = s.btn;
+    if (txt)   txt.textContent   = s.txt;
   }
 
-  function micShowTranscript(interim, final) {
-    var el = micEl('micTranscript');
-    if (!el) return;
-    el.innerHTML = '';
-    if (final) {
-      var f = document.createElement('span');
-      f.textContent = final;
-      el.appendChild(f);
-    }
-    if (interim) {
-      var i = document.createElement('span');
-      i.className = 'interim';
-      i.textContent = (final ? ' ' : '') + interim;
-      el.appendChild(i);
-    }
-    if (!interim && !final) {
-      el.innerHTML = '<span style="color:var(--dim);font-size:.75rem">Ang sinabi mo ay lalabas dito...</span>';
-    }
-  }
-
-  function micSetListening(on) {
-    micListening = on;
-    var btn   = micEl('micRecBtn');
-    var label = micEl('micRecLabel');
-    var card  = micEl('micCard');
-    if (btn)   btn.classList.toggle('recording', on);
-    if (label) { label.textContent = on ? 'NAKIKINIG...' : 'PINDUTIN PARA MAGSALITA';
-                 label.className   = 'mic-rec-label' + (on ? ' active-label' : ''); }
-    if (card)  card.classList.toggle('listening', on);
-    micSetStatus(on ? 'Nakikinig sa iyong boses...' : 'Handa. Piliin ang boses at pindutin ang mic.', on);
-  }
-
-  // ── voice selector ──
+  /* ─── Voice selector ─── */
   window.micSetVoice = function(v) {
     micVoice = v;
     ['A','M','W'].forEach(function(x) {
-      var b = micEl('mvc' + x);
+      var b = $id('mvc' + x);
       if (b) b.classList.toggle('active', x === v);
     });
   };
 
-  // ── play audio through Bluetooth-friendly AudioContext ──
-  function micPlayBlob(blob) {
+  /* ─── Play blob via AudioContext (→ Bluetooth default output) ─── */
+  function micPlay(blob) {
     return new Promise(function(resolve) {
-      var au = micEl('micAudio');
-      if (!au) { resolve(); return; }
       var url = URL.createObjectURL(blob);
+      var AC  = window.AudioContext || window.webkitAudioContext;
 
-      // Try AudioContext route first (goes to default system output = Bluetooth)
-      if (window.AudioContext || window.webkitAudioContext) {
-        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (AC) {
+        var ctx    = new AC();
         var reader = new FileReader();
-        reader.onload = function(e) {
-          ctx.decodeAudioData(e.target.result, function(buf) {
-            var src = ctx.createBufferSource();
-            var gain = ctx.createGain();
-            gain.gain.value = 1.0;  // 100% volume
-            src.buffer = buf;
-            src.connect(gain);
-            gain.connect(ctx.destination);
-            src.onended = function() { ctx.close(); URL.revokeObjectURL(url); resolve(); };
-            src.start(0);
-            micSetStatus('Nagsasalita si DRIAN...', true);
-          }, function() {
-            // fallback: plain audio element
-            ctx.close();
-            micPlayViaElement(au, url, resolve);
-          });
+        reader.onload = function(ev) {
+          ctx.decodeAudioData(ev.target.result,
+            function(buf) {
+              var src  = ctx.createBufferSource();
+              var gain = ctx.createGain();
+              gain.gain.value = MIC_GAIN;          // boosted volume
+              src.buffer = buf;
+              src.connect(gain);
+              gain.connect(ctx.destination);
+              src.onended = function() {
+                try { ctx.close(); } catch(e) {}
+                URL.revokeObjectURL(url);
+                resolve();
+              };
+              src.start(0);
+            },
+            function() { ctx.close(); micPlayFallback(url, resolve); }
+          );
         };
-        reader.onerror = function() { ctx.close(); micPlayViaElement(au, url, resolve); };
+        reader.onerror = function() { ctx.close(); micPlayFallback(url, resolve); };
         reader.readAsArrayBuffer(blob);
       } else {
-        micPlayViaElement(au, url, resolve);
+        micPlayFallback(url, resolve);
       }
     });
   }
 
-  function micPlayViaElement(au, url, resolve) {
-    au.src = url;
+  function micPlayFallback(url, resolve) {
+    var au = $id('micAudio');
+    if (!au) { resolve(); return; }
     au.volume = 1.0;
-    // Try setSinkId to force default output (Bluetooth)
-    if (au.setSinkId) {
-      au.setSinkId('').catch(function() {});
-    }
+    if (au.setSinkId) au.setSinkId('').catch(function(){});
+    au.src = url;
     var done = false;
-    function finish() {
+    function fin() {
       if (done) return; done = true;
-      au.removeEventListener('ended', finish);
-      au.removeEventListener('error', finish);
+      au.removeEventListener('ended', fin);
+      au.removeEventListener('error', fin);
       URL.revokeObjectURL(url);
       resolve();
     }
-    au.addEventListener('ended', finish);
-    au.addEventListener('error', finish);
-    au.play().catch(function() { finish(); });
+    au.addEventListener('ended', fin);
+    au.addEventListener('error', fin);
+    au.play().catch(fin);
   }
 
-  // ── send text to DRIAN and play ──
-  async function micSendToDrian(text) {
-    if (!text || micSpeaking) return;
-    micSpeaking = true;
-    micSetStatus('Ginagawa ni DRIAN ang boses...', false);
+  /* ─── Send text → DRIAN API → play ─── */
+  async function micSpeak(text) {
+    if (!text || !text.trim()) return;
+    micBusy = true;
+    micSetUI('processing');
+
+    var endpoint, body;
+    if (micVoice === 'W') {
+      endpoint = '/api/drian/female';
+      body = JSON.stringify({ text: text, withMusic: false });
+    } else if (micVoice === 'M') {
+      endpoint = '/api/drian/female';
+      body = JSON.stringify({ text: text, withMusic: true });
+    } else {
+      // A = Angelo male
+      endpoint = '/api/drian/male';
+      body = JSON.stringify({ text: text });
+    }
 
     try {
-      var endpoint, body;
-      if (micVoice === 'A') {
-        endpoint = '/api/drian/male';
-        body = JSON.stringify({ text: text });
-      } else if (micVoice === 'W') {
-        endpoint = '/api/drian/female';
-        body = JSON.stringify({ text: text, withMusic: false });
-      } else {
-        // M = Mixed: male voice + music background
-        endpoint = '/api/drian/female';
-        body = JSON.stringify({ text: text, withMusic: true });
-      }
-
       var resp = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: body
       });
-      if (!resp.ok) throw new Error('API error ' + resp.status);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var blob = await resp.blob();
-      await micPlayBlob(blob);
+      micSetUI('speaking');
+      await micPlay(blob);
     } catch(e) {
-      micSetStatus('Error: ' + e.message, false);
+      var txt = $id('micStatusTxt');
+      if (txt) txt.textContent = 'Error: ' + e.message;
     }
 
-    micSpeaking = false;
-    micSetStatus('Tapos na. Pindutin ulit ang mic para magsalita.', false);
+    micBusy = false;
+
+    // Auto-restart listening if still ON
+    if (micOn) {
+      setTimeout(micStartRecog, 300);
+    } else {
+      micSetUI('off');
+    }
   }
 
-  // ── Web Speech API setup ──
-  function micBuildRecognizer() {
-    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) return null;
+  /* ─── Build & start a SpeechRecognition instance ─── */
+  function micStartRecog() {
+    if (!micOn) return;
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      var txt = $id('micStatusTxt');
+      if (txt) txt.textContent = 'Kailangan ng Chrome o Edge browser para sa mic.';
+      return;
+    }
 
-    var r = new SpeechRec();
-    r.lang = 'fil-PH';               // Filipino primary
-    r.interimResults = true;
+    try { if (micRecog) { micRecog.onend = null; micRecog.abort(); } } catch(e) {}
+    micRecog = null;
+
+    var r = new SR();
+    r.lang            = 'fil-PH';
+    r.interimResults  = false;  // NO interim — final result lang
     r.maxAlternatives = 1;
-    r.continuous = false;
+    r.continuous      = false;  // one utterance at a time, auto-restart after
 
-    r.onstart = function() {
-      micFinalText = ''; micInterimText = '';
-      micShowTranscript('', '');
-      micSetListening(true);
+    r.onstart = function() { micSetUI('listening'); };
+
+    r.onresult = function(ev) {
+      // Grab the final transcript
+      var text = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        if (ev.results[i].isFinal) text += ev.results[i][0].transcript;
+      }
+      text = text.trim();
+      if (text && micOn && !micBusy) {
+        // Stop recog so DRIAN's voice isn't picked up as input
+        try { r.onend = null; r.abort(); } catch(e) {}
+        micSpeak(text);
+      }
     };
 
-    r.onresult = function(e) {
-      var interim = '', final = micFinalText;
-      for (var i = e.resultIndex; i < e.results.length; i++) {
-        var t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) { final += t; }
-        else { interim += t; }
+    r.onerror = function(ev) {
+      if (ev.error === 'not-allowed') {
+        micOn = false;
+        micSetUI('off');
+        var txt = $id('micStatusTxt');
+        if (txt) txt.textContent = 'Hindi pinayagan ang mic. I-allow sa browser at subukan ulit.';
+        return;
       }
-      micFinalText = final;
-      micInterimText = interim;
-      micShowTranscript(interim, final);
-    };
-
-    r.onerror = function(e) {
-      micSetListening(false);
-      if (e.error === 'not-allowed') {
-        micSetStatus('Hindi pinayagan ang mic. I-allow sa browser settings.', false);
-      } else if (e.error === 'no-speech') {
-        micSetStatus('Walang narinig. Pindutin ulit at magsalita.', false);
-      } else {
-        micSetStatus('Mic error: ' + e.error, false);
-      }
+      // no-speech / aborted / network → just restart quietly
+      if (micOn && !micBusy) setTimeout(micStartRecog, 400);
     };
 
     r.onend = function() {
-      micSetListening(false);
-      var text = (micFinalText || micInterimText || '').trim();
-      if (text) {
-        micShowTranscript('', text);
-        micSendToDrian(text);
-      } else {
-        micSetStatus('Walang narinig. Subukan ulit.', false);
-      }
+      // Only auto-restart here if no result was captured (handled in onresult)
+      if (micOn && !micBusy) setTimeout(micStartRecog, 300);
     };
 
-    return r;
+    micRecog = r;
+    try { r.start(); } catch(e) {
+      if (micOn && !micBusy) setTimeout(micStartRecog, 500);
+    }
   }
 
-  // ── toggle recording ──
+  /* ─── Main toggle ─── */
   window.micToggle = function() {
-    if (micSpeaking) return; // wait for DRIAN to finish
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) {
-      micSetStatus('Hindi sinusuportahan ng browser na ito ang mic. Gamitin ang Chrome o Edge.', false);
-      return;
-    }
-
-    if (micListening) {
-      // Stop listening → will trigger onend → send to DRIAN
-      if (micRecog) { try { micRecog.stop(); } catch(e) {} }
-      micSetListening(false);
-      return;
-    }
-
-    // Start listening
-    micRecog = micBuildRecognizer();
-    if (!micRecog) {
-      micSetStatus('Hindi available ang speech recognition. Gamitin ang Chrome.', false);
-      return;
-    }
-
-    // Resume AudioContext if suspended (required on mobile after user gesture)
-    try { if (window._micCtx && window._micCtx.state === 'suspended') window._micCtx.resume(); } catch(e) {}
-
-    try {
-      micRecog.start();
-    } catch(e) {
-      micSetStatus('Mic start error: ' + e.message, false);
+    if (micOn) {
+      // Turn OFF
+      micOn = false;
+      try { if (micRecog) { micRecog.onend = null; micRecog.abort(); } } catch(e) {}
+      micRecog = null;
+      micBusy = false;
+      // Stop any playing audio
+      var au = $id('micAudio');
+      try { if (au) { au.pause(); au.src = ''; } } catch(e) {}
+      micSetUI('off');
+    } else {
+      // Turn ON
+      if (!SR) {
+        var txt = $id('micStatusTxt');
+        if (txt) txt.textContent = 'Kailangan ng Chrome o Edge browser para sa mic feature.';
+        return;
+      }
+      micOn   = true;
+      micBusy = false;
+      micStartRecog();
     }
   };
 })();
