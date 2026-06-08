@@ -330,6 +330,29 @@ input,textarea,select{font-family:inherit;outline:none}
 .adj-chat-label{font-size:.58rem;color:var(--muted);font-weight:700;letter-spacing:.09em;
   text-transform:uppercase;margin-top:10px;margin-bottom:5px}
 
+/* DJ FEATURE BUTTONS */
+.adj-feat-label{font-size:.58rem;color:var(--muted);font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;margin-top:14px;margin-bottom:7px}
+.adj-feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:4px}
+.adj-feat-btn{padding:9px 6px;border-radius:13px;border:1.5px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);color:var(--text);font-size:.68rem;font-weight:800;
+  letter-spacing:.03em;cursor:pointer;transition:.18s;text-align:center;line-height:1.35;
+  display:flex;flex-direction:column;align-items:center;gap:3px}
+.adj-feat-btn .fbi{font-size:1.1rem}
+.adj-feat-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(157,0,255,.5);
+  box-shadow:0 0 12px rgba(157,0,255,.2);color:#fff}
+.adj-feat-btn.busy{opacity:.45;cursor:not-allowed}
+.adj-feat-btn.adj-green-btn{border-color:rgba(0,230,118,.3);color:var(--green)}
+.adj-feat-btn.adj-green-btn:hover{background:rgba(0,230,118,.12);border-color:rgba(0,230,118,.7);box-shadow:0 0 12px rgba(0,230,118,.25)}
+.adj-feat-btn.adj-cyan-btn{border-color:rgba(0,229,255,.3);color:var(--cyan)}
+.adj-feat-btn.adj-cyan-btn:hover{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.7);box-shadow:0 0 12px rgba(0,229,255,.22)}
+.adj-feat-btn.adj-gold-btn{border-color:rgba(255,215,0,.3);color:var(--gold)}
+.adj-feat-btn.adj-gold-btn:hover{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.7);box-shadow:0 0 12px rgba(255,215,0,.22)}
+.adj-feat-btn.adj-pink-btn{border-color:rgba(255,20,119,.3);color:var(--pink2)}
+.adj-feat-btn.adj-pink-btn:hover{background:rgba(255,20,119,.1);border-color:rgba(255,20,119,.7);box-shadow:0 0 12px rgba(255,20,119,.22)}
+.adj-feat-btn.adj-red-btn{border-color:rgba(255,56,96,.3);color:var(--red)}
+.adj-feat-btn.adj-red-btn:hover{background:rgba(255,56,96,.1);border-color:rgba(255,56,96,.7);box-shadow:0 0 12px rgba(255,56,96,.22)}
+
 /* FOOTER */
 .footer-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;
   padding:10px 20px;background:rgba(4,0,16,.97);backdrop-filter:blur(20px);
@@ -503,6 +526,38 @@ input,textarea,select{font-family:inherit;outline:none}
     <!-- LIVE LOG -->
     <div class="autodj-log" id="adjLog">
       <div class="adj-log-line"><span class="adj-ts">--:--</span><span class="adj-msg">Pindutin ang START para simulan ang 1-oras na live DJ broadcast...</span></div>
+    </div>
+
+    <!-- FEATURE BUTTONS -->
+    <div class="adj-feat-label">⚡ QUICK FEATURES — PINDUTIN PARA MAGSALITA SI DRIAN</div>
+    <div class="adj-feat-grid">
+      <button class="adj-feat-btn adj-green-btn" onclick="adjFeat('generate')">
+        <span class="fbi">🎲</span>AUTO GENERATE
+      </button>
+      <button class="adj-feat-btn adj-cyan-btn" onclick="adjFeat('volcheck')">
+        <span class="fbi">🔊</span>VOLUME CHECK
+      </button>
+      <button class="adj-feat-btn adj-gold-btn" onclick="adjFeat('stationid')">
+        <span class="fbi">📻</span>STATION ID
+      </button>
+      <button class="adj-feat-btn adj-pink-btn" onclick="adjFeat('greeting')">
+        <span class="fbi">🌅</span>GREETING
+      </button>
+      <button class="adj-feat-btn" onclick="adjFeat('request')">
+        <span class="fbi">🎵</span>SONG REQUEST
+      </button>
+      <button class="adj-feat-btn adj-red-btn" onclick="adjFeat('break')">
+        <span class="fbi">⏸</span>BREAK
+      </button>
+      <button class="adj-feat-btn adj-gold-btn" onclick="adjFeat('shoutout')">
+        <span class="fbi">🎉</span>SHOUTOUT
+      </button>
+      <button class="adj-feat-btn adj-cyan-btn" onclick="adjFeat('backonair')">
+        <span class="fbi">📡</span>BACK ON AIR
+      </button>
+      <button class="adj-feat-btn adj-red-btn" onclick="adjFeat('signoff')">
+        <span class="fbi">🌙</span>SIGN OFF
+      </button>
     </div>
 
     <!-- DJ CHAT — type & DRIAN reads it instantly -->
@@ -1403,6 +1458,136 @@ function adjPlayAudio(au) {
       if (adjStopFlag || (au.paused && au.ended)) done();
     }, 400);
   });
+}
+
+/* ── DJ FEATURE BUTTONS ── */
+let adjFeatBusy = false;
+
+async function adjFeat(type) {
+  if (adjFeatBusy) return;
+  adjFeatBusy = true;
+
+  // Mark all buttons busy
+  document.querySelectorAll(".adj-feat-btn").forEach(b => b.classList.add("busy"));
+
+  let text = "";
+
+  try {
+    if (type === "generate") {
+      // Fetch live AI script from server
+      adjLog("🎲 Kumuha ng AI DJ script...", "fetch");
+      try {
+        const r = await fetch("/api/dj/script");
+        text = (await r.text()).trim();
+      } catch(e) {
+        text = "Magandang araw sa inyong lahat! Ito si DRIAN ng Power Love Song Hits, lagi para sa inyong mga puso!";
+      }
+
+    } else if (type === "volcheck") {
+      const checks = [
+        "Testing, testing... isa, dalawa, tatlo. Volume check! Naririnig ba ninyo kami mga ka-Power FM? Kung marinig ninyo ito, ibig sabihin perfect ang inyong volume! Salamat!",
+        "Mic check, mic check! Ito si DRIAN, sinisigurado namin na malinaw kayo nakakarinig. Isa, dalawa, tatlo — perfect ang audio! Patuloy kayong makinig sa Power Love Song Hits!",
+        "Sound check muna mga ka-Power FM! Kung naririnig ninyo ang aking boses ngayon, ibig sabihin gumagana ang lahat! Salamat at patuloy tayong mag-enjoy ng musika!",
+      ];
+      text = checks[Math.floor(Math.random() * checks.length)];
+
+    } else if (type === "stationid") {
+      const ids = [
+        "Ito ang Power Love Song Hits — ang inyong istasyon ng pag-ibig sa buong Pilipinas! Lagi kaming nandito para sa inyo, 24 oras, 7 araw sa isang linggo. Dahil para sa amin, kayo ang pinaka-mahalaga!",
+        "Power Love Song Hits — kung saan ang bawat kanta ay may kwento, at ang bawat kwento ay para sa inyo. Ito si DRIAN, ang inyong DJ ng pag-ibig. Salamat sa inyong tiwala!",
+        "Nakakarinig kayo ng Power Love Song Hits! Ang tanging istasyon na nagpapatugtog ng mga kanta para sa inyong puso. Kasama kayo namin sa bawat sandali ng inyong araw!",
+      ];
+      text = ids[Math.floor(Math.random() * ids.length)];
+
+    } else if (type === "greeting") {
+      const h = new Date().getHours();
+      if (h >= 5 && h < 12) {
+        const greets = [
+          "Magandang umaga sa inyong lahat mga ka-Power FM! Sana maliwanag at masaya ang inyong araw ngayon. Ito si DRIAN at kasama ninyo ako sa magandang simula ng inyong umaga!",
+          "Good morning mga mahal naming tagapakinig! Handa na ba kayong simulan ang inyong araw sa tunog ng magagandang kanta? Ito ang Power Love Song Hits, lagi sa inyong serbisyo!",
+        ];
+        text = greets[Math.floor(Math.random() * greets.length)];
+      } else if (h >= 12 && h < 18) {
+        const greets = [
+          "Magandang hapon sa inyong lahat! Kumusta na ang inyong araw? Sana kahit pagod na kayo, ang musika namin ang magbibigay ng lakas sa inyong puso. Ito si DRIAN ng Power Love Song Hits!",
+          "Good afternoon mga ka-Power FM! Nandito kami para samahan kayo sa hapon. Mag-relax muna at pakinggan ang mga magagandang kanta para sa inyo!",
+        ];
+        text = greets[Math.floor(Math.random() * greets.length)];
+      } else {
+        const greets = [
+          "Magandang gabi sa inyong lahat! Pagkatapos ng mahabang araw, oras na para mag-relax at pakinggan ang mga kanta na para sa inyong puso. Ito si DRIAN, kasama ninyo ngayong gabi!",
+          "Good evening mga mahal naming tagapakinig! Tahimik na ang gabi at perpekto itong pagkakataon para marinig ang mga kanta ng pag-ibig. Power Love Song Hits, nandito kami para sa inyo!",
+        ];
+        text = greets[Math.floor(Math.random() * greets.length)];
+      }
+
+    } else if (type === "request") {
+      const reqs = [
+        "Mga ka-Power FM, bukas na ang aming linya para sa inyong mga request! Mag-message na kayo at ipapatugtog namin ang inyong paboritong kanta. Ito ang Power Love Song Hits, para sa inyo!",
+        "Request time na mga mahal naming tagapakinig! Anong kanta ang gusto ninyong marinig ngayon? Ipadala ang inyong request at ibibigay namin sa inyo ang musika ng inyong puso!",
+        "Para sa aming mga tagapakinig na may special request — puwede kayong mag-message! Ito ang Power Love Song Hits at gusto naming matuwa kayo sa bawat kanta na aming ipapatugtog para sa inyo!",
+      ];
+      text = reqs[Math.floor(Math.random() * reqs.length)];
+
+    } else if (type === "break") {
+      const breaks = [
+        "Sandali lang mga ka-Power FM! Maliit lang ang pahinga namin. Pero huwag kayong matakot — babalik kami agad na may mas magagandang kanta para sa inyo. Ito ang Power Love Song Hits!",
+        "Maikling pahinga muna mga mahal naming tagapakinig. Huwag kayong mag-alis ng tuner dahil marami pa kaming magagandang kanta para sa inyong mga puso. Power Love Song Hits — babalik agad!",
+        "Commercial break muna mga ka-Power FM! Habang nagpapahinga kami, isipin ninyo ang taong espesyal sa inyong buhay. Babalik kami agad na may kanta para sa kanya. Power Love Song Hits!",
+      ];
+      text = breaks[Math.floor(Math.random() * breaks.length)];
+
+    } else if (type === "shoutout") {
+      const shouts = [
+        "Malaking shoutout sa lahat ng aming mga tagapakinig sa buong Pilipinas! Kayo ang dahilan kung bakit kami nagpapatuloy. Mahal na mahal namin kayong lahat at salamat sa inyong walang sawang suporta!",
+        "Shoutout sa lahat ng naka-tune in ngayon! Sana masaya kayo at nararamdaman ninyo ang pagmamahal sa bawat kanta namin. Ito ang Power Love Song Hits — para sa bawat isa sa inyo!",
+        "Espesyal na shoutout sa aming mga tapat na tagapakinig! Kahit saan kayo naroroon ngayon — sa bahay, sa trabaho, o sa biyahe — nandito kami para samahan kayo. Power Love Song Hits, mahal namin kayo!",
+      ];
+      text = shouts[Math.floor(Math.random() * shouts.length)];
+
+    } else if (type === "backonair") {
+      const backs = [
+        "Nandito na kami ulit mga ka-Power FM! Pasensya na sa maikling pahinga. Handa na kaming magpatuloy ng programa at magdala ng mas magagandang kanta para sa inyong mga puso. Power Love Song Hits, LIVE na ulit!",
+        "Back on air na kami! Salamat sa inyong pasensya mga mahal naming tagapakinig. Ngayon ay patuloy na nating i-enjoy ang musika ng pag-ibig dito sa Power Love Song Hits!",
+        "Kami ay bumalik na mga ka-Power FM! Handa na kayong makinig ng mas magagandang kanta? Ito si DRIAN at kasama ninyo ulit ako. Power Love Song Hits — never namin kayong iiwanan!",
+      ];
+      text = backs[Math.floor(Math.random() * backs.length)];
+
+    } else if (type === "signoff") {
+      const signs = [
+        "Ito na ang katapusan ng aming programa ngayong gabi mga ka-Power FM. Salamat sa inyong pakikinig at sa inyong walang sawang pagmamahal. Ito si DRIAN ng Power Love Song Hits — magpahinga na kayo nang mabuti. Ingat at magpahinga!",
+        "Paalam na muna mga mahal naming tagapakinig! Ito si DRIAN at ito na ang katapusan ng aming broadcast ngayon. Salamat sa inyong oras at pagmamahal. Bukas, kasama ninyo kami ulit. Good night at God bless!",
+        "Hanggang sa muli mga ka-Power FM! Salamat sa isang magandang programa kasama kayo. Ingat sa inyong mga sarili at sa inyong mga mahal sa buhay. Power Love Song Hits — hanggang bukas! Mahal namin kayo!",
+      ];
+      text = signs[Math.floor(Math.random() * signs.length)];
+    }
+
+    if (text) {
+      adjLog('⚡ ' + (type === 'generate' ? 'AI: ' : '') + '"' + text.slice(0, 70) + (text.length > 70 ? '…' : '') + '"', "speaking");
+      const resp = await fetch("/api/drian/mic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text })
+      });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const blob = await resp.blob();
+      const burl = URL.createObjectURL(blob);
+      const au   = document.getElementById("adjChatAudio");
+      au.src = burl;
+      await new Promise(function(resolve) {
+        var done = false;
+        function fin() { if (done) return; done = true; au.removeEventListener("ended",fin); au.removeEventListener("error",fin); URL.revokeObjectURL(burl); resolve(); }
+        au.addEventListener("ended", fin);
+        au.addEventListener("error", fin);
+        au.play().catch(fin);
+      });
+    }
+  } catch(e) {
+    adjLog("Feature error: " + e.message, "err");
+  }
+
+  adjFeatBusy = false;
+  document.querySelectorAll(".adj-feat-btn").forEach(b => b.classList.remove("busy"));
 }
 
 /* ── DJ CHAT — type text → DRIAN reads it instantly ── */
