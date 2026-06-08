@@ -1098,21 +1098,38 @@ async function handleRequest(req, res) {
   // GET /api/dj/script — Pollinations AI generates unique DJ announcement
   if (pathname === "/api/dj/script" && req.method === "GET") {
     const FALLBACKS = [
-      "Magandang araw sa inyong lahat! Ito si DRIAN ng Power Love Song Hits, ang inyong istasyon ng pag-ibig. Patuloy kayong makinig dahil marami pa kaming magagandang kanta para sa inyong mga puso!",
-      "Nandito pa rin tayo para sa inyo, mga mahal naming tagapakinig. Ito ang Power Love Song Hits, at ito ang susunod na kanta para sa inyong puso. Salamat sa inyong pagmamahal!",
-      "Power Love Song Hits, lagi sa inyong puso. Kung mahal mo ang isang tao, ipadama mo sa kanya ngayon. Ito ang inyong DJ DRIAN, at ito ang aming regalo para sa inyo!",
-      "Kumusta na kayo mga ka-Power FM! Sana masaya kayo ngayon at nararamdaman ninyo ang pagmamahal sa bawat kanta namin. Ito si DRIAN at patuloy kaming nandito para sa inyo!",
-      "Ito ang Power Love Song Hits, ang tanging istasyon na nagpapatugtog ng mga kanta para sa inyong mga puso. Makinig kayo at hayaan ninyong ang musika ang mag-alaga sa inyong damdamin!",
-      "Magandang hapon mga ka-Power FM! Sana kahit anong pagsubok ang inyong naranasan ngayon, nandito ang musika para magbigay ng lakas sa inyong puso. Ito si DRIAN, lagi para sa inyo!",
-      "Mga minamahal naming tagapakinig, salamat sa inyong tiwala at pagmamahal sa Power Love Song Hits. Ipinagmamalaki namin kayong lahat. Patuloy na makinig dahil may espesyal kaming para sa inyo!",
-      "Huwag kayong umalis dahil ito ay Power Love Song Hits at marami pa kaming love songs na ibibigay sa inyo. Ito si DRIAN, ang inyong DJ ng pag-ibig, lagi para sa inyong mga puso!",
+      "Ito si DRIAN ng Power Love Song Hits! Kung nandyan kayo sa trabaho ngayon, huwag kalimutang mag-break paminsan-minsan. Kayo ang pinakamahalaga — ingatan ninyo ang inyong sarili!",
+      "Kumusta na mga ka-Power FM! Ilang oras na kayong nakikinig? Sana nasisiyahan kayo — dahil kami nandito para samahan kayo kahit saan kayo naroroon ngayon.",
+      "Ito ang Power Love Song Hits! Para sa lahat ng nag-iingat sa trapiko ngayon — ingat kayo ha! Kayo ang dahilan kung bakit kami nagsasalita ngayon. Salamat sa pakikinig!",
+      "Mga ka-Power FM, mayroon ba kayong kanta na gustong marinig ngayon? Open na ang aming linya para sa inyong mga request. Ito si DRIAN — andiyan pa rin kami para sa inyo!",
+      "Fresh music coming your way! Ito si DRIAN ng Power Love Song Hits. Kung may tao kang naiisip ngayon — yung taong palagi mong naiisip — para sa kanya ang susunod na kanta.",
+      "Good vibes lang tayo ngayon mga ka-Power FM! Kahit anong nangyayari sa buhay ninyo — may musika kayong kasama. Ito si DRIAN at nandito kami lagi para sa inyo.",
+      "Salamat sa lahat ng naka-tune in ngayon! Malayo man o malapit kayo — naabot kayo ng musika namin. Ito ang Power Love Song Hits at hindi kami titigil hanggang masaya na kayong lahat!",
+      "Para sa mga estudyante na nag-aaral ngayon — huwag kayong susuko! Kaya ninyo yan. Ito si DRIAN, kasama kayo sa bawat gabi ng pag-aaral. Power Love Song Hits — sumasamo kami!",
+      "Ito si DRIAN at naiisip ko — kailan kayo huling kumain ng maayos? Mag-break muna kayo saglit. Kain muna bago makinig. Nandito pa rin kami pagbalik ninyo — promise!",
+      "Mga ka-Power FM — simula na ng bagong oras. Kung may stress kayo kanina, iwan na natin iyon. Fresh start tayo ngayon kasama ang magagandang kanta. Ito ang Power Love Song Hits!",
     ];
     try {
       const seed = Math.floor(Math.random() * 999999);
+      const TOPICS = [
+        "give listeners a fun motivational message for their day",
+        "do a casual check-in asking how listeners are doing right now",
+        "hype up the next song without mentioning love or hearts",
+        "give a relatable comment about work, school, or commuting",
+        "make a funny lighthearted remark about everyday Filipino life",
+        "remind listeners to take a break and rest for a moment",
+        "give a warm shoutout to listeners who are working the night shift",
+        "say something encouraging to students studying late at night",
+        "talk about the weather and how the music matches the mood today",
+        "make a playful comment about food — lunch, merienda, or dinner",
+        "hype up the weekend or complain about Monday like a real DJ",
+        "give a quick fun trivia or did-you-know fact about music",
+      ];
+      const topic = TOPICS[seed % TOPICS.length];
       const templates = [
-        `Write one warm 2-sentence Tagalog Filipino radio DJ announcement for Power Love Song Hits radio station. Sound like a professional friendly Filipino DJ. Talk about love music and your listeners. Make it unique seed${seed}. Output ONLY the script text no quotes no labels.`,
-        `Ikaw si DRIAN DJ ng Power Love Song Hits radio. Gumawa ng 1-2 sentence na Tagalog na announcement para sa mga nakikinig. Malambing at propesyonal. Unique seed${seed}. Script text lang ang output walang quotes.`,
-        `You are a warm Filipino DJ on Power Love Song Hits. Write 2 sentences in natural Tagalog welcoming listeners and hyping the next love song. Fresh unique message seed${seed}. Pure script output only.`,
+        `You are DRIAN, a charismatic Filipino radio DJ on Power Love Song Hits. Write exactly 2 natural conversational Tagalog sentences to ${topic}. Sound genuine and spontaneous, NOT scripted. Do NOT mention hearts or love. seed${seed}. Output ONLY the script text, no quotes, no labels.`,
+        `Ikaw si DRIAN, isang masayang Filipino radio DJ sa Power Love Song Hits. Gumawa ng 2 sentence na Tagalog DJ line para ${topic}. Maging natural at totoo — tulad ng totoong DJ. Huwag gumamit ng "puso" o "pag-ibig". seed${seed}. Script text lang ang output.`,
+        `Filipino radio DJ script. Station: Power Love Song Hits. DJ name: DRIAN. Task: ${topic}. Language: natural conversational Tagalog. Length: 2 sentences max. Avoid the word "puso". seed${seed}. Output the script text only.`,
       ];
       const prompt = templates[seed % templates.length];
       const axios = require("axios");
