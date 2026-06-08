@@ -1635,30 +1635,67 @@ function adjVolChange(val) {
   if (icon)   icon.textContent = v === 0 ? "🔇" : v < 40 ? "🔉" : "🔊";
 }
 
-/* Parse volume commands from chat — returns {cmd,vol} or null */
-function _parseVolCmd(text) {
+/* ── CHAT COMMAND PARSER ──
+   Returns { kind, ... } describing the command, or null = normal speech
+   Kinds: "vol", "feat", "music" */
+function _parseChatCmd(text) {
   const t = text.toLowerCase().trim();
-  // mute
-  if (/\b(mute|tahimik|patayin|zero|wala)\b/.test(t)) return { cmd:"set", vol:0 };
-  // max / full
-  if (/\b(max|full|lakas|100|puno)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
-    return { cmd:"set", vol:100 };
-  // numeric: "volume 70", "vol 70", "70 percent", "70%", "set volume 70"
-  const numMatch = t.match(/(?:vol(?:ume)?\s*(?:to|set)?\s*(\d+)|(\d+)\s*%?\s*(?:vol(?:ume)?)?)/);
-  if (numMatch) {
-    const n = parseInt(numMatch[1] || numMatch[2], 10);
-    if (!isNaN(n) && n >= 0 && n <= 100) return { cmd:"set", vol:n };
+
+  /* ── VOLUME COMMANDS ── */
+  if (/\b(mute|tahimik|patayin ang musika|i-mute)\b/.test(t)) return { kind:"vol", cmd:"set", vol:0 };
+  if (/\b(max|full|puno)\b.*\b(vol|volume|lakas)\b|\b(vol|volume|lakas)\b.*\b(max|full|puno)\b/.test(t)) return { kind:"vol", cmd:"set", vol:100 };
+  const numVol = t.match(/(?:vol(?:ume)?\s*(?:to|set|=)?\s*(\d+)|(\d+)\s*%?\s*(?:vol(?:ume)?))/);
+  if (numVol) { const n = parseInt(numVol[1]||numVol[2],10); if (!isNaN(n)&&n>=0&&n<=100) return { kind:"vol", cmd:"set", vol:n }; }
+  if (/\b(up|taas|pataas|louder|dagdag)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t)) return { kind:"vol", cmd:"up" };
+  if (/\b(down|baba|pababa|softer|bawas|lower)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t)) return { kind:"vol", cmd:"down" };
+  if (/\b(check|status|ilan|level)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t)) return { kind:"vol", cmd:"check" };
+
+  /* ── MUSIC PLAYER CONTROLS ── */
+  if (/^(play|i-play|tugtog|simulan)\b/.test(t) || t === "play")           return { kind:"music", cmd:"play" };
+  if (/^(pause|stop|i-pause|tigil|itigil)\b/.test(t))                      return { kind:"music", cmd:"pause" };
+  if (/^(next|skip|prox|susunod|iba|ibang kanta)\b/.test(t))               return { kind:"music", cmd:"next" };
+
+  /* ── FEATURE BUTTON COMMANDS ── */
+  if (/\b(station\s*id|istasyon|station identification|radio id)\b/.test(t)) return { kind:"feat", feat:"stationid" };
+  if (/\b(good\s*(morning|afternoon|evening)|magandang\s*(umaga|hapon|gabi)|kumusta|greeting|bati)\b/.test(t)) return { kind:"feat", feat:"greeting" };
+  if (/\b(shoutout|sho+t\s*out|shout|papuri|para\s*sa\s*aming)\b/.test(t)) return { kind:"feat", feat:"shoutout" };
+  if (/\b(commercial\s*break|break|pahinga|maliit\s*lang|sandali\s*lang)\b/.test(t)) return { kind:"feat", feat:"break" };
+  if (/\b(back\s*on\s*air|babalik|bumalik|nandito\s*na|on\s*air\s*na)\b/.test(t)) return { kind:"feat", feat:"backonair" };
+  if (/\b(sign\s*off|sign-off|paalam|good\s*night|magpahinga|pangwakas)\b/.test(t)) return { kind:"feat", feat:"signoff" };
+  if (/\b(song\s*request|request|humiling|magrequest|gusto\s*ninyo)\b/.test(t)) return { kind:"feat", feat:"request" };
+  if (/\b(volume\s*check|mic\s*check|sound\s*check|testing|isa\s*dalawa)\b/.test(t)) return { kind:"feat", feat:"volcheck" };
+  if (/\b(auto\s*generate|generate|script|kumuha\s*ng\s*script|ai\s*script)\b/.test(t)) return { kind:"feat", feat:"generate" };
+
+  return null; // → normal speech
+}
+
+/* Legacy alias (volume only) kept for _applyVolCmd call */
+function _parseVolCmd(text) {
+  const r = _parseChatCmd(text);
+  return (r && r.kind === "vol") ? r : null;
+}
+
+/* Music player control */
+function _applyMusicCmd(cmd) {
+  const online = document.getElementById("onlineAudio");
+  const adjA   = document.getElementById("adjAudio");
+  const active = (online && online.src && !online.paused) ? online : adjA;
+  if (cmd === "play") {
+    if (online && online.src) online.play().catch(()=>{});
+    adjLog("▶ Music play", "speaking");
+    showToast("▶ Playing music");
+  } else if (cmd === "pause") {
+    if (online) online.pause();
+    if (adjA)   adjA.pause();
+    adjLog("⏸ Music paused", "speaking");
+    showToast("⏸ Music paused");
+  } else if (cmd === "next") {
+    // If auto DJ is on, skip current song by ending it
+    if (adjA && adjA.src) { adjA.currentTime = adjA.duration || 9999; }
+    else if (online && online.src) { online.currentTime = online.duration || 9999; }
+    adjLog("⏭ Skipping song...", "speaking");
+    showToast("⏭ Next song");
   }
-  // up / taasan
-  if (/\b(up|taas|pataas|louder|dagdag|malakas)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
-    return { cmd:"up" };
-  // down / ibaba
-  if (/\b(down|baba|pababa|softer|bawas|tahimik|lower)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
-    return { cmd:"down" };
-  // check
-  if (/\b(check|status|ano|ilan|level)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
-    return { cmd:"check" };
-  return null;
 }
 
 async function _applyVolCmd(vcmd) {
@@ -1707,14 +1744,23 @@ async function adjChatSend() {
   const text = (inp ? inp.value : "").trim();
   if (!text || adjChatBusy) return;
 
-  // ── VOLUME COMMAND INTERCEPT ──
-  const vcmd = _parseVolCmd(text);
-  if (vcmd) {
+  // ── COMMAND INTERCEPT (volume / music / feature) ──
+  const cmd = _parseChatCmd(text);
+  if (cmd) {
     inp.value = "";
     inp.style.height = "";
     adjChatBusy = true;
     if (btn) btn.classList.add("busy");
-    await _applyVolCmd(vcmd);
+    try {
+      if (cmd.kind === "vol")   await _applyVolCmd(cmd);
+      else if (cmd.kind === "music") _applyMusicCmd(cmd.cmd);
+      else if (cmd.kind === "feat") {
+        // reuse adjFeat but bypass the adjFeatBusy guard — we own the lock via adjChatBusy
+        const savedBusy = adjFeatBusy; adjFeatBusy = false;
+        await adjFeat(cmd.feat);
+        adjFeatBusy = savedBusy;
+      }
+    } catch(e) { adjLog("CMD error: " + e.message, "err"); }
     adjChatBusy = false;
     if (btn) btn.classList.remove("busy");
     if (inp) inp.focus();
