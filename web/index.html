@@ -514,7 +514,7 @@ input,textarea,select{font-family:inherit;outline:none}
       <span class="autodj-icon">🤖</span>
       <div class="autodj-titles">
         <div class="autodj-title">AUTO DJ MODE</div>
-        <div class="autodj-sub">AI script + love songs &middot; 1 oras non-stop</div>
+        <div class="autodj-sub">AI script + love songs &middot; 2 oras non-stop</div>
       </div>
       <button class="autodj-toggle off" id="autoDjBtn" onclick="toggleAutoDJ()">&#9654; START</button>
     </div>
@@ -522,7 +522,7 @@ input,textarea,select{font-family:inherit;outline:none}
     <div class="autodj-stats">
       <div class="autodj-stat">
         <div class="autodj-stat-label">&#9201; Natitirang Oras</div>
-        <div class="autodj-stat-val adj-gold" id="adjCountdown">1:00:00</div>
+        <div class="autodj-stat-val adj-gold" id="adjCountdown">2:00:00</div>
       </div>
       <div class="autodj-stat">
         <div class="autodj-stat-label">&#128251; Katayuan</div>
@@ -1310,7 +1310,7 @@ function toggleAutoDJ() {
 function adjStart() {
   adjActive   = true;
   adjStopFlag = false;
-  adjEndTime  = Date.now() + 60 * 60 * 1000;
+  adjEndTime  = Date.now() + 120 * 60 * 1000;
 
   const btn  = document.getElementById("autoDjBtn");
   const card = document.getElementById("autoDjCard");
@@ -1319,7 +1319,7 @@ function adjStart() {
   card.classList.add("on");
 
   document.getElementById("adjLog").innerHTML = "";
-  adjLog("AUTO DJ nagsimula na! 1 oras na live broadcast.", "speaking");
+  adjLog("AUTO DJ nagsimula na! 2 oras na live broadcast.", "speaking");
 
   adjTimer = setInterval(function() {
     const rem = Math.max(0, Math.round((adjEndTime - Date.now()) / 1000));
@@ -1346,7 +1346,7 @@ function adjStop() {
   if (card) card.classList.remove("on");
 
   const cd = document.getElementById("adjCountdown");
-  if (cd) cd.textContent = "1:00:00";
+  if (cd) cd.textContent = "2:00:00";
 
   adjSetPhase("Natapos na.");
   adjSetSong("Wala pa");
