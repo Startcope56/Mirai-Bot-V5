@@ -54,6 +54,39 @@ const IS_VERCEL   = !!process.env.VERCEL;
 const IS_NETLIFY  = !!process.env.NETLIFY;
 const IS_SERVERLESS = IS_VERCEL || IS_NETLIFY;
 
+// ── Cached MsEdgeTTS instances — reuse WebSocket connection for speed ─────────
+const _ttsInstances = {};
+async function _getTTS(voiceName) {
+  const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
+  if (!_ttsInstances[voiceName]) {
+    const t = new MsEdgeTTS();
+    await t.setMetadata(voiceName, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+    _ttsInstances[voiceName] = t;
+    console.log("[TTS] Cached instance for", voiceName);
+  }
+  return _ttsInstances[voiceName];
+}
+async function _ttsToBuffer(text, voiceName, rate, pitch, timeoutMs) {
+  const tts = await _getTTS(voiceName);
+  const { audioStream } = tts.toStream(text, { rate: rate || "0%", pitch: pitch || "0Hz" });
+  const chunks = [];
+  await new Promise((resolve, reject) => {
+    audioStream.on("data", d => chunks.push(d));
+    audioStream.on("end", resolve);
+    audioStream.on("error", err => { delete _ttsInstances[voiceName]; reject(err); });
+    setTimeout(() => { delete _ttsInstances[voiceName]; resolve(); }, timeoutMs || 40000);
+  });
+  return Buffer.concat(chunks);
+}
+// Pre-warm both voices on startup so first mic call is instant
+(async () => {
+  try {
+    await _getTTS("fil-PH-AngeloNeural");
+    await _getTTS("fil-PH-BlessicaNeural");
+    console.log("[TTS] Both voices pre-warmed ✅");
+  } catch (e) { console.warn("[TTS] Pre-warm failed:", e.message?.slice(0, 60)); }
+})();
+
 // ── SoundCloud client_id — initialized once, shared across all requests ───────
 let scReady = false;
 async function ensureSC() {
@@ -912,6 +945,31 @@ async function handleRequest(req, res) {
       const cleanText = text.trim().slice(0, 350);
       const buf = await drianTTS(cleanText, "fil-PH-AngeloNeural", "-18%", "-2Hz");
       res.writeHead(200, { "Content-Type": "audio/mpeg", "Content-Length": buf.length, "Content-Disposition": "inline; filename=\"weather-voice.mp3\"", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
+      return res.end(buf);
+    } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
+    return;
+  }
+
+  // POST /api/drian/mic — Fast mic voice conversion (no music, cached TTS, low latency)
+  if (pathname === "/api/drian/mic" && req.method === "POST") {
+    try {
+      const body = await _readBody(req);
+      const { text, voice } = JSON.parse(body);
+      if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
+      const cleanText = text.trim().slice(0, 250);
+      let buf;
+      if (voice === "W") {
+        buf = await _ttsToBuffer(cleanText, "fil-PH-BlessicaNeural", "-12%", "+2Hz", 12000);
+      } else {
+        buf = await _ttsToBuffer(cleanText, "fil-PH-AngeloNeural", "-15%", "-2Hz", 12000);
+      }
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": buf.length,
+        "Content-Disposition": "inline; filename=\"mic-voice.mp3\"",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*"
+      });
       return res.end(buf);
     } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
     return;

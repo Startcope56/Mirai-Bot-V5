@@ -1051,45 +1051,35 @@ openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
     au.play().catch(fin);
   }
 
-  /* ─── Send text → DRIAN API → play ─── */
+  /* ─── Send text → DRIAN fast mic API → play ─── */
   async function micSpeak(text) {
     if (!text || !text.trim()) return;
     micBusy = true;
     micSetUI('processing');
 
-    var endpoint, body;
-    if (micVoice === 'W') {
-      endpoint = '/api/drian/female';
-      body = JSON.stringify({ text: text, withMusic: false });
-    } else if (micVoice === 'M') {
-      endpoint = '/api/drian/female';
-      body = JSON.stringify({ text: text, withMusic: true });
-    } else {
-      // A = Angelo male
-      endpoint = '/api/drian/male';
-      body = JSON.stringify({ text: text });
-    }
+    // Show recognized text so user knows it was heard
+    var statusTxt = $id('micStatusTxt');
+    if (statusTxt) statusTxt.textContent = '🎙️ "' + text.trim().slice(0, 80) + (text.length > 80 ? '…' : '') + '"';
 
     try {
-      var resp = await fetch(endpoint, {
+      var resp = await fetch('/api/drian/mic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: body
+        body: JSON.stringify({ text: text, voice: micVoice })
       });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var blob = await resp.blob();
       micSetUI('speaking');
       await micPlay(blob);
     } catch(e) {
-      var txt = $id('micStatusTxt');
-      if (txt) txt.textContent = 'Error: ' + e.message;
+      if (statusTxt) statusTxt.textContent = 'Error: ' + e.message;
     }
 
     micBusy = false;
 
-    // Auto-restart listening if still ON
+    // Auto-restart listening immediately after DRIAN finishes speaking
     if (micOn) {
-      setTimeout(micStartRecog, 300);
+      setTimeout(micStartRecog, 80);
     } else {
       micSetUI('off');
     }
@@ -1138,13 +1128,13 @@ openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
         if (txt) txt.textContent = 'Hindi pinayagan ang mic. I-allow sa browser at subukan ulit.';
         return;
       }
-      // no-speech / aborted / network → just restart quietly
-      if (micOn && !micBusy) setTimeout(micStartRecog, 400);
+      // no-speech / aborted / network → restart fast
+      if (micOn && !micBusy) setTimeout(micStartRecog, 80);
     };
 
     r.onend = function() {
       // Only auto-restart here if no result was captured (handled in onresult)
-      if (micOn && !micBusy) setTimeout(micStartRecog, 300);
+      if (micOn && !micBusy) setTimeout(micStartRecog, 80);
     };
 
     micRecog = r;
