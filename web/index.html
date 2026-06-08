@@ -399,8 +399,24 @@ function setMode(m) {
 /* ── START / STOP ── */
 let drianStarted = false;
 let drianDebounce = null;
-let currentAudio = null;
-let isGenerating = false;
+let drianController = null;   // AbortController — cancels in-flight fetch
+let drianToken = 0;           // generation counter — stale results ignored
+let drianBlobUrl = null;      // current blob URL — revoked on next play
+const drianAudioEl = document.getElementById("drianAudio");
+
+function stopAudio() {
+  drianAudioEl.onended = null;
+  drianAudioEl.pause();
+  drianAudioEl.src = "";
+  try { drianAudioEl.load(); } catch(e) {}
+  if (drianBlobUrl) { URL.revokeObjectURL(drianBlobUrl); drianBlobUrl = null; }
+  document.getElementById("waveform").style.display = "none";
+}
+
+function cancelFetch() {
+  if (drianController) { try { drianController.abort(); } catch(e){} drianController = null; }
+  drianToken++;
+}
 
 function toggleStart() {
   drianStarted = !drianStarted;
@@ -417,18 +433,17 @@ function toggleStart() {
     hl.textContent = "ON AIR";
     setStatus("active", "🎙️ DRIAN ON — mag-type at awtomatikong magsasalita!");
     showToast("🎙️ DRIAN STARTED — mag-type ka na!", 2500);
-    // Speak current text if any
     const t = document.getElementById("scriptInput").value.trim();
-    if (t) scheduleSpeech(t);
+    if (t) kickGenerate(t);
   } else {
+    cancelFetch();
+    stopAudio();
+    clearTimeout(drianDebounce);
     btn.classList.remove("on"); btn.classList.add("off");
     icon.textContent = "▶"; label.textContent = "START";
     badge.classList.remove("show");
     hl.textContent = "READY";
-    clearTimeout(drianDebounce);
-    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
     setStatus("idle", "Naka-stop. Pindutin ang START para magsimula ulit.");
-    document.getElementById("waveform").style.display = "none";
     showToast("⏹ DRIAN stopped.", 2000);
   }
 }
@@ -448,95 +463,92 @@ function setStatus(type, msg) {
 /* ── AUTO-SPEAK ON TYPING ── */
 document.getElementById("scriptInput").addEventListener("input", e => {
   const len = e.target.value.length;
-  document.getElementById("charCount").textContent = `${len} / 500`;
-  if (e.target.value.length > 500) e.target.value = e.target.value.slice(0, 500);
+  document.getElementById("charCount").textContent = `${Math.min(len,500)} / 500`;
+  if (len > 500) e.target.value = e.target.value.slice(0, 500);
   if (!drianStarted) return;
   clearTimeout(drianDebounce);
   const text = e.target.value.trim();
   if (!text) return;
-  drianDebounce = setTimeout(() => scheduleSpeech(text), 900);
+  drianDebounce = setTimeout(() => kickGenerate(text), 900);
 });
 
 /* ── GENERATE NOW BUTTON ── */
 function generateNow() {
   const text = document.getElementById("scriptInput").value.trim();
   if (!text) { showToast("⚠️ I-type muna ang script!", 2000); return; }
-  scheduleSpeech(text);
+  clearTimeout(drianDebounce);
+  kickGenerate(text);
 }
 
-/* ── SPEECH PIPELINE ── */
-function scheduleSpeech(text) {
-  if (isGenerating) return; // don't stack
-  if (currentAudio) { try { currentAudio.pause(); } catch(e){} currentAudio = null; }
+/* ── KICK — cancel old, start new ── */
+function kickGenerate(text) {
+  cancelFetch();   // abort any in-flight fetch
+  stopAudio();     // silence immediately
   clearTimeout(drianDebounce);
   doGenerate(text);
 }
 
+/* ── MAIN GENERATE PIPELINE ── */
 async function doGenerate(text) {
-  if (isGenerating) return;
-  isGenerating = true;
+  const myToken = drianToken;   // snapshot — if it changes, we're stale
   const withMusic = document.getElementById("withMusicChk").checked;
 
   setStatus("loading", "⟳ Nagge-generate... sandali lang!");
-  document.getElementById("waveform").style.display = "none";
 
   let endpoint, body;
   switch (currentMode) {
-    case "female":
-      endpoint = "/api/drian/female";
-      body = { text: text.slice(0, 500), withMusic };
-      break;
-    case "male":
-      endpoint = "/api/drian/male";
-      body = { text: text.slice(0, 500) };
-      break;
-    case "song":
-      endpoint = "/api/drian/song";
-      body = { prompt: text.slice(0, 300), voice: "female" };
-      break;
-    case "news":
-      endpoint = "/api/drian/news";
-      body = { headline: text.slice(0, 400), withMusic };
-      break;
+    case "female": endpoint = "/api/drian/female"; body = { text: text.slice(0,500), withMusic }; break;
+    case "male":   endpoint = "/api/drian/male";   body = { text: text.slice(0,500) }; break;
+    case "song":   endpoint = "/api/drian/song";   body = { prompt: text.slice(0,300), voice:"female" }; break;
+    case "news":   endpoint = "/api/drian/news";   body = { headline: text.slice(0,400), withMusic }; break;
   }
+
+  const controller = new AbortController();
+  drianController = controller;
 
   try {
     const res = await fetch(endpoint, {
       method: "POST",
+      signal: controller.signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+    if (drianToken !== myToken) return;   // stale — a newer request took over
+    if (!res.ok) throw new Error(`Server ${res.status}`);
 
-    const audioEl = document.getElementById("drianAudio");
-    audioEl.src = url;
-    currentAudio = audioEl;
+    const blob = await res.blob();
+    if (drianToken !== myToken) return;   // stale
+
+    // Stop any leftover audio one more time before playing
+    stopAudio();
+
+    drianBlobUrl = URL.createObjectURL(blob);
+    drianAudioEl.src = drianBlobUrl;
+    drianAudioEl.load();
 
     const modeLabels = { female:"🎀 Babae (Jingle)", male:"📢 Lalake (Broadcast)", song:"🎵 AI Song", news:"📺 Balita" };
-    document.getElementById("drianAudioLabel").textContent = `${modeLabels[currentMode]} — ${text.slice(0,50)}${text.length > 50 ? "…" : ""}`;
+    document.getElementById("drianAudioLabel").textContent =
+      `${modeLabels[currentMode]} — ${text.slice(0,50)}${text.length>50?"…":""}`;
     document.getElementById("drianAudioWrap").classList.add("show");
 
-    audioEl.play().catch(() => {});
+    drianAudioEl.onended = () => {
+      document.getElementById("waveform").style.display = "none";
+      setStatus(drianStarted ? "active" : "idle",
+        drianStarted ? "🎙️ DRIAN ON — mag-type ulit para magsalita!" : "Tapos na. Pindutin ang START.");
+    };
+
+    await drianAudioEl.play();
     setStatus("playing", "▶ Nagsasalita na si DRIAN...");
     document.getElementById("waveform").style.display = "flex";
 
-    audioEl.onended = () => {
-      setStatus(drianStarted ? "active" : "idle",
-        drianStarted ? "🎙️ DRIAN ON — mag-type ulit para magsalita!" : "Tapos na. Pindutin ang START para sa auto-speak.");
-      document.getElementById("waveform").style.display = "none";
-    };
-
-    // Save to history
     addHistory(text, currentMode);
-    showToast("🎙️ DRIAN nagsalita!", 2000);
+    showToast("🎙️ DRIAN nagsalita!", 1800);
 
   } catch (e) {
-    setStatus("idle", "❌ Error: " + e.message);
-    showToast("❌ Generate error: " + e.message, 3500);
+    if (e.name === "AbortError") return;   // cancelled — not an error
+    setStatus(drianStarted ? "active" : "idle", "❌ Error: " + e.message);
+    showToast("❌ Error: " + e.message, 3500);
   }
-  isGenerating = false;
 }
 
 /* ── HISTORY ── */

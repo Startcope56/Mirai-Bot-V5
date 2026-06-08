@@ -893,7 +893,7 @@ async function handleRequest(req, res) {
       const { text, withMusic } = JSON.parse(body);
       if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
       const cleanText = text.trim().slice(0, 350);
-      let buf = await drianTTS(cleanText, "fil-PH-BlessicaNeural", "-2%", "+4Hz");
+      let buf = await drianTTS(cleanText, "fil-PH-BlessicaNeural", "-15%", "+2Hz");
       if (withMusic) {
         try { buf = await mixWithBgMusic(buf, "female", 0.85, 0.95); } catch (e) { console.warn("[DRIAN] bg mix failed:", e.message); }
       }
@@ -910,7 +910,7 @@ async function handleRequest(req, res) {
       const { text } = JSON.parse(body);
       if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
       const cleanText = text.trim().slice(0, 350);
-      const buf = await drianTTS(cleanText, "fil-PH-AngeloNeural", "-4%", "-2Hz");
+      const buf = await drianTTS(cleanText, "fil-PH-AngeloNeural", "-18%", "-2Hz");
       res.writeHead(200, { "Content-Type": "audio/mpeg", "Content-Length": buf.length, "Content-Disposition": "inline; filename=\"weather-voice.mp3\"", "Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*" });
       return res.end(buf);
     } catch (e) { if (!res.headersSent) { res.writeHead(500); return res.end(e.message); } }
@@ -924,8 +924,8 @@ async function handleRequest(req, res) {
       const { femaleText, maleText, withMusic } = JSON.parse(body);
       if (!femaleText?.trim() && !maleText?.trim()) { res.writeHead(400); return res.end("Missing texts"); }
       let bufF = null, bufM = null;
-      if (femaleText?.trim()) bufF = await drianTTS(femaleText.trim().slice(0, 350), "fil-PH-BlessicaNeural", "-2%", "+4Hz");
-      if (maleText?.trim())   bufM = await drianTTS(maleText.trim().slice(0, 350), "fil-PH-AngeloNeural", "-4%", "-2Hz");
+      if (femaleText?.trim()) bufF = await drianTTS(femaleText.trim().slice(0, 350), "fil-PH-BlessicaNeural", "-15%", "+2Hz");
+      if (maleText?.trim())   bufM = await drianTTS(maleText.trim().slice(0, 350), "fil-PH-AngeloNeural", "-18%", "-2Hz");
       let combined = (bufF && bufM) ? await concatAudios(bufF, bufM) : (bufF || bufM);
       if (withMusic) {
         try { combined = await mixWithBgMusic(combined, "female", 0.85, 0.95); } catch (e) { console.warn("[DRIAN] duet bg mix failed:", e.message); }
@@ -1021,7 +1021,7 @@ async function handleRequest(req, res) {
         script = `Magandang araw po sa inyong lahat. Ayon sa aming mga ulat, ${headline.trim()}. Patuloy naming susubaybayan ang mga kaganapan at ibabahagi sa inyo ang pinakabagong balita. Ito ay Power Inc News, lagi sa inyong serbisyo.`;
       }
 
-      let buf = await drianTTS(script, "fil-PH-AngeloNeural", "-3%", "-2Hz");
+      let buf = await drianTTS(script, "fil-PH-AngeloNeural", "-18%", "-2Hz");
       if (withMusic) {
         try { buf = await mixWithBgMusic(buf, "male", 0.7, 1.0); } catch (e) { console.warn("[DRIAN News] bg mix failed:", e.message); }
       }
