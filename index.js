@@ -950,19 +950,15 @@ async function handleRequest(req, res) {
     return;
   }
 
-  // POST /api/drian/mic — Fast mic voice conversion (no music, cached TTS, low latency)
+  // POST /api/drian/mic — Fast mic voice conversion (Drian AI · BlessicaNeural · cached)
   if (pathname === "/api/drian/mic" && req.method === "POST") {
     try {
       const body = await _readBody(req);
-      const { text, voice } = JSON.parse(body);
+      const { text } = JSON.parse(body);
       if (!text?.trim()) { res.writeHead(400); return res.end("Missing text"); }
       const cleanText = text.trim().slice(0, 250);
-      let buf;
-      if (voice === "W") {
-        buf = await _ttsToBuffer(cleanText, "fil-PH-BlessicaNeural", "-12%", "+2Hz", 12000);
-      } else {
-        buf = await _ttsToBuffer(cleanText, "fil-PH-AngeloNeural", "-15%", "-2Hz", 12000);
-      }
+      // Exact same voice as !drian female in drian.js — BlessicaNeural, -15% rate, +2Hz pitch
+      const buf = await _ttsToBuffer(cleanText, "fil-PH-BlessicaNeural", "-15%", "+2Hz", 12000);
       res.writeHead(200, {
         "Content-Type": "audio/mpeg",
         "Content-Length": buf.length,

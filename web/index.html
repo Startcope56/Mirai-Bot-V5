@@ -237,23 +237,10 @@ input,textarea,select{font-family:inherit;outline:none}
   background:linear-gradient(90deg,#ff3860,#ff8fab);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .mic-sub{font-size:.6rem;color:var(--muted);margin-top:2px}
 
-/* A / M / W voice buttons */
-.mic-voice-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
-.mvc{padding:14px 8px;border-radius:16px;border:2px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;
-  font-weight:900;font-size:1.1rem;letter-spacing:.04em;transition:.2s;text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:4px}
-.mvc small{font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.mvc:hover{background:rgba(255,255,255,.09)}
-.mvc.mv-a{border-color:rgba(0,229,255,.35);color:var(--cyan)}
-.mvc.mv-a.active{background:rgba(0,229,255,.18);border-color:var(--cyan);
-  box-shadow:0 0 18px rgba(0,229,255,.35);color:#fff}
-.mvc.mv-m{border-color:rgba(157,0,255,.35);color:var(--purple2)}
-.mvc.mv-m.active{background:rgba(157,0,255,.18);border-color:var(--purple2);
-  box-shadow:0 0 18px rgba(157,0,255,.35);color:#fff}
-.mvc.mv-w{border-color:rgba(255,20,119,.35);color:var(--pink2)}
-.mvc.mv-w.active{background:rgba(255,20,119,.18);border-color:var(--pink);
-  box-shadow:0 0 18px rgba(255,20,119,.35);color:#fff}
+/* Mic voice indicator badge */
+.mic-voice-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;
+  padding:5px 14px;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.08em;
+  background:rgba(255,20,119,.13);border:1px solid rgba(255,20,119,.4);color:var(--pink2)}
 
 /* Record button */
 .mic-rec-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
@@ -445,18 +432,8 @@ input,textarea,select{font-family:inherit;outline:none}
       </div>
     </div>
 
-    <!-- VOICE SELECTOR: A / M / W -->
-    <div class="mic-voice-row">
-      <button class="mvc mv-a active" id="mvcA" onclick="micSetVoice('A')">
-        A<small>Angelo · Lalake</small>
-      </button>
-      <button class="mvc mv-m" id="mvcM" onclick="micSetVoice('M')">
-        M<small>Mixed · +Music</small>
-      </button>
-      <button class="mvc mv-w" id="mvcW" onclick="micSetVoice('W')">
-        W<small>Blessica · Babae</small>
-      </button>
-    </div>
+    <!-- DRIAN AI VOICE BADGE -->
+    <div class="mic-voice-badge">🎙️ DRIAN AI VOICE &nbsp;·&nbsp; Blessica Neural</div>
 
     <!-- BIG RECORD TOGGLE BUTTON -->
     <div class="mic-rec-wrap">
@@ -464,10 +441,10 @@ input,textarea,select{font-family:inherit;outline:none}
       <div class="mic-rec-label" id="micRecLabel">PINDUTIN PARA I-ON</div>
     </div>
 
-    <!-- STATUS ONLY — walang transcript -->
+    <!-- STATUS BAR -->
     <div class="mic-status-bar" id="micStatusBar">
       <div class="mic-dot"></div>
-      <span class="mic-status-txt" id="micStatusTxt">Handa. Piliin ang boses at i-on ang mic.</span>
+      <span class="mic-status-txt" id="micStatusTxt">Handa. I-on ang mic at magsalita.</span>
     </div>
     <div class="mic-bt-note">&#128266; Bluetooth: i-connect muna bago i-on. Volume: MAX.</div>
 
@@ -954,7 +931,6 @@ openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
    Toggle ON/OFF. No transcript. Auto-restart loop.
    ══════════════════════════════════════════════════ */
 (function() {
-  var micVoice   = 'A';   // A=Angelo(male)  M=Mixed(+music)  W=Blessica(female)
   var micOn      = false; // global ON/OFF toggle
   var micBusy    = false; // true while DRIAN is speaking
   var micRecog   = null;
@@ -977,24 +953,15 @@ openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
     if (bar)  bar.className = 'mic-status-bar' + (isOn ? ' on' : '');
 
     var labels = {
-      off:        { btn: 'PINDUTIN PARA I-ON',  txt: 'Handa. Piliin ang boses at i-on ang mic.' },
-      listening:  { btn: 'NAKIKINIG \u2014 TAP TO OFF', txt: '\uD83D\uDFE2 Nakikinig... Magsalita na!' },
-      processing: { btn: 'GINAGAWA NG DRIAN...', txt: '\u23F3 Ginagawa ang boses ni DRIAN...' },
-      speaking:   { btn: 'NAGSASALITA SI DRIAN', txt: '\uD83C\uDFA4 Nagsasalita si DRIAN...' }
+      off:        { btn: 'PINDUTIN PARA I-ON',       txt: 'Handa. I-on ang mic at magsalita.' },
+      listening:  { btn: 'NAKIKINIG — TAP TO OFF',   txt: '🟢 Nakikinig... Magsalita na!' },
+      processing: { btn: 'GINAGAWA NG DRIAN...',     txt: '⏳ Kino-convert ang boses mo...' },
+      speaking:   { btn: 'NAGSASALITA SI DRIAN',     txt: '🎤 Nagsasalita si DRIAN AI...' }
     };
     var s = labels[state] || labels.off;
     if (label) label.textContent = s.btn;
     if (txt)   txt.textContent   = s.txt;
   }
-
-  /* ─── Voice selector ─── */
-  window.micSetVoice = function(v) {
-    micVoice = v;
-    ['A','M','W'].forEach(function(x) {
-      var b = $id('mvc' + x);
-      if (b) b.classList.toggle('active', x === v);
-    });
-  };
 
   /* ─── Play blob via AudioContext (→ Bluetooth default output) ─── */
   function micPlay(blob) {
@@ -1051,33 +1018,31 @@ openDB().then(() => renderLibrary()).catch(e => console.error("DB error:", e));
     au.play().catch(fin);
   }
 
-  /* ─── Send text → DRIAN fast mic API → play ─── */
+  /* ─── Send text → DRIAN AI voice → play ─── */
   async function micSpeak(text) {
     if (!text || !text.trim()) return;
     micBusy = true;
     micSetUI('processing');
 
-    // Show recognized text so user knows it was heard
     var statusTxt = $id('micStatusTxt');
-    if (statusTxt) statusTxt.textContent = '🎙️ "' + text.trim().slice(0, 80) + (text.length > 80 ? '…' : '') + '"';
+    if (statusTxt) statusTxt.textContent = '⏳ "' + text.trim().slice(0, 80) + (text.length > 80 ? '…' : '') + '"';
 
     try {
       var resp = await fetch('/api/drian/mic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text, voice: micVoice })
+        body: JSON.stringify({ text: text })
       });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       var blob = await resp.blob();
       micSetUI('speaking');
       await micPlay(blob);
     } catch(e) {
-      if (statusTxt) statusTxt.textContent = 'Error: ' + e.message;
+      if (statusTxt) statusTxt.textContent = '❌ Error: ' + e.message;
     }
 
     micBusy = false;
 
-    // Auto-restart listening immediately after DRIAN finishes speaking
     if (micOn) {
       setTimeout(micStartRecog, 80);
     } else {
