@@ -311,6 +311,25 @@ input,textarea,select{font-family:inherit;outline:none}
   font-size:.76rem;color:var(--text);line-height:1.6;font-style:italic;display:none}
 .autodj-script-now.show{display:block}
 
+/* DJ CHAT INPUT */
+.adj-chat-wrap{display:flex;gap:8px;margin-top:12px;align-items:flex-end}
+.adj-chat-input{flex:1;padding:10px 14px;border-radius:14px;font-size:.82rem;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(0,230,118,.25);
+  color:var(--text);resize:none;min-height:42px;max-height:90px;line-height:1.5;
+  transition:.2s;font-family:inherit}
+.adj-chat-input:focus{border-color:rgba(0,230,118,.6);background:rgba(0,230,118,.05);
+  box-shadow:0 0 12px rgba(0,230,118,.12);outline:none}
+.adj-chat-input::placeholder{color:var(--muted)}
+.adj-chat-send{flex-shrink:0;width:44px;height:44px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,rgba(0,230,118,.25),rgba(0,200,100,.35));
+  border:1.5px solid rgba(0,230,118,.4);color:var(--green);
+  font-size:1.15rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+.adj-chat-send:hover{background:linear-gradient(135deg,rgba(0,230,118,.4),rgba(0,200,100,.5));
+  box-shadow:0 0 14px rgba(0,230,118,.35)}
+.adj-chat-send.busy{opacity:.5;cursor:not-allowed;animation:none}
+.adj-chat-label{font-size:.58rem;color:var(--muted);font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;margin-top:10px;margin-bottom:5px}
+
 /* FOOTER */
 .footer-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;
   padding:10px 20px;background:rgba(4,0,16,.97);backdrop-filter:blur(20px);
@@ -486,8 +505,17 @@ input,textarea,select{font-family:inherit;outline:none}
       <div class="adj-log-line"><span class="adj-ts">--:--</span><span class="adj-msg">Pindutin ang START para simulan ang 1-oras na live DJ broadcast...</span></div>
     </div>
 
+    <!-- DJ CHAT — type & DRIAN reads it instantly -->
+    <div class="adj-chat-label">💬 I-TYPE AT BABASAHIN NI DRIAN AI</div>
+    <div class="adj-chat-wrap">
+      <textarea class="adj-chat-input" id="adjChatInput" rows="1"
+        placeholder="Mag-type ng kahit ano... pindutin Enter o Send para basahin ni DRIAN"></textarea>
+      <button class="adj-chat-send" id="adjChatSend" onclick="adjChatSend()">▶</button>
+    </div>
+
     <!-- AUDIO ELEMENT (hidden) -->
     <audio id="adjAudio" style="display:none"></audio>
+    <audio id="adjChatAudio" style="display:none"></audio>
   </div>
 
   <!-- MUSIC SEARCH -->
@@ -1376,6 +1404,66 @@ function adjPlayAudio(au) {
     }, 400);
   });
 }
+
+/* ── DJ CHAT — type text → DRIAN reads it instantly ── */
+let adjChatBusy = false;
+
+async function adjChatSend() {
+  const inp  = document.getElementById("adjChatInput");
+  const btn  = document.getElementById("adjChatSend");
+  const text = (inp ? inp.value : "").trim();
+  if (!text || adjChatBusy) return;
+
+  adjChatBusy = true;
+  if (btn) btn.classList.add("busy");
+  inp.value = "";
+  inp.style.height = "";
+
+  adjLog('💬 "' + text.slice(0, 80) + (text.length > 80 ? "…" : "") + '"', "speaking");
+
+  try {
+    const resp = await fetch("/api/drian/mic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text })
+    });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const blob = await resp.blob();
+    const burl = URL.createObjectURL(blob);
+    const au   = document.getElementById("adjChatAudio");
+    au.src = burl;
+    await new Promise(function(resolve) {
+      var done = false;
+      function fin() { if (done) return; done = true; au.removeEventListener("ended", fin); au.removeEventListener("error", fin); URL.revokeObjectURL(burl); resolve(); }
+      au.addEventListener("ended", fin);
+      au.addEventListener("error", fin);
+      au.play().catch(fin);
+    });
+  } catch(e) {
+    adjLog("Chat error: " + e.message, "err");
+  }
+
+  adjChatBusy = false;
+  if (btn) btn.classList.remove("busy");
+  if (inp) inp.focus();
+}
+
+// Enter = send, Shift+Enter = new line
+document.addEventListener("DOMContentLoaded", function() {
+  const inp = document.getElementById("adjChatInput");
+  if (!inp) return;
+  inp.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      adjChatSend();
+    }
+  });
+  // Auto-grow textarea
+  inp.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 90) + "px";
+  });
+});
 
 /* ── COPY CODE ── */
 document.getElementById("copyBtn").addEventListener("click", async () => {
