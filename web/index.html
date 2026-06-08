@@ -209,6 +209,20 @@ input,textarea,select{font-family:inherit;outline:none}
 .online-player-label{font-size:.72rem;color:var(--muted);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .online-player audio{width:100%;height:34px;border-radius:8px}
 
+/* VOLUME CONTROL ROW */
+.adj-vol-row{display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:2px;
+  background:rgba(0,229,255,.04);border:1.5px solid rgba(0,229,255,.18);border-radius:14px;padding:10px 14px}
+.adj-vol-icon{font-size:1.1rem;flex-shrink:0}
+.adj-vol-label{font-size:.6rem;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.adj-vol-slider{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:5px;
+  background:linear-gradient(90deg,var(--cyan) var(--vp,100%),rgba(255,255,255,.1) var(--vp,100%));
+  cursor:pointer;outline:none}
+.adj-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.5);cursor:pointer;transition:.15s}
+.adj-vol-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;border:none;
+  background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.5);cursor:pointer}
+.adj-vol-pct{font-size:.8rem;font-weight:900;color:var(--cyan);min-width:38px;text-align:right;flex-shrink:0}
+
 /* LIBRARY */
 .library-section{margin-top:14px}
 .library-header{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.08em;
@@ -558,6 +572,15 @@ input,textarea,select{font-family:inherit;outline:none}
       <button class="adj-feat-btn adj-red-btn" onclick="adjFeat('signoff')">
         <span class="fbi">🌙</span>SIGN OFF
       </button>
+    </div>
+
+    <!-- VOLUME CONTROL -->
+    <div class="adj-vol-row">
+      <span class="adj-vol-icon" id="adjVolIcon">🔊</span>
+      <span class="adj-vol-label">MUSIC VOL</span>
+      <input class="adj-vol-slider" id="adjVolSlider" type="range" min="0" max="100" value="100"
+        oninput="adjVolChange(this.value)" style="--vp:100%">
+      <span class="adj-vol-pct" id="adjVolPct">100%</span>
     </div>
 
     <!-- DJ CHAT — type & DRIAN reads it instantly -->
@@ -1590,6 +1613,91 @@ async function adjFeat(type) {
   document.querySelectorAll(".adj-feat-btn").forEach(b => b.classList.remove("busy"));
 }
 
+/* ── VOLUME CONTROL ── */
+let _musicVol = 1.0; // 0.0 – 1.0
+
+function _allMusicEls() {
+  return [
+    document.getElementById("onlineAudio"),
+    document.getElementById("adjAudio")
+  ].filter(Boolean);
+}
+
+function adjVolChange(val) {
+  const v = Math.max(0, Math.min(100, parseInt(val, 10)));
+  _musicVol = v / 100;
+  _allMusicEls().forEach(el => { el.volume = _musicVol; });
+  const slider = document.getElementById("adjVolSlider");
+  const pct    = document.getElementById("adjVolPct");
+  const icon   = document.getElementById("adjVolIcon");
+  if (slider) { slider.value = v; slider.style.setProperty("--vp", v + "%"); }
+  if (pct)    pct.textContent = v + "%";
+  if (icon)   icon.textContent = v === 0 ? "🔇" : v < 40 ? "🔉" : "🔊";
+}
+
+/* Parse volume commands from chat — returns {cmd,vol} or null */
+function _parseVolCmd(text) {
+  const t = text.toLowerCase().trim();
+  // mute
+  if (/\b(mute|tahimik|patayin|zero|wala)\b/.test(t)) return { cmd:"set", vol:0 };
+  // max / full
+  if (/\b(max|full|lakas|100|puno)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
+    return { cmd:"set", vol:100 };
+  // numeric: "volume 70", "vol 70", "70 percent", "70%", "set volume 70"
+  const numMatch = t.match(/(?:vol(?:ume)?\s*(?:to|set)?\s*(\d+)|(\d+)\s*%?\s*(?:vol(?:ume)?)?)/);
+  if (numMatch) {
+    const n = parseInt(numMatch[1] || numMatch[2], 10);
+    if (!isNaN(n) && n >= 0 && n <= 100) return { cmd:"set", vol:n };
+  }
+  // up / taasan
+  if (/\b(up|taas|pataas|louder|dagdag|malakas)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
+    return { cmd:"up" };
+  // down / ibaba
+  if (/\b(down|baba|pababa|softer|bawas|tahimik|lower)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
+    return { cmd:"down" };
+  // check
+  if (/\b(check|status|ano|ilan|level)\b/.test(t) && /\b(vol|volume|lakas)\b/.test(t))
+    return { cmd:"check" };
+  return null;
+}
+
+async function _applyVolCmd(vcmd) {
+  let newVol = Math.round(_musicVol * 100);
+  if      (vcmd.cmd === "set")   newVol = vcmd.vol;
+  else if (vcmd.cmd === "up")    newVol = Math.min(100, newVol + 10);
+  else if (vcmd.cmd === "down")  newVol = Math.max(0,   newVol - 10);
+  // else "check" — just announce current
+
+  adjVolChange(newVol);
+
+  const announcements = {
+    0:   "Volume muted! Ni-mute ko na ang musika.",
+    100: "Full volume na! Maximum lakas na ng musika.",
+  };
+  const speak = announcements[newVol]
+    || (vcmd.cmd === "check"
+        ? `Kasalukuyang volume ay ${newVol} porsyento.`
+        : `Volume set to ${newVol} percent.`);
+
+  adjLog(`🔊 Volume → ${newVol}%`, "speaking");
+
+  const au = document.getElementById("adjChatAudio");
+  try {
+    const resp = await fetch("/api/drian/mic", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ text: speak })
+    });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const burl = URL.createObjectURL(await resp.blob());
+    au.src = burl;
+    await new Promise(r => {
+      const fin = () => { au.removeEventListener("ended",fin); au.removeEventListener("error",fin); URL.revokeObjectURL(burl); r(); };
+      au.addEventListener("ended", fin); au.addEventListener("error", fin);
+      au.play().catch(fin);
+    });
+  } catch(e) { adjLog("Vol announce error: " + e.message, "err"); }
+}
+
 /* ── DJ CHAT — type text → DRIAN reads it instantly ── */
 let adjChatBusy = false;
 
@@ -1598,6 +1706,20 @@ async function adjChatSend() {
   const btn  = document.getElementById("adjChatSend");
   const text = (inp ? inp.value : "").trim();
   if (!text || adjChatBusy) return;
+
+  // ── VOLUME COMMAND INTERCEPT ──
+  const vcmd = _parseVolCmd(text);
+  if (vcmd) {
+    inp.value = "";
+    inp.style.height = "";
+    adjChatBusy = true;
+    if (btn) btn.classList.add("busy");
+    await _applyVolCmd(vcmd);
+    adjChatBusy = false;
+    if (btn) btn.classList.remove("busy");
+    if (inp) inp.focus();
+    return;
+  }
 
   adjChatBusy = true;
   if (btn) btn.classList.add("busy");
